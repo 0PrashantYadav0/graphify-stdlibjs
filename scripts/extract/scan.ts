@@ -106,7 +106,7 @@ export function readNativeDeps(dir: string): string[] {
   }
   const out = new Set<string>();
   for (const conf of manifest.confs ?? []) {
-    if (conf.task !== 'build') continue;
+    if (conf.task && conf.task !== 'build') continue;
     for (const d of conf.dependencies ?? []) out.add(d.replace(/^@stdlib\//, ''));
   }
   return [...out];
@@ -145,6 +145,7 @@ export function scanPackage(root: string, dir: string, ids: Set<string>): Scanne
     ...requiresIn(path.join(dir, 'examples')),
   ]);
   for (const r of runtime) dev.delete(r);
+  // Native deps use exact matching: manifest entries are full package identifiers, not file paths.
   const native = resolveExact(readNativeDeps(dir));
   return {
     id,
