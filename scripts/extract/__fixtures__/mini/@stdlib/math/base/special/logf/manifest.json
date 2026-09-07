@@ -1,0 +1,1 @@
+{"confs":[{"task":"build","dependencies":["@stdlib/math/base/napi/binary","@stdlib/math/base/special/lnf"]},{"task":"benchmark","dependencies":["@stdlib/math/base/special/lnf"]}]}
