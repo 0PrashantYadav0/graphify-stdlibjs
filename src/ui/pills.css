@@ -1,0 +1,24 @@
+.pills {
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.pill {
+  --pill: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  padding: 3px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--pill);
+  color: var(--pill);
+  background: color-mix(in srgb, var(--pill) 10%, transparent);
+}
+
+.pill-js { --pill: var(--tag-js); }
+.pill-c { --pill: var(--tag-c); }
+.pill-f { --pill: var(--tag-f); }
+.pill-wasm { --pill: var(--tag-wasm); }
+.pill-native { --pill: var(--tag-native); }
+.pill-cli { --pill: var(--tag-cli); }
