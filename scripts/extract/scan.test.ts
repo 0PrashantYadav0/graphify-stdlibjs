@@ -50,6 +50,9 @@ describe('detectTags / readNativeDeps', () => {
     expect(readNativeDeps(`${ROOT}/math/base/special/logf`)).toEqual(['math/base/napi/binary', 'math/base/special/lnf']);
     expect(readNativeDeps(`${ROOT}/assert/is-nan`)).toEqual([]);
   });
+  it('includes confs with no task field (applies to all tasks)', () => {
+    expect(readNativeDeps(`${ROOT}/math/base/napi/binary`)).toEqual(['math/base/special/lnf']);
+  });
 });
 
 describe('scanAll', () => {
@@ -63,5 +66,8 @@ describe('scanAll', () => {
   });
   it('drops native deps that are not packages', () => {
     expect([...byId.get('math/base/special/lnf')!.native]).toEqual([]);
+  });
+  it('includes native deps from confs with no task field', () => {
+    expect([...byId.get('math/base/napi/binary')!.native]).toEqual(['math/base/special/lnf']);
   });
 });
