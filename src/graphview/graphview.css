@@ -51,13 +51,17 @@
   outline: none;
 }
 
+.gnode-centre {
+  cursor: default;
+}
+
 .gnode-box {
   fill: var(--surface);
   stroke: var(--line);
   stroke-width: 1;
 }
 
-.gnode:hover .gnode-box,
+.gnode:not(.gnode-centre):hover .gnode-box,
 .gnode.on-path .gnode-box {
   stroke: var(--trace);
 }

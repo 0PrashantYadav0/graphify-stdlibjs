@@ -24,7 +24,9 @@ describe('Focus', () => {
     expect(screen.getByText('Connected 2')).toBeTruthy();
     expect(screen.getByRole('button', { name: /^math\/base\/special\/lnf$/ })).toBeTruthy();
     expect(screen.getByRole('button', { name: /^math\/base\/special\/log10f$/ })).toBeTruthy();
-    expect(screen.getByRole('img', { name: /^logf/ })).toBeTruthy();
+    const centre = screen.getByRole('img', { name: /^logf/ });
+    expect(centre).toBeTruthy();
+    expect(centre.querySelector('.gnode-count')).toBeNull();
   });
 
   it('opens a neighbour on click', () => {
@@ -44,6 +46,19 @@ describe('Focus', () => {
     expect(screen.getByText('Requires 2')).toBeTruthy();
     expect(screen.getByText('Required by 2')).toBeTruthy();
     expect(screen.getByRole('button', { name: /^assert\/is-nan$/ })).toBeTruthy();
+  });
+
+  it('toggles a requires folder open and closed', () => {
+    const g2 = graphFromIds(
+      ['math/base/special/logf', 'blas/base/dasum', 'blas/base/daxpy'],
+      { runtime: [['math/base/special/logf', 'blas/base/dasum'], ['math/base/special/logf', 'blas/base/daxpy']] },
+    );
+    render(<Focus graph={g2} id="math/base/special/logf" edges={['runtime']} />);
+    expect(screen.getByRole('button', { name: /^dasum$/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /^blas\/base, 2 packages/ }));
+    expect(screen.queryByRole('button', { name: /^dasum$/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /^blas\/base, 2 packages/ }));
+    expect(screen.getByRole('button', { name: /^dasum$/ })).toBeTruthy();
   });
 
   it('explains an unknown id', () => {
