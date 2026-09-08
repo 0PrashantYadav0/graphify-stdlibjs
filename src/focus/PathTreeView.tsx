@@ -37,9 +37,10 @@ export function PathTreeView({ graph, title, indexes }: Props) {
 
   return (
     <section className="side">
-      <h2 className="side-title">
-        {title} · {indexes.length}
-      </h2>
+      <div className="side-head">
+        <h2 className="side-title">{title}</h2>
+        <span className="side-count mono">{indexes.length}</span>
+      </div>
       {indexes.length === 0 ? (
         <p className="muted side-empty">None.</p>
       ) : (
@@ -72,10 +73,20 @@ function TreeRow({ graph, node, closed, toggle }: RowProps) {
           </button>
         )}
         {node.index >= 0 ? (
-          <a className="tree-leaf" href={formatRoute({ kind: 'module', id: node.path, edges: ['runtime'] })}>
-            <span className="mono">{graph.name(node.index)}</span>
-            <TagPills mask={graph.tags[node.index]} />
-          </a>
+          <>
+            {node.label.includes('/') && (
+              <a
+                className="tree-folder mono"
+                href={formatRoute({ kind: 'explore', path: node.path.slice(0, node.path.lastIndexOf('/')), group: null })}
+              >
+                {node.label.slice(0, node.label.lastIndexOf('/'))}/
+              </a>
+            )}
+            <a className="tree-leaf" href={formatRoute({ kind: 'module', id: node.path, edges: ['runtime'] })}>
+              <span className="mono">{graph.name(node.index)}</span>
+              <TagPills mask={graph.tags[node.index]} />
+            </a>
+          </>
         ) : (
           <a className="tree-folder mono" href={formatRoute({ kind: 'explore', path: node.path, group: null })}>
             {node.label}
