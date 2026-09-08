@@ -34,7 +34,7 @@ MIN_GROUP = 2     // a stem needs at least this many members
 
 1. For every name, enumerate decompositions `(prefix, stem, suffix)` where `prefix ∈ PREFIXES ∪ {''}`, `suffix ∈ SUFFIXES ∪ {''}`, `name === prefix + stem + suffix`, `stem.length ≥ MIN_STEM`, and stem does not start or end with `-`.
 2. Count how many *distinct names* produce each stem.
-3. For each name pick the decomposition whose stem has the highest count; ties → longer stem, then shorter prefix.
+3. For each name pick the decomposition whose stem has the highest count; ties → shorter stem (so `dasumpw` keeps its `pw` suffix), then shorter prefix.
 4. A stem forms a group when ≥ `MIN_GROUP` names picked it **and** at least one of those names has a non-empty prefix or suffix (so `copy`, `copy2` stay singles but `sum`, `dsum` group).
 5. Inside a group, members bucket by prefix in this order: `''` base, `d`, `s`, `dnan`, `snan`, `ds`, `sds`, `dsnan`, `sdsnan`, `z`, `c`, `g`. Within a bucket, sort by name.
 
@@ -81,12 +81,12 @@ childrenOf(graph, node): TreeNode[]
 
 `d3-hierarchy`'s tidy tree with `nodeSize([52, 320])`, horizontal (depth → x). Only expanded nodes contribute children. Links are `d3-shape` `linkHorizontal` curves. Boxes are 260 × 40 px (name in `--font-mono` 13 px; a package's algorithm label on a second 10 px line beneath it; pills right-aligned; a small count badge for expandable nodes). Labels truncate with an ellipsis only after the pills/count have been given their space. The selected/expanded path is drawn in `--trace` (node border and link stroke 2 px); other links are `--line` 1 px.
 
-Focus view uses the same renderer twice from one centre node: `direction: 'right'` for required-by, `direction: 'left'` (x mirrored) for requires, each fed a `buildPathTree` result. Folders at depth ≥ 2 start collapsed when a side has > 40 leaves.
+Focus view uses the same renderer twice from one centre node: `direction: 'right'` for required-by, `direction: 'left'` (x mirrored) for requires, each fed a `buildPathTree` result. Folders at depth ≥ 2 start collapsed when a side has > 40 leaves; when a side has > 200 leaves only depth-0 folders start expanded. The initial view fits both sides horizontally and vertically (scale never below 0.4×).
 
 ## Interaction
 
 - Click a node with children → toggle expand; the view pans so the node sits at 1/3 from the left and its children are visible (240 ms ease, disabled under `prefers-reduced-motion`).
-- Click a leaf package → `#/module/<id>`. A namespace package has a small "open" affordance on its node for the same.
+- Click a leaf package → `#/module/<id>`. When the selected node is a namespace package, an "Open <name>" link in the explorer header opens its module page.
 - Keyboard: nodes are focusable in document order; `Enter`/`Space` toggles or opens; visible focus ring in `--trace`.
 - Wheel/pinch zooms (0.4–2×), drag pans. A "Reset view" button returns to the initial transform.
 - URL `#/explore/<path>` opens with that path expanded and the target node selected, and the view scaled (never below 0.4×) and panned so the whole path from `stdlib` to the target is on screen; `#/explore` opens with `stdlib` expanded to its 47 namespaces.
