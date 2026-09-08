@@ -57,11 +57,12 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
         const n = ln.data;
         if (hideRoot && n.key === root.key) return null;
         const mask = n.index >= 0 ? getTagMask(n) : 0;
-        const rightText = n.hasChildren ? `${n.count} ${chevron}` : '';
-        const reserved = n.hasChildren ? rightText.length * CHAR_W + PAD_X : pillsWidth(mask) + (mask ? PAD_X : 0);
+        const isStatic = n.kind === 'centre';
+        const showCount = n.hasChildren && !isStatic;
+        const rightText = showCount ? `${n.count} ${chevron}` : '';
+        const reserved = showCount ? rightText.length * CHAR_W + PAD_X : pillsWidth(mask) + (mask ? PAD_X : 0);
         const labelMax = NODE_W - PAD_X * 2 - reserved;
         const cls = ['gnode', `gnode-${n.kind}`, n.key === selectedKey ? 'is-selected' : '', pathKeys.has(n.key) ? 'on-path' : '', expanded.has(n.key) ? 'is-expanded' : ''].filter(Boolean).join(' ');
-        const isStatic = n.kind === 'centre';
         return (
           <g
             key={n.key}
@@ -92,7 +93,7 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
                 {truncate(n.sublabel, labelMax)}
               </text>
             )}
-            {n.hasChildren ? (
+            {showCount ? (
               <text className="gnode-count" x={NODE_W - PAD_X} y={NODE_H / 2 + 4} textAnchor="end">{rightText}</text>
             ) : (
               <SvgPills mask={mask} x={NODE_W - PAD_X} y={NODE_H / 2} align="end" />
