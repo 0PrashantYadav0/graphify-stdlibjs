@@ -30,14 +30,14 @@ export function buildSide(graph: Graph, side: Side, indexes: number[]): { root: 
   const tree = buildPathTree(indexes.map((i) => graph.ids[i]), (id) => graph.indexOf(id));
   const root = wrap(side, tree);
   const defaultExpanded = new Set<string>();
-  // Above COLLAPSE_ABOVE, only the root and its own direct children (the "depth-0"
-  // folders, one level below the root) start expanded -- everything deeper waits for
-  // a click. Above COLLAPSE_DEEP_ABOVE the side is even larger, but the cutoff is the
-  // same: there is no depth beyond the root's own children worth auto-expanding.
-  const collapseDeep = root.count > COLLAPSE_ABOVE || root.count > COLLAPSE_DEEP_ABOVE;
+  // <= COLLAPSE_ABOVE: everything starts expanded. Above it, only the root and its
+  // own direct ("depth-0") children start expanded -- everything deeper waits for a
+  // click. Above COLLAPSE_DEEP_ABOVE the side is large enough that even the root's
+  // direct children stay collapsed; only the root itself starts open.
+  const maxDepth = root.count > COLLAPSE_DEEP_ABOVE ? 1 : root.count > COLLAPSE_ABOVE ? 2 : Infinity;
   const walk = (n: FocusNode, depth: number) => {
     if (!n.hasChildren) return;
-    if (!collapseDeep || depth < 2) defaultExpanded.add(n.key);
+    if (depth < maxDepth) defaultExpanded.add(n.key);
     n.children.forEach((c) => walk(c, depth + 1));
   };
   walk(root, 0);
