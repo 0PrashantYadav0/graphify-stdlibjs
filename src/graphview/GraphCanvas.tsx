@@ -3,6 +3,7 @@ import { select } from 'd3-selection';
 import { zoom, zoomIdentity, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
 import 'd3-transition';
 import { prefersReducedMotion } from './motion';
+import { NODE_W } from './layout';
 import './graphview.css';
 
 export interface Point {
@@ -10,8 +11,16 @@ export interface Point {
   y: number;
 }
 
+export interface FitRange {
+  x0: number;
+  x1: number;
+  y: number;
+}
+
 interface Props {
   focusPoint: Point | null;
+  /** When set, fits this horizontal span (plus the vertical point) into view instead of panning to a single point. */
+  fitRange?: FitRange | null;
   label: string;
   className?: string;
   children: ReactNode;
@@ -28,7 +37,7 @@ function size(svg: SVGSVGElement | null) {
   return w > 0 && h > 0 ? { width: w, height: h } : FALLBACK;
 }
 
-export function GraphCanvas({ focusPoint, label, className, children }: Props) {
+export function GraphCanvas({ focusPoint, fitRange, label, className, children }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const [transform, setTransform] = useState<ZoomTransform>(() => zoomIdentity);
@@ -48,12 +57,10 @@ export function GraphCanvas({ focusPoint, label, className, children }: Props) {
     };
   }, []);
 
-  const panTo = useCallback((point: Point, scale: number, animate: boolean) => {
+  const apply = useCallback((target: ZoomTransform, animate: boolean) => {
     const svg = svgRef.current;
     const z = zoomRef.current;
     if (!svg || !z) return;
-    const { width, height } = size(svg);
-    const target = zoomIdentity.translate(width / 3 - point.x * scale, height / 2 - point.y * scale).scale(scale);
     try {
       if (animate && !prefersReducedMotion()) {
         select(svg).transition().duration(PAN_MS).call(z.transform, target);
@@ -68,10 +75,31 @@ export function GraphCanvas({ focusPoint, label, className, children }: Props) {
     }
   }, []);
 
+  const panTo = useCallback((point: Point, scale: number, animate: boolean) => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const { width, height } = size(svg);
+    const target = zoomIdentity.translate(width / 3 - point.x * scale, height / 2 - point.y * scale).scale(scale);
+    apply(target, animate);
+  }, [apply]);
+
   useEffect(() => {
+    if (fitRange) return; // fitRange takes precedence over a single focus point
     if (focusPoint) panTo(focusPoint, transform.k, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-pan only when the focus point changes
-  }, [focusPoint?.x, focusPoint?.y, panTo]);
+  }, [focusPoint?.x, focusPoint?.y, panTo, fitRange]);
+
+  useEffect(() => {
+    if (!fitRange) return;
+    const svg = svgRef.current;
+    if (!svg) return;
+    const { width, height } = size(svg);
+    const { x0, x1, y } = fitRange;
+    const k = Math.min(1, Math.max(0.4, (width - 80) / (x1 - x0 + NODE_W)));
+    const target = zoomIdentity.translate(40 - (x0 - NODE_W / 2) * k, height / 2 - y * k).scale(k);
+    apply(target, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-fit only when the range changes
+  }, [fitRange?.x0, fitRange?.x1, fitRange?.y, apply]);
 
   const reset = () => panTo(focusPoint ?? { x: 0, y: 0 }, 1, true);
 

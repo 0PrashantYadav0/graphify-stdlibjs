@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Graph } from '../graph/Graph';
 import { hasTag } from '../graph/tags';
 import { formatRoute, navigate } from '../app/router';
@@ -20,15 +20,25 @@ export function GraphExplorer({ graph, path }: Props) {
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(route.expanded));
   const [selected, setSelected] = useState<string | null>(route.selected);
   const [focusKey, setFocusKey] = useState<string | null>(route.selected ?? route.expanded[route.expanded.length - 1]);
+  const [focusMode, setFocusMode] = useState<'fit' | 'point'>('fit');
   const [positions, setPositions] = useState<Map<string, Point>>(new Map());
   const rootNode = useMemo<TreeNode>(() => ({ ...ROOT, count: graph.n }), [graph]);
+  // the path GraphExplorer itself just pushed via navigate(); a hashchange for it is our own
+  // navigation catching up, not an external route change, and must not re-expand a node the
+  // user has since collapsed.
+  const lastNavigated = useRef<string | null>(null);
 
   // a route change from outside (breadcrumb, search, back button) merges into the local expansion
   useEffect(() => {
+    if (lastNavigated.current === path) {
+      lastNavigated.current = null;
+      return;
+    }
     setExpanded((prev) => new Set([...prev, ...route.expanded]));
     setSelected(route.selected);
     setFocusKey(route.selected ?? route.expanded[route.expanded.length - 1]);
-  }, [route]);
+    setFocusMode('fit');
+  }, [route, path]);
 
   const childrenOf = useCallback((n: TreeNode) => model.children(n), [model]);
   const onLayout = useCallback((r: LayoutResult<TreeNode>) => {
@@ -45,10 +55,16 @@ export function GraphExplorer({ graph, path }: Props) {
       else next.delete(n.key);
       return next;
     });
-    if (opening) setFocusKey(n.key);
+    if (opening) {
+      setFocusKey(n.key);
+      setFocusMode('point');
+    }
     if (n.kind === 'package') {
       setSelected(n.key);
-      if (opening) navigate({ kind: 'explore', path: graph.ids[n.index], group: null });
+      if (opening) {
+        lastNavigated.current = graph.ids[n.index];
+        navigate({ kind: 'explore', path: graph.ids[n.index], group: null });
+      }
     }
   };
 
@@ -57,7 +73,9 @@ export function GraphExplorer({ graph, path }: Props) {
   };
 
   const selectedNode = selected && selected.startsWith('p:') ? graph.indexOf(selected.slice(2)) : -1;
-  const focusPoint = focusKey ? positions.get(focusKey) ?? null : null;
+  const focusKeyPoint = focusKey ? positions.get(focusKey) ?? null : null;
+  const focusPoint = focusMode === 'point' ? focusKeyPoint : null;
+  const fitRange = focusMode === 'fit' && focusKeyPoint ? { x0: 0, x1: focusKeyPoint.x, y: focusKeyPoint.y } : null;
 
   return (
     <section className="graph-explorer">
@@ -69,7 +87,7 @@ export function GraphExplorer({ graph, path }: Props) {
           </a>
         )}
       </div>
-      <GraphCanvas focusPoint={focusPoint} label="package graph">
+      <GraphCanvas focusPoint={focusPoint} fitRange={fitRange} label="package graph">
         <TreeLayer
           root={rootNode}
           childrenOf={childrenOf}
