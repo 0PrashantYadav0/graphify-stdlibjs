@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Explorer } from '../explorer/Explorer';
 import { Focus } from '../focus/Focus';
+import { SearchPalette } from '../search/SearchPalette';
+import { useShortcut } from '../search/useShortcut';
 import { TopBar } from './TopBar';
 import { useGraph } from './useGraph';
 import { useRoute } from './router';
@@ -9,7 +11,10 @@ import './app.css';
 export default function App() {
   const state = useGraph();
   const route = useRoute();
-  const [, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const openSearch = useCallback(() => setSearchOpen(true), []);
+  const closeSearch = useCallback(() => setSearchOpen(false), []);
+  useShortcut(openSearch);
 
   let content;
   if (state.status === 'loading') content = <p className="app-note muted">Loading the package map…</p>;
@@ -19,8 +24,9 @@ export default function App() {
 
   return (
     <div className="app">
-      <TopBar onSearch={() => setSearchOpen(true)} />
+      <TopBar onSearch={openSearch} />
       <main className="app-main">{content}</main>
+      {searchOpen && state.status === 'ready' && <SearchPalette graph={state.graph} onClose={closeSearch} />}
     </div>
   );
 }
