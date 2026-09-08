@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { GraphExplorer } from '../explorer/GraphExplorer';
 import { Focus } from '../focus/Focus';
+import { Home } from '../home/Home';
 import { SearchPalette } from '../search/SearchPalette';
 import { useShortcut } from '../search/useShortcut';
 import { TopBar } from './TopBar';
@@ -20,6 +21,7 @@ export default function App() {
   let content;
   if (state.status === 'loading') content = <p className="app-note muted">Loading the package map…</p>;
   else if (state.status === 'error') content = <p className="app-note">{state.message}</p>;
+  else if (route.kind === 'home') content = <Home graph={state.graph} onSearch={openSearch} />;
   else if (route.kind === 'explore') content = <GraphExplorer graph={state.graph} path={route.path} />;
   else content = <Focus graph={state.graph} id={route.id} edges={route.edges} />;
 
