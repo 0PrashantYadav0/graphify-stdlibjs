@@ -61,14 +61,10 @@ export function GraphCanvas({ focusPoint, label, className, children }: Props) {
         select(svg).call(z.transform, target);
       }
     } catch (err) {
-      // jsdom's SVGSVGElement lacks a working viewBox.baseVal, which d3-zoom's
-      // internal Gesture reads when applying a transform programmatically.
-      // Fall back to setting state directly outside a real browser.
-      if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
-        setTransform(target);
-      } else {
-        throw err;
-      }
+      // jsdom's SVGSVGElement has no width/height baseVal, which d3-zoom's default extent reads
+      if (!(err instanceof TypeError && /baseVal/.test(err.message))) throw err;
+      select(svg).property('__zoom', target);
+      setTransform(target);
     }
   }, []);
 

@@ -18,4 +18,22 @@ describe('GraphCanvas', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Reset view' }));
     expect(svg.querySelector('g.canvas-pan')!.getAttribute('transform')).toMatch(/^translate\(/);
   });
+
+  it('re-pans when focusPoint changes, landing the point at 1/3 width, centred vertically', () => {
+    const { rerender } = render(
+      <GraphCanvas focusPoint={{ x: 0, y: 0 }} label="package graph">
+        <circle data-testid="dot" r={2} />
+      </GraphCanvas>,
+    );
+    const svg = screen.getByRole('application', { name: 'package graph' });
+    const before = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
+    rerender(
+      <GraphCanvas focusPoint={{ x: 500, y: 0 }} label="package graph">
+        <circle data-testid="dot" r={2} />
+      </GraphCanvas>,
+    );
+    const after = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
+    expect(after).not.toBe(before);
+    expect(after).toBe(`translate(${1200 / 3 - 500}, 400) scale(1)`);
+  });
 });
