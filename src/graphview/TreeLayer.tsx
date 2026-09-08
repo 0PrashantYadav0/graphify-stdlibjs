@@ -61,22 +61,27 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
         const reserved = n.hasChildren ? rightText.length * CHAR_W + PAD_X : pillsWidth(mask) + (mask ? PAD_X : 0);
         const labelMax = NODE_W - PAD_X * 2 - reserved;
         const cls = ['gnode', `gnode-${n.kind}`, n.key === selectedKey ? 'is-selected' : '', pathKeys.has(n.key) ? 'on-path' : '', expanded.has(n.key) ? 'is-expanded' : ''].filter(Boolean).join(' ');
+        const isStatic = n.kind === 'centre';
         return (
           <g
             key={n.key}
             className={cls}
             transform={`translate(${ln.x - NODE_W / 2}, ${ln.y - NODE_H / 2})`}
-            role="button"
-            tabIndex={0}
+            role={isStatic ? 'img' : 'button'}
+            tabIndex={isStatic ? undefined : 0}
             aria-label={ariaLabelFor(n)}
-            aria-expanded={n.hasChildren ? expanded.has(n.key) : undefined}
-            onClick={() => activate(n)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                activate(n);
-              }
-            }}
+            aria-expanded={isStatic ? undefined : n.hasChildren ? expanded.has(n.key) : undefined}
+            onClick={isStatic ? undefined : () => activate(n)}
+            onKeyDown={
+              isStatic
+                ? undefined
+                : (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      activate(n);
+                    }
+                  }
+            }
           >
             <rect className="gnode-box" width={NODE_W} height={NODE_H} rx={4} />
             <text className="gnode-label" x={PAD_X} y={n.sublabel ? 17 : NODE_H / 2 + 4.5}>
