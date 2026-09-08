@@ -79,10 +79,14 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
             }}
           >
             <rect className="gnode-box" width={NODE_W} height={NODE_H} rx={4} />
-            <text className="gnode-label" x={PAD_X} y={NODE_H / 2 + 4.5}>
-              {truncate(n.label, n.sublabel ? labelMax * 0.55 : labelMax)}
-              {n.sublabel && <tspan className="gnode-sub"> {truncate(n.sublabel, labelMax * 0.45)}</tspan>}
+            <text className="gnode-label" x={PAD_X} y={n.sublabel ? 17 : NODE_H / 2 + 4.5}>
+              {truncate(n.label, labelMax)}
             </text>
+            {n.sublabel && (
+              <text className="gnode-sub" x={PAD_X} y={32}>
+                {truncate(n.sublabel, labelMax)}
+              </text>
+            )}
             {n.hasChildren ? (
               <text className="gnode-count" x={NODE_W - PAD_X} y={NODE_H / 2 + 4} textAnchor="end">{rightText}</text>
             ) : (
