@@ -42,4 +42,15 @@ describe('layoutTree', () => {
   it('builds an svg path for a link', () => {
     expect(linkPath({ source: 'r', target: 'a', sx: 0, sy: 0, tx: 100, ty: 50 })).toMatch(/^M0,0C/);
   });
+
+  it('lays out a root-only tree as a single node with no links', () => {
+    const solo: N = { key: 'solo', kids: [] };
+    const r = layoutTree(solo, childrenOf, () => true, 'right');
+    expect(r.nodes).toEqual([{ data: solo, x: 0, y: 0, depth: 0, parentKey: null }]);
+    expect(r.links).toHaveLength(0);
+    expect(r.minX).toBe(0);
+    expect(r.maxX).toBe(0);
+    expect(r.minY).toBe(0);
+    expect(r.maxY).toBe(0);
+  });
 });
