@@ -7,6 +7,8 @@
   --trace: #1f4bff;
   --trace-ink: #ffffff;
   --trace-soft: rgba(31, 75, 255, 0.1);
+  --scrim: rgba(16, 24, 32, 0.45);
+  --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.25);
 
   --tag-js: #c98a00;
   --tag-c: #2f6fd6;
@@ -39,5 +41,7 @@
     --trace: #6b8cff;
     --trace-ink: #0b1020;
     --trace-soft: rgba(107, 140, 255, 0.16);
+    --scrim: rgba(0, 0, 0, 0.6);
+    --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.6);
   }
 }
