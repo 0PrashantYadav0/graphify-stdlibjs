@@ -24,6 +24,19 @@ export const TAG_LABEL: Record<TagName, string> = {
   FOLDER: 'dir',
 };
 
+export const SHOWN_TAGS: TagName[] = ['JS', 'C', 'FORTRAN', 'WASM', 'NATIVE', 'CLI'];
+
+export const TAG_DESCRIPTION: Record<TagName, string> = {
+  JS: 'JavaScript implementation',
+  C: 'C implementation',
+  FORTRAN: 'Fortran implementation',
+  WASM: 'WebAssembly build',
+  NATIVE: 'JS bridge to the native add-on',
+  CLI: 'command-line interface',
+  NAMESPACE: 'namespace',
+  FOLDER: 'folder',
+};
+
 export function decodeTags(mask: number): TagName[] {
   return TAG_ORDER.filter((t) => (mask & Tag[t]) !== 0);
 }

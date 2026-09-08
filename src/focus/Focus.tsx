@@ -14,11 +14,13 @@ interface Props {
 }
 
 const KIND_LABEL: Record<EdgeKind, string> = { runtime: 'runtime', dev: 'dev', native: 'C' };
-const GITHUB = 'https://github.com/stdlib-js/stdlib/tree/develop/lib/node_modules/@stdlib/';
+const FULL_SHA = /^[0-9a-f]{40}$/;
 
 export function Focus({ graph, id, edges }: Props) {
   const index = graph.indexOf(id);
   const n = useMemo(() => (index >= 0 ? neighbourhood(graph, index, edges) : null), [graph, index, edges]);
+  const ref = FULL_SHA.test(graph.source) ? graph.source : 'develop';
+  const github = `https://github.com/stdlib-js/stdlib/tree/${ref}/lib/node_modules/@stdlib/`;
 
   if (index < 0 || !n) {
     return (
@@ -40,7 +42,7 @@ export function Focus({ graph, id, edges }: Props) {
     <section className="focus">
       <header className="module-card">
         <div className="module-main">
-          <a className="focus-back mono" href={formatRoute({ kind: 'explore', path: parent, group: null })}>‹ explore {parent || 'stdlib'}</a>
+          <a className="focus-back mono" href={formatRoute({ kind: 'explore', path: parent })}>‹ explore {parent || 'stdlib'}</a>
           <h1 className="module-id mono">{id}</h1>
           {graph.desc[index] && <p className="module-desc">{graph.desc[index]}</p>}
           <TagPills mask={graph.tags[index]} />
@@ -59,8 +61,8 @@ export function Focus({ graph, id, edges }: Props) {
             ))}
           </div>
           <p className="module-links">
-            <a href={GITHUB + id} target="_blank" rel="noreferrer">Open on GitHub</a>
-            <a href={formatRoute({ kind: 'explore', path: id, group: null })}>Browse inside</a>
+            <a href={github + id} target="_blank" rel="noreferrer">Open on GitHub</a>
+            <a href={formatRoute({ kind: 'explore', path: id })}>Browse inside</a>
           </p>
         </div>
       </header>

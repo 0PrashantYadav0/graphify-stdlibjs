@@ -44,7 +44,7 @@ export function SearchPalette({ graph, onClose }: Props) {
 
   const open = (index: number) => {
     const id = graph.ids[index];
-    if (hasTag(graph.tags[index], 'FOLDER')) navigate({ kind: 'explore', path: id, group: null });
+    if (hasTag(graph.tags[index], 'FOLDER')) navigate({ kind: 'explore', path: id });
     else navigate({ kind: 'module', id, edges: ['runtime'] });
     onClose();
   };
@@ -75,7 +75,7 @@ export function SearchPalette({ graph, onClose }: Props) {
           className="palette-input mono"
           role="combobox"
           aria-expanded={hits.length > 0}
-          aria-controls="palette-results"
+          aria-controls={hits.length ? 'palette-results' : undefined}
           aria-activedescendant={hits[active] ? `hit-${hits[active].index}` : undefined}
           aria-autocomplete="list"
           placeholder="Package name or path, e.g. logf or blas/base"
