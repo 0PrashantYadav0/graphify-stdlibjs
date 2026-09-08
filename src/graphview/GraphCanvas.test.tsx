@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { GraphCanvas } from './GraphCanvas';
+import { NODE_W } from './layout';
 
 afterEach(cleanup);
 
@@ -35,5 +36,17 @@ describe('GraphCanvas', () => {
     const after = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
     expect(after).not.toBe(before);
     expect(after).toBe(`translate(${1200 / 3 - 500}, 400) scale(1)`);
+  });
+
+  it('fits a fitRange into view, scaling to show the whole span', () => {
+    render(
+      <GraphCanvas focusPoint={null} fitRange={{ x0: 0, x1: 1920, y: 0 }} label="package graph">
+        <circle data-testid="dot" r={2} />
+      </GraphCanvas>,
+    );
+    const svg = screen.getByRole('application', { name: 'package graph' });
+    const transform = svg.querySelector('g.canvas-pan')!.getAttribute('transform')!;
+    const scale = parseFloat(transform.match(/scale\(([^)]+)\)/)![1]);
+    expect(scale).toBeCloseTo((1200 - 80) / (1920 + NODE_W));
   });
 });

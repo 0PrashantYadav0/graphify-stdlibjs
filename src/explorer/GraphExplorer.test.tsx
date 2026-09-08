@@ -40,4 +40,15 @@ describe('GraphExplorer', () => {
     fireEvent.click(screen.getByRole('button', { name: /^lnf/ }));
     expect(window.location.hash).toBe('#/module/math/base/special/lnf');
   });
+
+  it('ignores a stale hashchange for a node the user already collapsed', () => {
+    const { rerender } = render(<GraphExplorer graph={g} path="" />);
+    fireEvent.click(screen.getByRole('button', { name: /^blas/ })); // opens + navigates
+    expect(screen.getByRole('button', { name: /^ext/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /^blas/ })); // collapses again
+    expect(screen.queryByRole('button', { name: /^ext/ })).toBeNull();
+    // the hashchange this navigate() triggered arrives late, after the user already collapsed the node
+    rerender(<GraphExplorer graph={g} path="blas" />);
+    expect(screen.queryByRole('button', { name: /^ext/ })).toBeNull();
+  });
 });

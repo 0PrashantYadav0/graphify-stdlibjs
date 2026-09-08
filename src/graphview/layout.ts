@@ -1,10 +1,10 @@
 import { hierarchy, tree } from 'd3-hierarchy';
 import { linkHorizontal } from 'd3-shape';
 
-export const NODE_W = 220;
-export const NODE_H = 36;
-export const LEVEL_DX = 280;
-export const ROW_DY = 48;
+export const NODE_W = 260;
+export const NODE_H = 40;
+export const LEVEL_DX = 320;
+export const ROW_DY = 52;
 
 export type Direction = 'right' | 'left';
 
