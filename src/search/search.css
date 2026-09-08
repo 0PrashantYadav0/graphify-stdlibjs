@@ -1,0 +1,79 @@
+.palette-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: rgba(16, 24, 32, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 12vh 16px 0;
+}
+
+.palette {
+  width: min(640px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.palette-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  font-size: var(--fs-3);
+  outline: none;
+}
+
+.palette-input::placeholder {
+  color: var(--ink-muted);
+}
+
+.palette-results {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.palette-hit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.palette-hit.is-active {
+  background: var(--trace-soft);
+}
+
+.palette-id {
+  font-size: var(--fs-2);
+  overflow-wrap: anywhere;
+}
+
+.palette-id mark {
+  background: transparent;
+  color: var(--trace);
+  font-weight: 500;
+}
+
+.palette-empty {
+  margin: 0;
+  padding: 16px;
+}
+
+.palette-hint {
+  margin: 0;
+  padding: 8px 16px 10px;
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-1);
+}
