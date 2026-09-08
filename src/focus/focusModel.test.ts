@@ -33,17 +33,15 @@ describe('buildSide', () => {
     expect(r2.defaultExpanded.has('requiredBy:ns/sub/deep')).toBe(false);
   });
 
-  it('only expands the root and its direct children when a side has more than 200 leaves', () => {
-    // 'a' has two child folders: 'b' (which chains down to 'c') and 'd'.
+  it('only expands the root when a side has more than 200 leaves, even its direct children stay collapsed', () => {
+    // Two depth-0 folders under the root, 'a' (chaining to 'a/x') and 'b' (chaining to 'b/y').
     const ids = [
-      ...Array.from({ length: 200 }, (_, i) => `a/b/c/pkg${i}`),
-      ...Array.from({ length: 50 }, (_, i) => `a/d/pkg${i}`),
+      ...Array.from({ length: 125 }, (_, i) => `a/x/pkg${i}`),
+      ...Array.from({ length: 125 }, (_, i) => `b/y/pkg${i}`),
     ];
     const g = graphFromIds(ids);
     const { root, defaultExpanded } = buildSide(g, 'requiredBy', ids.map((id) => g.indexOf(id)));
     expect(root.count).toBe(250);
-    expect([...defaultExpanded]).toEqual(['requiredBy:', 'requiredBy:a']);
-    expect(defaultExpanded.has('requiredBy:a/b/c')).toBe(false);
-    expect(defaultExpanded.has('requiredBy:a/d')).toBe(false);
+    expect(defaultExpanded).toEqual(new Set(['requiredBy:']));
   });
 });
