@@ -79,7 +79,7 @@ childrenOf(graph, node): TreeNode[]
 
 ## Layout
 
-`d3-hierarchy`'s tidy tree with `nodeSize([48, 280])`, horizontal (depth → x). Only expanded nodes contribute children. Links are `d3-shape` `linkHorizontal` curves. Boxes are 220 × 36 px (label in `--font-mono` 13 px, pills right-aligned, a small count badge for expandable nodes). The selected/expanded path is drawn in `--trace` (node border and link stroke 2 px); other links are `--line` 1 px.
+`d3-hierarchy`'s tidy tree with `nodeSize([52, 320])`, horizontal (depth → x). Only expanded nodes contribute children. Links are `d3-shape` `linkHorizontal` curves. Boxes are 260 × 40 px (name in `--font-mono` 13 px; a package's algorithm label on a second 10 px line beneath it; pills right-aligned; a small count badge for expandable nodes). Labels truncate with an ellipsis only after the pills/count have been given their space. The selected/expanded path is drawn in `--trace` (node border and link stroke 2 px); other links are `--line` 1 px.
 
 Focus view uses the same renderer twice from one centre node: `direction: 'right'` for required-by, `direction: 'left'` (x mirrored) for requires, each fed a `buildPathTree` result. Folders at depth ≥ 2 start collapsed when a side has > 40 leaves.
 
@@ -89,7 +89,7 @@ Focus view uses the same renderer twice from one centre node: `direction: 'right
 - Click a leaf package → `#/module/<id>`. A namespace package has a small "open" affordance on its node for the same.
 - Keyboard: nodes are focusable in document order; `Enter`/`Space` toggles or opens; visible focus ring in `--trace`.
 - Wheel/pinch zooms (0.4–2×), drag pans. A "Reset view" button returns to the initial transform.
-- URL `#/explore/<path>` opens with that path expanded and the target node selected; `#/explore` opens with `stdlib` expanded to its 47 namespaces.
+- URL `#/explore/<path>` opens with that path expanded and the target node selected, and the view scaled (never below 0.4×) and panned so the whole path from `stdlib` to the target is on screen; `#/explore` opens with `stdlib` expanded to its 47 namespaces.
 
 ## Landing page (`#/`)
 
