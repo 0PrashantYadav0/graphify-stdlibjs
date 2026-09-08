@@ -60,4 +60,29 @@ describe('GraphCanvas', () => {
     const scale = parseFloat(transform.match(/scale\(([^)]+)\)/)![1]);
     expect(scale).toBeCloseTo((1200 - 80) / (1920 + NODE_W));
   });
+
+  it('fits a fitRange with a vertical span too, clamping scale and centring the range', () => {
+    render(
+      <GraphCanvas focusPoint={null} fitRange={{ x0: 0, x1: 0, y: 0, y0: -4000, y1: 4000 }} label="package graph">
+        <circle data-testid="dot" r={2} />
+      </GraphCanvas>,
+    );
+    const svg = screen.getByRole('application', { name: 'package graph' });
+    const transform = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
+    expect(transform).toBe('translate(600, 400) scale(0.4)');
+  });
+
+  it('reset view re-applies the last fitted transform instead of returning to the origin', () => {
+    render(
+      <GraphCanvas focusPoint={null} fitRange={{ x0: 0, x1: 1920, y: 0 }} label="package graph">
+        <circle data-testid="dot" r={2} />
+      </GraphCanvas>,
+    );
+    const svg = screen.getByRole('application', { name: 'package graph' });
+    const fitted = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
+    fireEvent.click(screen.getByRole('button', { name: 'Reset view' }));
+    const afterReset = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
+    expect(afterReset).toBe(fitted);
+    expect(afterReset).not.toBe('translate(0, 0) scale(1)');
+  });
 });
