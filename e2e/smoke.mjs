@@ -4,9 +4,13 @@ const base = process.env.BASE_URL ?? 'http://localhost:4173';
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 
-await page.goto(`${base}/#/explore/stats/base/ndarray/svariancepn`);
-await page.waitForSelector('.column');
-console.log('columns:', await page.locator('.column').count());
+await page.goto(`${base}/#/`);
+await page.waitForSelector('.constellation');
+await page.screenshot({ path: 'e2e/home.png' });
+
+await page.goto(`${base}/#/explore/blas/ext/base/dsumkbn`);
+await page.waitForSelector('.gnode.is-selected');
+console.log('nodes:', await page.locator('.gnode').count());
 await page.screenshot({ path: 'e2e/explorer.png' });
 
 await page.keyboard.press('Meta+K');
