@@ -29,7 +29,7 @@ export default function App() {
     <div className="app">
       <TopBar onSearch={openSearch} />
       <main className="app-main">{content}</main>
-      <Legend />
+      {route.kind !== 'home' && <Legend />}
       {searchOpen && state.status === 'ready' && <SearchPalette graph={state.graph} onClose={closeSearch} />}
     </div>
   );
