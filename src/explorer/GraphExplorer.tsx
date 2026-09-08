@@ -63,7 +63,7 @@ export function GraphExplorer({ graph, path }: Props) {
       setSelected(n.key);
       if (opening) {
         lastNavigated.current = graph.ids[n.index];
-        navigate({ kind: 'explore', path: graph.ids[n.index], group: null });
+        navigate({ kind: 'explore', path: graph.ids[n.index] });
       }
     }
   };

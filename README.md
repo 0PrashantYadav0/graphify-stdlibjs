@@ -16,12 +16,15 @@ Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces i
 
 `public/data/graph.json` is committed, so `npm run dev` works without a stdlib checkout.
 
+`public/data/graph.json` is 1.2 MB uncompressed (≈190 KB gzipped) — make sure your static host serves it compressed.
+
 ## Scripts
 
 - `npm test` — unit tests (Vitest)
 - `npm run build` — typecheck + production build into `dist/`
 - `npm run preview` — serve `dist/`
 - `npm run extract` — rebuild the graph file (`--stdlib <path>`, `--out <file>`)
+- `node e2e/smoke.mjs` — optional Playwright smoke run against `npm run preview` (needs a globally installed playwright)
 
 ## How it works
 

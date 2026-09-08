@@ -1,10 +1,8 @@
-import { decodeTags, TAG_LABEL, type TagName } from '../graph/tags';
+import { decodeTags, SHOWN_TAGS, TAG_LABEL } from '../graph/tags';
 import './pills.css';
 
-const SHOWN: TagName[] = ['JS', 'C', 'FORTRAN', 'WASM', 'NATIVE', 'CLI'];
-
 export function TagPills({ mask }: { mask: number }) {
-  const tags = decodeTags(mask).filter((t) => SHOWN.includes(t));
+  const tags = decodeTags(mask).filter((t) => SHOWN_TAGS.includes(t));
   if (tags.length === 0) return null;
   return (
     <span className="pills" aria-label={`implementations: ${tags.map((t) => TAG_LABEL[t]).join(', ')}`}>

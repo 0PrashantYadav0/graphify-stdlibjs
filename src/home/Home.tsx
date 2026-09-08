@@ -4,10 +4,12 @@ import './home.css';
 
 const fmt = new Intl.NumberFormat('en-US');
 const CREATOR = '0PrashantYadav0';
+const FULL_SHA = /^[0-9a-f]{40}$/;
 
 export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }) {
   const runtime = countEdges(graph);
   const namespaces = graph.children(-1).length;
+  const source = FULL_SHA.test(graph.source) ? `Built from stdlib commit ${graph.source.slice(0, 7)}.` : 'Built from a local stdlib checkout.';
   return (
     <section className="home">
       <div className="hero">
@@ -25,7 +27,7 @@ export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }
       </div>
       <footer className="home-foot">
         <p className="home-stats mono">
-          {fmt.format(graph.n)} packages. {fmt.format(runtime)} runtime {runtime === 1 ? 'link' : 'links'} across {namespaces} namespaces. Built from stdlib commit {graph.source.slice(0, 7)}.
+          {fmt.format(graph.n)} packages. {fmt.format(runtime)} runtime {runtime === 1 ? 'link' : 'links'} across {namespaces} namespaces. {source}
         </p>
         <p className="home-credit">
           Made by <a href={`https://github.com/${CREATOR}`} target="_blank" rel="noreferrer">{CREATOR}</a>
