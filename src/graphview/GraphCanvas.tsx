@@ -21,6 +21,8 @@ interface Props {
   focusPoint: Point | null;
   /** When set, fits this horizontal span (plus the vertical point) into view instead of panning to a single point. */
   fitRange?: FitRange | null;
+  /** Fraction of the canvas width where focusPoint lands. Defaults to 1/3. */
+  anchor?: number;
   label: string;
   className?: string;
   children: ReactNode;
@@ -37,7 +39,7 @@ function size(svg: SVGSVGElement | null) {
   return w > 0 && h > 0 ? { width: w, height: h } : FALLBACK;
 }
 
-export function GraphCanvas({ focusPoint, fitRange, label, className, children }: Props) {
+export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, label, className, children }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const [transform, setTransform] = useState<ZoomTransform>(() => zoomIdentity);
@@ -79,9 +81,9 @@ export function GraphCanvas({ focusPoint, fitRange, label, className, children }
     const svg = svgRef.current;
     if (!svg) return;
     const { width, height } = size(svg);
-    const target = zoomIdentity.translate(width / 3 - point.x * scale, height / 2 - point.y * scale).scale(scale);
+    const target = zoomIdentity.translate(width * anchor - point.x * scale, height / 2 - point.y * scale).scale(scale);
     apply(target, animate);
-  }, [apply]);
+  }, [apply, anchor]);
 
   useEffect(() => {
     if (fitRange) return; // fitRange takes precedence over a single focus point
