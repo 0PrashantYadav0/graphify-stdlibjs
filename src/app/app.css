@@ -1,5 +1,5 @@
 .app {
-  min-height: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -7,9 +7,16 @@
 .app-main {
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
 }
 
 .app-note {
   padding: 40px 20px;
   max-width: 60ch;
+}
+
+.legend {
+  flex-shrink: 0;
 }
