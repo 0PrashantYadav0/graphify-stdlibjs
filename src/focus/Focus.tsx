@@ -42,7 +42,7 @@ export function Focus({ graph, id, edges }: Props) {
         ‹ explore {parent || 'stdlib'}
       </a>
       <div className="focus-grid">
-        <PathTreeView graph={graph} title="Requires" indexes={n.requires} />
+        <PathTreeView key={`requires-${edges.join(',')}`} graph={graph} title="Requires" indexes={n.requires} />
         <article className="module-card">
           <h1 className="module-id mono">{id}</h1>
           {graph.desc[index] && <p className="module-desc">{graph.desc[index]}</p>}
@@ -64,7 +64,7 @@ export function Focus({ graph, id, edges }: Props) {
             <a href={formatRoute({ kind: 'explore', path: id, group: null })}>Browse inside</a>
           </p>
         </article>
-        <PathTreeView graph={graph} title="Required by" indexes={n.requiredBy} />
+        <PathTreeView key={`required-by-${edges.join(',')}`} graph={graph} title="Required by" indexes={n.requiredBy} />
       </div>
     </section>
   );
