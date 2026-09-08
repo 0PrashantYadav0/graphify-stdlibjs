@@ -3,7 +3,7 @@ import { EDGE_KINDS, type EdgeKind } from '../graph/types';
 
 export type Route =
   | { kind: 'home' }
-  | { kind: 'explore'; path: string; group: string | null }
+  | { kind: 'explore'; path: string }
   | { kind: 'module'; id: string; edges: EdgeKind[] };
 
 export function parseHash(hash: string): Route {
@@ -18,7 +18,7 @@ export function parseHash(hash: string): Route {
       .filter((k): k is EdgeKind => (EDGE_KINDS as string[]).includes(k));
     return { kind: 'module', id: segs.slice(1).join('/'), edges: edges.length ? edges : ['runtime'] };
   }
-  if (segs[0] === 'explore') return { kind: 'explore', path: segs.slice(1).join('/'), group: params.get('g') };
+  if (segs[0] === 'explore') return { kind: 'explore', path: segs.slice(1).join('/') };
   return { kind: 'home' };
 }
 
@@ -28,8 +28,7 @@ export function formatRoute(r: Route): string {
     const onlyRuntime = r.edges.length === 1 && r.edges[0] === 'runtime';
     return `#/module/${r.id}${onlyRuntime ? '' : `?edges=${r.edges.join(',')}`}`;
   }
-  const base = r.path ? `#/explore/${r.path}` : '#/explore';
-  return r.group ? `${base}?g=${encodeURIComponent(r.group)}` : base;
+  return r.path ? `#/explore/${r.path}` : '#/explore';
 }
 
 export function navigate(r: Route): void {

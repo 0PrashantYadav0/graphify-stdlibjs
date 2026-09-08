@@ -1,13 +1,12 @@
-import { decodeTags, TAG_LABEL, type TagName } from '../graph/tags';
+import { decodeTags, SHOWN_TAGS, TAG_LABEL } from '../graph/tags';
 
-const SHOWN: TagName[] = ['JS', 'C', 'FORTRAN', 'WASM', 'NATIVE', 'CLI'];
 const CHAR_W = 7;
 const PAD = 6;
 const GAP = 4;
 const H = 16;
 
-export function shownTags(mask: number): TagName[] {
-  return decodeTags(mask).filter((t) => SHOWN.includes(t));
+export function shownTags(mask: number) {
+  return decodeTags(mask).filter((t) => SHOWN_TAGS.includes(t));
 }
 
 export function pillsWidth(mask: number): number {

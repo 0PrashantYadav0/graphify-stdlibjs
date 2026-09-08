@@ -8,9 +8,8 @@ describe('parseHash', () => {
     expect(parseHash('#/')).toEqual({ kind: 'home' });
   });
   it('parses explore routes', () => {
-    expect(parseHash('#/explore')).toEqual({ kind: 'explore', path: '', group: null });
-    expect(parseHash('#/explore/math/base')).toEqual({ kind: 'explore', path: 'math/base', group: null });
-    expect(parseHash('#/explore/stats/base/ndarray?g=svariance')).toEqual({ kind: 'explore', path: 'stats/base/ndarray', group: 'svariance' });
+    expect(parseHash('#/explore')).toEqual({ kind: 'explore', path: '' });
+    expect(parseHash('#/explore/math/base')).toEqual({ kind: 'explore', path: 'math/base' });
   });
   it('parses module routes with edge kinds, defaulting to runtime', () => {
     expect(parseHash('#/module/math/base/special/logf')).toEqual({ kind: 'module', id: 'math/base/special/logf', edges: ['runtime'] });
@@ -28,7 +27,6 @@ describe('formatRoute', () => {
       '#/',
       '#/explore',
       '#/explore/math/base',
-      '#/explore/stats/base/ndarray?g=svariance',
       '#/module/math/base/special/logf',
       '#/module/x?edges=runtime,dev',
     ]) {
