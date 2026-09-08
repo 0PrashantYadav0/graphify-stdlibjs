@@ -1,7 +1,7 @@
 .explorer {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - var(--topbar-h));
+  height: calc(100vh - var(--topbar-h) - 38px);
 }
 
 .breadcrumb {

@@ -22,3 +22,20 @@
 .pill-wasm { --pill: var(--tag-wasm); }
 .pill-native { --pill: var(--tag-native); }
 .pill-cli { --pill: var(--tag-cli); }
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  font-size: var(--fs-1);
+  color: var(--ink-muted);
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
