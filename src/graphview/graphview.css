@@ -83,8 +83,9 @@
 }
 
 .gnode-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
   fill: var(--ink-muted);
-  font-size: 11px;
 }
 
 .gnode-count {
