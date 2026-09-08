@@ -34,12 +34,12 @@ export interface LayoutResult<T> {
   maxY: number;
 }
 
-const curve = linkHorizontal<LayoutLink, [number, number]>()
+const curve = linkHorizontal<{ source: [number, number]; target: [number, number] }, [number, number]>()
   .x((p) => p[0])
   .y((p) => p[1]);
 
 export function linkPath(link: LayoutLink): string {
-  return curve({ source: [link.sx, link.sy], target: [link.tx, link.ty] } as never) ?? '';
+  return curve({ source: [link.sx, link.sy], target: [link.tx, link.ty] }) ?? '';
 }
 
 export function layoutTree<T extends { key: string }>(
