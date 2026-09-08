@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Explorer } from '../explorer/Explorer';
+import { GraphExplorer } from '../explorer/GraphExplorer';
 import { Focus } from '../focus/Focus';
 import { SearchPalette } from '../search/SearchPalette';
 import { useShortcut } from '../search/useShortcut';
@@ -20,7 +20,7 @@ export default function App() {
   let content;
   if (state.status === 'loading') content = <p className="app-note muted">Loading the package map…</p>;
   else if (state.status === 'error') content = <p className="app-note">{state.message}</p>;
-  else if (route.kind === 'explore') content = <Explorer graph={state.graph} path={route.path} group={route.group} />;
+  else if (route.kind === 'explore') content = <GraphExplorer graph={state.graph} path={route.path} />;
   else content = <Focus graph={state.graph} id={route.id} edges={route.edges} />;
 
   return (
