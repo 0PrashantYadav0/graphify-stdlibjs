@@ -16,14 +16,22 @@ const g = graphFromIds(
 afterEach(cleanup);
 
 describe('Focus', () => {
-  it('shows the module, counts, and both sides as trees of links', () => {
+  it('shows the module card, counts, and both sides as graph nodes', () => {
     render(<Focus graph={g} id="math/base/special/logf" edges={['runtime']} />);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('math/base/special/logf');
     expect(screen.getByText('Requires 1')).toBeTruthy();
     expect(screen.getByText('Required by 1')).toBeTruthy();
     expect(screen.getByText('Connected 2')).toBeTruthy();
-    expect(screen.getByRole('link', { name: /^lnf/ }).getAttribute('href')).toBe('#/module/math/base/special/lnf');
-    expect(screen.getByRole('link', { name: /^log10f/ }).getAttribute('href')).toBe('#/module/math/base/special/log10f');
+    expect(screen.getByRole('button', { name: /^math\/base\/special\/lnf$/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^math\/base\/special\/log10f$/ })).toBeTruthy();
+    expect(screen.getByRole('img', { name: /^logf/ })).toBeTruthy();
+  });
+
+  it('opens a neighbour on click', () => {
+    window.location.hash = '#/module/math/base/special/logf';
+    render(<Focus graph={g} id="math/base/special/logf" edges={['runtime']} />);
+    fireEvent.click(screen.getByRole('button', { name: /^math\/base\/special\/lnf$/ }));
+    expect(window.location.hash).toBe('#/module/math/base/special/lnf');
   });
 
   it('includes dev and native edges when toggled on', () => {
@@ -35,7 +43,7 @@ describe('Focus', () => {
     render(<Focus graph={g} id="math/base/special/logf" edges={['runtime', 'dev', 'native']} />);
     expect(screen.getByText('Requires 2')).toBeTruthy();
     expect(screen.getByText('Required by 2')).toBeTruthy();
-    expect(screen.getByRole('link', { name: /^is-nan/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^assert\/is-nan$/ })).toBeTruthy();
   });
 
   it('explains an unknown id', () => {

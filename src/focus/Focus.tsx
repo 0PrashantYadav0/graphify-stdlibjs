@@ -4,7 +4,7 @@ import { EDGE_KINDS, type EdgeKind } from '../graph/types';
 import { formatRoute, navigate } from '../app/router';
 import { TagPills } from '../ui/TagPills';
 import { neighbourhood } from './neighbourhood';
-import { PathTreeView } from './PathTreeView';
+import { FocusGraph } from './FocusGraph';
 import './focus.css';
 
 interface Props {
@@ -24,7 +24,7 @@ export function Focus({ graph, id, edges }: Props) {
     return (
       <section className="focus-missing">
         <p>
-          No package named <span className="mono">{id}</span>. <a href="#/">Browse from the top</a> or search with ⌘K.
+          No package named <span className="mono">{id}</span>. <a href="#/explore">Browse from the top</a> or search with ⌘K.
         </p>
       </section>
     );
@@ -38,15 +38,14 @@ export function Focus({ graph, id, edges }: Props) {
 
   return (
     <section className="focus">
-      <a className="focus-back mono" href={formatRoute({ kind: 'explore', path: parent, group: null })}>
-        ‹ explore {parent || 'stdlib'}
-      </a>
-      <div className="focus-grid">
-        <PathTreeView key={`requires-${edges.join(',')}`} graph={graph} title="Requires" indexes={n.requires} />
-        <article className="module-card">
+      <header className="module-card">
+        <div className="module-main">
+          <a className="focus-back mono" href={formatRoute({ kind: 'explore', path: parent, group: null })}>‹ explore {parent || 'stdlib'}</a>
           <h1 className="module-id mono">{id}</h1>
           {graph.desc[index] && <p className="module-desc">{graph.desc[index]}</p>}
           <TagPills mask={graph.tags[index]} />
+        </div>
+        <div className="module-side">
           <ul className="module-facts">
             <li>Requires {n.requires.length}</li>
             <li>Required by {n.requiredBy.length}</li>
@@ -63,9 +62,9 @@ export function Focus({ graph, id, edges }: Props) {
             <a href={GITHUB + id} target="_blank" rel="noreferrer">Open on GitHub</a>
             <a href={formatRoute({ kind: 'explore', path: id, group: null })}>Browse inside</a>
           </p>
-        </article>
-        <PathTreeView key={`required-by-${edges.join(',')}`} graph={graph} title="Required by" indexes={n.requiredBy} />
-      </div>
+        </div>
+      </header>
+      <FocusGraph graph={graph} index={index} requires={n.requires} requiredBy={n.requiredBy} />
     </section>
   );
 }

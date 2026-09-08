@@ -38,6 +38,17 @@ describe('GraphCanvas', () => {
     expect(after).toBe(`translate(${1200 / 3 - 500}, 400) scale(1)`);
   });
 
+  it('pans to a custom anchor fraction of the width when anchor is set', () => {
+    render(
+      <GraphCanvas focusPoint={{ x: 0, y: 0 }} anchor={0.5} label="package graph">
+        <circle data-testid="dot" r={2} />
+      </GraphCanvas>,
+    );
+    const svg = screen.getByRole('application', { name: 'package graph' });
+    const transform = svg.querySelector('g.canvas-pan')!.getAttribute('transform');
+    expect(transform).toBe('translate(600, 400) scale(1)');
+  });
+
   it('fits a fitRange into view, scaling to show the whole span', () => {
     render(
       <GraphCanvas focusPoint={null} fitRange={{ x0: 0, x1: 1920, y: 0 }} label="package graph">
