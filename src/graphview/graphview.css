@@ -1,0 +1,133 @@
+.graph-canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--ground);
+}
+
+.graph-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.graph-svg:active {
+  cursor: grabbing;
+}
+
+.canvas-reset {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-size: var(--fs-1);
+  cursor: pointer;
+}
+
+.canvas-reset:hover {
+  color: var(--ink);
+  border-color: var(--trace);
+}
+
+.glink {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.glink.on-path {
+  stroke: var(--trace);
+  stroke-width: 2;
+}
+
+.gnode {
+  cursor: pointer;
+  outline: none;
+}
+
+.gnode-box {
+  fill: var(--surface);
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.gnode:hover .gnode-box,
+.gnode.on-path .gnode-box {
+  stroke: var(--trace);
+}
+
+.gnode.on-path .gnode-box {
+  stroke-width: 2;
+}
+
+.gnode:focus-visible .gnode-box {
+  stroke: var(--trace);
+  stroke-width: 3;
+}
+
+.gnode.is-selected .gnode-box {
+  fill: var(--trace);
+  stroke: var(--trace);
+}
+
+.gnode-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  fill: var(--ink);
+}
+
+.gnode-sub {
+  fill: var(--ink-muted);
+  font-size: 11px;
+}
+
+.gnode-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  fill: var(--ink-muted);
+}
+
+.gnode.is-selected .gnode-label,
+.gnode.is-selected .gnode-sub,
+.gnode.is-selected .gnode-count {
+  fill: var(--trace-ink);
+}
+
+.gnode-operation .gnode-box,
+.gnode-variant .gnode-box,
+.gnode-cluster .gnode-box {
+  stroke-dasharray: 4 3;
+}
+
+.gnode-root .gnode-label,
+.gnode-centre .gnode-label {
+  font-weight: 600;
+}
+
+.spill rect {
+  fill: color-mix(in srgb, var(--pill) 12%, transparent);
+  stroke: var(--pill);
+  stroke-width: 1;
+}
+
+.spill text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  fill: var(--pill);
+}
+
+.spill { --pill: var(--ink-muted); }
+.spill-js { --pill: var(--tag-js); }
+.spill-c { --pill: var(--tag-c); }
+.spill-f { --pill: var(--tag-f); }
+.spill-wasm { --pill: var(--tag-wasm); }
+.spill-native { --pill: var(--tag-native); }
+.spill-cli { --pill: var(--tag-cli); }
+
+.gnode.is-selected .spill { --pill: var(--trace-ink); }
