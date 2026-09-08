@@ -32,7 +32,11 @@ export function SearchPalette({ graph, onClose }: Props) {
   const hits = useMemo(() => search(query, 12), [search, query]);
 
   useEffect(() => {
+    const previous = document.activeElement as HTMLElement | null;
     inputRef.current?.focus();
+    return () => {
+      if (previous && typeof previous.focus === 'function') previous.focus();
+    };
   }, []);
   useEffect(() => {
     setActive(0);
