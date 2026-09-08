@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Explorer } from '../explorer/Explorer';
+import { Focus } from '../focus/Focus';
 import { TopBar } from './TopBar';
 import { useGraph } from './useGraph';
 import { useRoute } from './router';
@@ -14,7 +15,7 @@ export default function App() {
   if (state.status === 'loading') content = <p className="app-note muted">Loading the package map…</p>;
   else if (state.status === 'error') content = <p className="app-note">{state.message}</p>;
   else if (route.kind === 'explore') content = <Explorer graph={state.graph} path={route.path} group={route.group} />;
-  else content = <Explorer graph={state.graph} path={route.id.slice(0, route.id.lastIndexOf('/'))} group={null} />;
+  else content = <Focus graph={state.graph} id={route.id} edges={route.edges} />;
 
   return (
     <div className="app">
