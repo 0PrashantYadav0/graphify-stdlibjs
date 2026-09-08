@@ -53,8 +53,6 @@
   position: relative;
   max-width: 34rem;
   padding: 48px 20px 48px 64px;
-  background: color-mix(in srgb, var(--ground) 78%, transparent);
-  backdrop-filter: blur(2px);
 }
 
 .hero-title {
@@ -127,6 +125,7 @@
 }
 
 @media (max-width: 719px) {
+  .constellation { top: 0; height: 55%; }
   .hero { align-items: flex-end; }
-  .hero-copy { padding: 24px 16px 32px; max-width: none; }
+  .hero-copy { background: var(--ground); max-width: none; padding: 20px 16px 28px; }
 }
