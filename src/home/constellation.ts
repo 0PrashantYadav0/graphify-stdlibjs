@@ -22,9 +22,14 @@ export interface ConstellationLayout {
   links: Segment[];
 }
 
-export function constellationLayout(graph: Graph, size: { width: number; height: number }, outerCount = 12): ConstellationLayout {
-  const cx = size.width / 2;
-  const cy = size.height / 2;
+export function constellationLayout(
+  graph: Graph,
+  size: { width: number; height: number },
+  outerCount = 12,
+  centre: { x: number; y: number } = { x: size.width / 2, y: size.height / 2 },
+): ConstellationLayout {
+  const cx = centre.x;
+  const cy = centre.y;
   const ringRadius = Math.min(size.width, size.height) * 0.3;
   const outerRadius = ringRadius * 1.55;
   const roots = graph.children(-1);
