@@ -6,6 +6,7 @@ import { useShortcut } from '../search/useShortcut';
 import { TopBar } from './TopBar';
 import { useGraph } from './useGraph';
 import { useRoute } from './router';
+import { Legend } from '../ui/Legend';
 import './app.css';
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
     <div className="app">
       <TopBar onSearch={openSearch} />
       <main className="app-main">{content}</main>
+      <Legend />
       {searchOpen && state.status === 'ready' && <SearchPalette graph={state.graph} onClose={closeSearch} />}
     </div>
   );
