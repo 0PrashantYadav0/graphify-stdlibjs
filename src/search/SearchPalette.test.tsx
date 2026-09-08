@@ -42,4 +42,15 @@ describe('SearchPalette', () => {
     fireEvent.keyDown(screen.getByRole('combobox'), { key: 'Escape' });
     expect(onClose).toHaveBeenCalled();
   });
+
+  it('returns focus to the previously focused element when it closes', () => {
+    document.body.innerHTML = '<button>trigger</button>';
+    const trigger = screen.getByRole('button', { name: 'trigger' });
+    trigger.focus();
+    expect(document.activeElement).toBe(trigger);
+    const { unmount } = render(<SearchPalette graph={g} onClose={() => {}} />);
+    expect(document.activeElement).toBe(screen.getByRole('combobox'));
+    unmount();
+    expect(document.activeElement).toBe(trigger);
+  });
 });
