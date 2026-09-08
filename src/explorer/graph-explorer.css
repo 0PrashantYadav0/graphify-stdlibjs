@@ -1,0 +1,54 @@
+.graph-explorer {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-explorer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-2);
+  color: var(--ink-muted);
+}
+
+.breadcrumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--trace);
+}
+
+.breadcrumb .sep {
+  margin: 0 4px;
+  opacity: 0.5;
+}
+
+.graph-open {
+  flex-shrink: 0;
+  font-size: var(--fs-2);
+  text-decoration: none;
+}
+
+.graph-open:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 719px) {
+  .graph-explorer-head { padding: 8px 12px; }
+}
