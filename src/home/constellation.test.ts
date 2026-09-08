@@ -27,4 +27,13 @@ describe('constellationLayout', () => {
   it('links centre→ring and parent→outer', () => {
     expect(layout.links).toHaveLength(3 + 2);
   });
+
+  it('accepts an explicit centre, off from the geometric middle', () => {
+    const offset = constellationLayout(g, { width: 800, height: 520 }, 2, { x: 560, y: 260 });
+    expect(offset.centre).toEqual({ x: 560, y: 260 });
+    for (const n of offset.ring) {
+      const r = Math.hypot(n.x - 560, n.y - 260);
+      expect(r).toBeCloseTo(offset.ringRadius, 5);
+    }
+  });
 });
