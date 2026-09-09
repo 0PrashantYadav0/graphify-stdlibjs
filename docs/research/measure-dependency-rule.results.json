@@ -1,0 +1,1160 @@
+{
+  "totalPackages": 6203,
+  "packagesWithAnyDeclaredDeps": 0,
+  "totalDeclaredStdlibDeps": 0,
+  "externalDeclaredDeps": 1,
+  "results": [
+    {
+      "kind": "runtime",
+      "total": 43102,
+      "ancestorOnly": 36,
+      "removed": 43102,
+      "removedExact": 43066,
+      "removedExactSamples": [
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "_tools/benchmarks/bundle",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "_tools/benchmarks/bundle"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "_tools/benchmarks/html",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "_tools/benchmarks/html"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "assert/is-string",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-string"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "assert/is-function",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-function"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "string/format",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "string/format"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "process/cwd",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "process/cwd"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "utils/copy",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "utils/copy"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "assert/has-own-property",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/has-own-property"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "assert/is-plain-object",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-plain-object"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "_tools/browserify/file-list",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "_tools/browserify/file-list"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "assert/is-string",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-string"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "assert/is-function",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-function"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "string/format",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "string/format"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "process/cwd",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "process/cwd"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "utils/copy",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "utils/copy"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "assert/has-own-property",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/has-own-property"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "assert/is-plain-object",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-plain-object"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/html",
+          "dst": "assert/is-string",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-string"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/html",
+          "dst": "assert/is-function",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "assert/is-function"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/html",
+          "dst": "fs/read-file",
+          "kind": "runtime",
+          "exact": true,
+          "specs": [
+            "fs/read-file"
+          ]
+        }
+      ],
+      "removedAncestorSamples": [
+        {
+          "src": "_tools/makie/plugins/makie-benchmark",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-benchmark-lang",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-complexity",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-examples",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-install-node-addons",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-lint-javascript",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-lint-markdown",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-lint-python",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-lint-r",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-lint-typescript-declarations",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-list-pkgs",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-list-pkgs-names",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-markdown-asset-link",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-markdown-examples-javascript",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-notes",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-repl",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-stats-list-contributors",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-test",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-test-cov",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        },
+        {
+          "src": "_tools/makie/plugins/makie-test-summary",
+          "dst": "_tools",
+          "kind": "runtime",
+          "exact": false,
+          "specs": [
+            "_tools/makie"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "dev",
+      "total": 46110,
+      "ancestorOnly": 4,
+      "removed": 46110,
+      "removedExact": 46106,
+      "removedExactSamples": [
+        {
+          "src": "_tools",
+          "dst": "assert/is-null",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-null"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "assert/is-browser",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-browser"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "assert/is-windows",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-windows"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "fs/read-file",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "fs/read-file"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "process/exec-path",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "process/exec-path"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "random/base/randu",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "random/base/randu"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "math/base/assert/is-nan",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "math/base/assert/is-nan"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/browser-build",
+          "dst": "math/base/special/exp",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "math/base/special/exp"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "assert/is-browser",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-browser"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "assert/is-windows",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-windows"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "fs/read-file",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "fs/read-file"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "utils/eval",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "utils/eval"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "process/exec-path",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "process/exec-path"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "fs/unlink",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "fs/unlink"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "utils/noop",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "utils/noop"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "random/base/randu",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "random/base/randu"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "math/base/assert/is-nan",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "math/base/assert/is-nan"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "math/base/special/exp",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "math/base/special/exp"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/html",
+          "dst": "assert/is-browser",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-browser"
+          ]
+        },
+        {
+          "src": "_tools/benchmarks/html",
+          "dst": "assert/is-windows",
+          "kind": "dev",
+          "exact": true,
+          "specs": [
+            "assert/is-windows"
+          ]
+        }
+      ],
+      "removedAncestorSamples": [
+        {
+          "src": "_tools/benchmarks/bundle",
+          "dst": "math/base/special",
+          "kind": "dev",
+          "exact": false,
+          "specs": [
+            "math/base/special/exponential"
+          ]
+        },
+        {
+          "src": "_tools/browserify/file-list",
+          "dst": "math/base/special",
+          "kind": "dev",
+          "exact": false,
+          "specs": [
+            "math/base/special/exponential"
+          ]
+        },
+        {
+          "src": "_tools/remark/plugins/remark-namespace-toc",
+          "dst": "math/base/special/fast",
+          "kind": "dev",
+          "exact": false,
+          "specs": [
+            "math/base/special/fast/atan"
+          ]
+        },
+        {
+          "src": "_tools/tests/bundle",
+          "dst": "math/base/special",
+          "kind": "dev",
+          "exact": false,
+          "specs": [
+            "math/base/special/exponential"
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "native",
+      "total": 9913,
+      "ancestorOnly": 0,
+      "removed": 9913,
+      "removedExact": 9913,
+      "removedExactSamples": [
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/equal-typedarray-types",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/equal-typedarray-types"
+          ]
+        },
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/equal-types",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/equal-types"
+          ]
+        },
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/has-property",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/has-property"
+          ]
+        },
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/is-dataview",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/is-dataview"
+          ]
+        },
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/is-type",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/is-type"
+          ]
+        },
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/is-typedarray",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/is-typedarray"
+          ]
+        },
+        {
+          "src": "assert/napi",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "assert/napi/equal-typedarray-types",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "assert/napi/equal-types",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "assert/napi/has-property",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "assert/napi/is-dataview",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "assert/napi/is-type",
+          "dst": "assert/napi/equal-types",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/equal-types"
+          ]
+        },
+        {
+          "src": "assert/napi/is-type",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "assert/napi/is-typedarray",
+          "dst": "assert/napi/status-ok",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "assert/napi/status-ok"
+          ]
+        },
+        {
+          "src": "blas/base/caxpy",
+          "dst": "blas/base/shared",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "blas/base/shared"
+          ]
+        },
+        {
+          "src": "blas/base/caxpy",
+          "dst": "blas/base/scabs1",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "blas/base/scabs1"
+          ]
+        },
+        {
+          "src": "blas/base/caxpy",
+          "dst": "strided/base/stride2offset",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "strided/base/stride2offset"
+          ]
+        },
+        {
+          "src": "blas/base/caxpy",
+          "dst": "napi/export",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "napi/export"
+          ]
+        },
+        {
+          "src": "blas/base/caxpy",
+          "dst": "napi/argv",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "napi/argv"
+          ]
+        },
+        {
+          "src": "blas/base/caxpy",
+          "dst": "napi/argv-int64",
+          "kind": "native",
+          "exact": true,
+          "specs": [
+            "napi/argv-int64"
+          ]
+        }
+      ],
+      "removedAncestorSamples": []
+    }
+  ],
+  "allAncestorWalkOnlyEdges": [
+    {
+      "src": "_tools/benchmarks/bundle",
+      "dst": "math/base/special",
+      "kind": "dev",
+      "exact": false,
+      "specs": [
+        "math/base/special/exponential"
+      ]
+    },
+    {
+      "src": "_tools/browserify/file-list",
+      "dst": "math/base/special",
+      "kind": "dev",
+      "exact": false,
+      "specs": [
+        "math/base/special/exponential"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-benchmark",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-benchmark-lang",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-complexity",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-examples",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-install-node-addons",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-lint-javascript",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-lint-markdown",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-lint-python",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-lint-r",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-lint-typescript-declarations",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-list-pkgs",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-list-pkgs-names",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-markdown-asset-link",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-markdown-examples-javascript",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-notes",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-repl",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-stats-list-contributors",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-test",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-test-cov",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-test-summary",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-view-complexity",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-view-cov",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/makie/plugins/makie-wasm",
+      "dst": "_tools",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "_tools/makie"
+      ]
+    },
+    {
+      "src": "_tools/remark/plugins/remark-namespace-toc",
+      "dst": "math/base/special/fast",
+      "kind": "dev",
+      "exact": false,
+      "specs": [
+        "math/base/special/fast/atan"
+      ]
+    },
+    {
+      "src": "_tools/tests/bundle",
+      "dst": "math/base/special",
+      "kind": "dev",
+      "exact": false,
+      "specs": [
+        "math/base/special/exponential"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/bool",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/complex128",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/complex64",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/int16",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/int32",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/int8",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/uint16",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/uint32",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/uint8",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/tensor3d/uint8c",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/tensor3d/ctor"
+      ]
+    },
+    {
+      "src": "ndarray/to-fancy",
+      "dst": "ndarray",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "ndarray/take",
+        "ndarray/mskfilter",
+        "ndarray/mskreject"
+      ]
+    },
+    {
+      "src": "repl/server",
+      "dst": "repl/help",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "repl/help/data/data.json"
+      ]
+    },
+    {
+      "src": "repl/server",
+      "dst": "repl/code-blocks",
+      "kind": "runtime",
+      "exact": false,
+      "specs": [
+        "repl/code-blocks/data/data.json"
+      ]
+    }
+  ]
+}
