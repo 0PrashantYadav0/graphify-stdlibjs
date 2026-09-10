@@ -41,4 +41,7 @@ superseding ADR should link back to the one it replaces rather than editing
 it in place — the record of what was once decided, and why, is part of the
 value.
 
-No ADRs exist yet. This directory is scaffolding for the first ones.
+Existing records:
+
+- `0001-svg-tree-widget-semantics.md`
+- `0002-comment-aware-require-extraction.md`

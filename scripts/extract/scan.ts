@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Tag } from '../../src/graph/tags';
+import { tokenize } from './lexer';
 
 export interface ScannedPackage {
   id: string;
@@ -15,7 +16,7 @@ const SKIP_DIRS = new Set([
   'node_modules', 'test', 'benchmark', 'docs', 'lib', 'src', 'include',
   'examples', 'etc', 'bin', 'scripts', 'data', '__tests__',
 ]);
-const REQUIRE_RE = /require\(\s*['"]@stdlib\/([^'"]+)['"]\s*\)/g;
+const SCOPE = '@stdlib/';
 
 export function findPackageDirs(root: string): string[] {
   const out: string[] = [];
@@ -39,9 +40,27 @@ export function idFromDir(root: string, dir: string): string {
   return path.relative(root, dir).split(path.sep).join('/');
 }
 
+/**
+ * Collects the `@stdlib/…` specs a source file actually requires at runtime.
+ *
+ * Matches the token sequence `require` `(` <string> `)`, so a `require()`
+ * written inside a JSDoc `@example` block, a comment, a string or a regex is
+ * not a dependency. See `lexer.ts` and docs/adr/0002 for why this is a
+ * tokeniser and not a regex.
+ */
 export function extractRequires(source: string): string[] {
   const out = new Set<string>();
-  for (const m of source.matchAll(REQUIRE_RE)) out.add(m[1]);
+  // Cheap reject: most files under lib/ mention no @stdlib spec at all.
+  if (!source.includes('@stdlib/')) return [];
+  const toks = tokenize(source);
+  for (let i = 0; i + 3 < toks.length; i++) {
+    if (toks[i].kind !== 'name' || toks[i].value !== 'require') continue;
+    if (toks[i + 1].kind !== 'punct' || toks[i + 1].value !== '(') continue;
+    if (toks[i + 2].kind !== 'string') continue;
+    if (toks[i + 3].kind !== 'punct' || toks[i + 3].value !== ')') continue;
+    const spec = toks[i + 2].value;
+    if (spec.startsWith(SCOPE) && spec.length > SCOPE.length) out.add(spec.slice(SCOPE.length));
+  }
   return [...out];
 }
 
