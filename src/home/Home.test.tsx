@@ -21,6 +21,13 @@ describe('Home', () => {
     expect(onSearch).toHaveBeenCalled();
   });
 
+  it('states in the footer that the project is unofficial and unaffiliated', () => {
+    render(<Home graph={g} onSearch={() => {}} />);
+    expect(screen.getByText(/unofficial, third-party project/i).textContent).toBe(
+      'An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the stdlib project.',
+    );
+  });
+
   it('draws one constellation dot per root namespace', () => {
     render(<Home graph={g} onSearch={() => {}} />);
     expect(document.querySelectorAll('.const-ring')).toHaveLength(3);

@@ -36,7 +36,9 @@
 
 .const-ring { fill: var(--trace); }
 .const-outer { fill: var(--ink-muted); opacity: 0.7; }
-.const-centre { fill: var(--ink); }
+/* The centre node is stdlib itself, so it carries stdlib's orange; the
+   namespaces radiating out of it carry ours. */
+.const-centre { fill: var(--spark); }
 
 .const-label {
   font-family: var(--font-mono);
@@ -46,7 +48,7 @@
 
 .const-centre-label {
   fill: var(--ink);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hero-copy {
@@ -60,7 +62,7 @@
   font-size: clamp(32px, 5vw, 52px);
   line-height: 1.05;
   letter-spacing: -0.02em;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .hero-lead {
@@ -83,7 +85,7 @@
   background: var(--trace);
   color: var(--trace-ink);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .button-primary:hover {
@@ -122,6 +124,15 @@
 
 .home-foot p {
   margin: 0;
+}
+
+/* Full-width third line so the disclaimer never gets squeezed onto the same
+   row as the stats. stdlib's terms ask that nothing imply affiliation, so this
+   stays visible rather than shrinking away. */
+.home-disclaimer {
+  flex-basis: 100%;
+  order: 3;
+  font-size: var(--fs-1);
 }
 
 @media (max-width: 719px) {

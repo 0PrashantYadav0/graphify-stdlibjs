@@ -63,7 +63,7 @@
 .palette-id mark {
   background: transparent;
   color: var(--trace);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .palette-empty {

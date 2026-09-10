@@ -32,6 +32,9 @@ export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }
         <p className="home-credit">
           Made by <a href={`https://github.com/${CREATOR}`} target="_blank" rel="noreferrer">{CREATOR}</a>
         </p>
+        <p className="home-disclaimer">
+          An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the stdlib project.
+        </p>
       </footer>
     </section>
   );
