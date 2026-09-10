@@ -22,12 +22,22 @@ affiliation, so this wording is the mitigation that makes the visual kinship
 legitimate.
 
 The palette in `src/styles/tokens.css` deliberately echoes stdlib.io's own
-served CSS: `--trace` is stdlib's blue (darkened in light mode to clear
-4.5:1 as text), `--spark` is stdlib's orange at its literal values, and
+served CSS: `--trace` is stdlib's blue (darkened in light mode to `#00759f`,
+which measures 5.19:1 on `--surface` and 4.76:1 on `--ground` — check both,
+since `body` paints `--ground` and that is where most links land),
+`--spark` is stdlib's orange at its literal values, and
 `--font-ui` is Lato, stdlib's UI face. `--spark` is a sparing decorative
 accent only — the wordmark separator and the constellation's centre node —
 never text or a large fill. No stdlib logo or icon is reproduced anywhere,
 and none should be.
+
+If you retune a `--tag-*` colour, measure it **as rendered**: `.pill` paints
+a 10% tint of the tag colour behind its own 10px text (`.spill` in
+graphview.css uses 12%), so the bare `--surface` figure overstates the real
+contrast by roughly 12%. The current worst case is 5.03:1 over `--surface`,
+4.63:1 over `--ground`. Every tag pair, and every tag against `--trace`,
+also has to stay above dE2000 21 in light and 19.5 in dark — that separation
+was hard-won and is easy to break by nudging one hex.
 
 Licensed Apache-2.0, matching stdlib. `NOTICE` records how `public/data/graph.json`
 is derived from a stdlib checkout and disclaims affiliation.
