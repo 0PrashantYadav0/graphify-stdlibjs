@@ -56,8 +56,8 @@ export function FocusGraph({ graph, index, requires, requiredBy }: Props) {
 
   return (
     <GraphCanvas focusPoint={null} fitRange={fitRange} label="dependency graph" className="focus-canvas">
-      <TreeLayer root={leftRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="left" selectedKey={null} pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} hideRoot onLayout={onLeftLayout} />
-      <TreeLayer root={rightRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="right" selectedKey="centre" pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} onLayout={onRightLayout} />
+      <TreeLayer root={leftRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="left" selectedKey={null} pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="requires" hideRoot onLayout={onLeftLayout} />
+      <TreeLayer root={rightRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="right" selectedKey="centre" pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="required by" onLayout={onRightLayout} />
     </GraphCanvas>
   );
 }
