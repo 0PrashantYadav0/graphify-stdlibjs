@@ -7,13 +7,22 @@
  * official stdlib product and deliberately borrows no logo or mark.
  *
  * --trace is the interactive accent (links, focus rings, primary buttons,
- * graph edges): stdlib's blue, darkened in light mode so it clears 4.5:1 as
- * body text on white. --spark is stdlib's orange, kept at stdlib's literal
- * values and used sparingly, as stdlib uses it — never as text or a large fill.
+ * graph edges): stdlib's blue, darkened in light mode until it clears 4.5:1
+ * on every ground a link is actually painted on — 5.19:1 on --surface, 4.76:1
+ * on --ground (body's background), and 4.52:1 for a search-hit `mark` sitting
+ * on --trace-soft. Dark mode uses stdlib's literal #00aeef at 6.16:1.
+ *
+ * --spark is stdlib's orange, kept at stdlib's literal values and used
+ * sparingly, as stdlib uses it. It has exactly two consumers — the wordmark
+ * separator and the constellation's centre node — and is never text or a
+ * large fill, which is why its 2.22:1 is not a text-contrast figure.
  *
  * The six --tag-* colours are retuned so that every pair, and every tag
- * against --trace, stays above dE2000 18 in both modes, and every one of them
- * clears 4.5:1 on its surface.
+ * against --trace, stays above dE2000 21 in light and 19.5 in dark. Contrast
+ * is quoted as rendered, i.e. measured against the pill's own 10% tint of
+ * itself rather than the bare surface token: worst case is 5.03:1 over
+ * --surface and 4.63:1 over --ground in light, 4.93:1 over --surface in dark.
+ * `.spill` in graphview.css uses a 12% tint; worst case there is 4.80:1.
  */
 
 :root {
@@ -22,19 +31,19 @@
   --ink: #15181a;
   --ink-muted: #5c6166;
   --line: #dcdee1;
-  --trace: #0080b0;
+  --trace: #00759f;
   --trace-ink: #ffffff;
-  --trace-soft: rgba(0, 128, 176, 0.1);
+  --trace-soft: rgba(0, 117, 159, 0.1);
   --spark: #e99f36;
   --scrim: rgba(20, 22, 24, 0.45);
   --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.25);
 
-  --tag-js: #8a7412;
-  --tag-c: #3a53d0;
+  --tag-js: #77650e;
+  --tag-c: #343fbe;
   --tag-f: #a33189;
   --tag-wasm: #0d7266;
-  --tag-native: #71716e;
-  --tag-cli: #3a8630;
+  --tag-native: #666663;
+  --tag-cli: #2e7411;
 
   --font-ui: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
