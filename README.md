@@ -1,5 +1,7 @@
 # graphify-stdlibjs
 
+> An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the [stdlib](https://stdlib.io) project. It reads a stdlib checkout; it is not part of stdlib. "stdlib" is used here only to name the library this tool reads.
+
 Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces into their packages, and see naming families like `sum` folded into variants (`float64 (d)`, `float32 (s)`, `float64 with NaN (dnan)`, …) and their algorithms (`dsum`, `dsumkbn`, `dsumpw`). Press ⌘K / Ctrl+K to search for a package and see what it requires (left) and what requires it (right).
 
 ## Routes
