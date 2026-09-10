@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 21 files, 124 tests, must stay green
+npm test                                 # Vitest — 21 files, 135 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -117,23 +117,25 @@ file was built from).
 
 ## Known gotchas
 
-- **The extractor is comment-blind (tracked in [#12](https://github.com/0PrashantYadav0/graphify-stdlibjs/issues/12)).**
-  `extractRequires` (`scripts/extract/scan.ts`) regexes whole file text for
-  `require('@stdlib/…')` and does not know about comments or string
-  literals. It currently counts `require()` calls that appear inside JSDoc
-  `@example` blocks, block comments, and commented-out code as real runtime
-  dependencies — measured at 35.3% of all `require()` occurrences under
-  `lib/` across the stdlib monorepo. Do not "fix" the graph's edge counts by
-  adding a naive comment-stripping regex; a regex will mis-handle string and
-  regex literals. If you touch this, treat #12 as the design discussion, not
-  a green light to redo it inline.
+- **The extractor tokenises; do not put the regex back.**
+  `extractRequires` (`scripts/extract/scan.ts`) runs a hand-written JS
+  tokeniser (`scripts/extract/lexer.ts`) and matches the token sequence
+  `require` `(` string `)`, so requires inside JSDoc `@example` blocks,
+  comments, strings and regex literals are not dependencies. It used to regex
+  raw file text, which counted 35.3% of all `require()` occurrences under
+  `lib/` as real runtime edges. A comment-stripping regex cannot replace the
+  tokeniser — `//` occurs in strings, `/*` occurs in regex literals, and `/`
+  is ambiguous between division and a regex. See
+  `docs/adr/0002-comment-aware-require-extraction.md`; changing the lexer
+  silently changes every edge in the graph.
 - **The ancestor-walk fallback in `resolveSpec` is not a bug worth chasing.**
   It's measured at under 0.1% of edges, most of which are not errors. Don't
   spend time "fixing" it without new evidence it's wrong.
 - **`package.json` `dependencies` fields are not used for anything.** They
   were considered as a cross-check and refuted ([#11](https://github.com/0PrashantYadav0/graphify-stdlibjs/issues/11)):
   essentially no package in the stdlib monorepo declares a `@stdlib/…`
-  dependency there, so the field carries no signal for this graph.
+  dependency there, so the field carries no signal for this graph. The
+  measurement is in `docs/adr/0002-comment-aware-require-extraction.md`.
 - **The variant/family folding in `src/graph/variants.ts` and
   `src/graph/clusterSiblings.ts` is settled, not a starting point.** Read
   `CONTEXT.md`'s "sibling-aware parse" entry before touching either file —
