@@ -13,11 +13,21 @@ copy, branding, or metadata in a way that would make the project read as an
 official stdlib product — keep the `graphify · stdlib` wordmark
 (`src/app/TopBar.tsx`) intact.
 
-The unofficial/not-affiliated disclaimer currently lives **only** in
-`NOTICE`. The app's own footer (`src/home/Home.tsx`) has no such wording
-today — it shows package stats and a "Made by" credit, nothing more. Adding
-disclaimer copy to the UI is tracked separately ([#9](https://github.com/0PrashantYadav0/graphify-stdlibjs/issues/9));
-don't assume it already exists there.
+The unofficial/not-affiliated disclaimer lives in three places and all three
+have to stay in sync: `NOTICE`, the `README.md` blockquote under the title,
+and the app footer (`.home-disclaimer` in `src/home/Home.tsx`, asserted by
+`src/home/Home.test.tsx`). Don't remove or soften any of them — stdlib
+publishes no brand policy, and its terms of service ban implying
+affiliation, so this wording is the mitigation that makes the visual kinship
+legitimate.
+
+The palette in `src/styles/tokens.css` deliberately echoes stdlib.io's own
+served CSS: `--trace` is stdlib's blue (darkened in light mode to clear
+4.5:1 as text), `--spark` is stdlib's orange at its literal values, and
+`--font-ui` is Lato, stdlib's UI face. `--spark` is a sparing decorative
+accent only — the wordmark separator and the constellation's centre node —
+never text or a large fill. No stdlib logo or icon is reproduced anywhere,
+and none should be.
 
 Licensed Apache-2.0, matching stdlib. `NOTICE` records how `public/data/graph.json`
 is derived from a stdlib checkout and disclaims affiliation.
