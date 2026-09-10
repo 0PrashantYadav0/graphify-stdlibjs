@@ -5,20 +5,39 @@
   flex-direction: column;
 }
 
+/* Copy and art get a column each rather than the art being a full-bleed
+   background under the copy. Two things came out of the old arrangement: the
+   art was sized to cover a box whose aspect ratio it could not know, which
+   sliced the ring labels off at every viewport, and on mid-width screens the
+   headline was printed straight over the ring. Equal `1fr` columns, rather
+   than a fixed copy column, keep the art from collapsing to a sliver just
+   above the stacking breakpoint. */
 .hero {
-  position: relative;
   flex: 1;
   min-height: 420px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
+  /* Past this the two columns drift so far apart they stop reading as one
+     composition, so the hero centres itself and the ground takes the rest. */
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: 'copy art';
+  align-items: stretch;
 }
 
 .constellation {
-  position: absolute;
-  inset: 0;
+  grid-area: art;
+  align-self: center;
+  justify-self: center;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
+  /* The art is decoration; past this size it stops reading as a diagram and
+     starts reading as wallpaper. */
+  max-height: 620px;
+  padding: 20px 24px 20px 0;
 }
 
 .const-links line {
@@ -52,7 +71,8 @@
 }
 
 .hero-copy {
-  position: relative;
+  grid-area: copy;
+  align-self: center;
   max-width: 34rem;
   padding: 48px 20px 48px 64px;
 }
@@ -135,8 +155,15 @@
   font-size: var(--fs-1);
 }
 
+/* Narrow viewports stack: art on top, copy underneath. Same arrangement the
+   old absolute-positioned rules produced, expressed in the grid. */
 @media (max-width: 719px) {
-  .constellation { top: 0; height: 55%; }
-  .hero { align-items: flex-end; }
-  .hero-copy { background: var(--ground); max-width: none; padding: 20px 16px 28px; }
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas: 'art' 'copy';
+  }
+
+  .constellation { padding: 8px 16px 0; }
+  .hero-copy { max-width: none; padding: 20px 16px 28px; }
 }
