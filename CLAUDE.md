@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 21 files, 102 tests, must stay green
+npm test                                 # Vitest — 21 files, 124 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -77,6 +77,16 @@ tool.
 
 `src/app/router.ts` parses/formats the hash-based routes above; that file is
 the source of truth if this list and the code ever disagree.
+
+The explorer and the focus view share `src/graphview/TreeLayer.tsx`, which
+renders each graph as an ARIA `tree`: one tab stop per tree (roving
+tabindex), Up/Down through visible nodes, Left/Right to collapse/expand, and
+Home/End. Focus pans itself into view via the canvas. The four decisions
+behind that shape — flat treeitems with no `role="group"`, `role="group"`
+rather than `role="application"` on the canvas, mirrored arrows on the
+left-growing side, and panning instead of scrolling — are in
+`docs/adr/0001-svg-tree-widget-semantics.md`. Keyboard pan/zoom, a `?` help
+overlay, `g` go-to and unified Escape semantics are deliberately not built.
 
 ## Where the data comes from
 
