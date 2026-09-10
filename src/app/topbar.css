@@ -9,16 +9,21 @@
   background: var(--surface);
 }
 
+/* Lato Light at open tracking is how stdlib.io sets its own chrome. Borrowing
+   the treatment is deliberate; borrowing the mark is not — there is no logo
+   here, and the name stays "graphify" first. */
 .wordmark {
-  font-weight: 600;
-  font-size: var(--fs-3);
+  font-weight: 300;
+  font-size: 17px;
   color: var(--ink);
   text-decoration: none;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
 }
 
+/* stdlib's orange, used the way stdlib uses it: one small deliberate accent. */
 .wordmark-dot {
-  color: var(--trace);
+  color: var(--spark);
+  padding: 0 1px;
 }
 
 .search-trigger {

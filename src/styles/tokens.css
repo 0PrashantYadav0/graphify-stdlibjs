@@ -1,23 +1,42 @@
+/*
+ * Palette and type tokens.
+ *
+ * The neutrals and the two accents are borrowed from stdlib.io's own served
+ * stylesheet (`--stdlib-orange`, `--stdlib-blue`, `--theme-background-color`,
+ * `--theme-text-color`) so this viewer reads as kin to stdlib. It is not an
+ * official stdlib product and deliberately borrows no logo or mark.
+ *
+ * --trace is the interactive accent (links, focus rings, primary buttons,
+ * graph edges): stdlib's blue, darkened in light mode so it clears 4.5:1 as
+ * body text on white. --spark is stdlib's orange, kept at stdlib's literal
+ * values and used sparingly, as stdlib uses it — never as text or a large fill.
+ *
+ * The six --tag-* colours are retuned so that every pair, and every tag
+ * against --trace, stays above dE2000 18 in both modes, and every one of them
+ * clears 4.5:1 on its surface.
+ */
+
 :root {
-  --ground: #f3f5f7;
+  --ground: #f4f5f6;
   --surface: #ffffff;
-  --ink: #172033;
-  --ink-muted: #5b6472;
-  --line: #d6dce3;
-  --trace: #1f4bff;
+  --ink: #15181a;
+  --ink-muted: #5c6166;
+  --line: #dcdee1;
+  --trace: #0080b0;
   --trace-ink: #ffffff;
-  --trace-soft: rgba(31, 75, 255, 0.1);
-  --scrim: rgba(16, 24, 32, 0.45);
+  --trace-soft: rgba(0, 128, 176, 0.1);
+  --spark: #e99f36;
+  --scrim: rgba(20, 22, 24, 0.45);
   --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.25);
 
-  --tag-js: #c98a00;
-  --tag-c: #2f6fd6;
-  --tag-f: #9a3e8f;
-  --tag-wasm: #0e8c7a;
-  --tag-native: #5a6b7b;
-  --tag-cli: #2e8b57;
+  --tag-js: #8a7412;
+  --tag-c: #3a53d0;
+  --tag-f: #a33189;
+  --tag-wasm: #0d7266;
+  --tag-native: #71716e;
+  --tag-cli: #3a8630;
 
-  --font-ui: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-ui: 'Lato', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --fs-1: 12px;
   --fs-2: 13px;
@@ -30,15 +49,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --ground: #101820;
-    --surface: #18232e;
-    --ink: #e7ecf2;
-    --ink-muted: #9aa5b4;
-    --line: #2b3947;
-    --trace: #6b8cff;
-    --trace-ink: #0b1020;
-    --trace-soft: rgba(107, 140, 255, 0.16);
+    --ground: #1a1c1e;
+    --surface: #222426;
+    --ink: #f5f7f7;
+    --ink-muted: #a2a7a9;
+    --line: #34383b;
+    --trace: #00aeef;
+    --trace-ink: #10161a;
+    --trace-soft: rgba(0, 174, 239, 0.16);
+    --spark: #f0ad3e;
     --scrim: rgba(0, 0, 0, 0.6);
     --shadow-sheet: 0 16px 48px rgba(0, 0, 0, 0.6);
+
+    --tag-js: #cdc964;
+    --tag-c: #8b9bf5;
+    --tag-f: #e07ac8;
+    --tag-wasm: #35c6bd;
+    --tag-native: #a9a8a4;
+    --tag-cli: #5cbf62;
   }
 }
