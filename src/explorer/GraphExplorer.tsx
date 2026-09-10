@@ -98,6 +98,7 @@ export function GraphExplorer({ graph, path }: Props) {
           onToggle={onToggle}
           onOpen={onOpen}
           getTagMask={(n) => graph.tags[n.index]}
+          label="package tree"
           onLayout={onLayout}
         />
       </GraphCanvas>
