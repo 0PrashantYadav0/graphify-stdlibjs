@@ -26,6 +26,78 @@ describe('extractRequires', () => {
     const src = `var a = require( '@stdlib/x/y' );\nvar b = require("@stdlib/z");\nrequire('@stdlib/x/y');\nrequire('./local');`;
     expect(extractRequires(src)).toEqual(['x/y', 'z']);
   });
+
+  it('ignores requires inside a JSDoc @example block', () => {
+    const src = [
+      '/**',
+      '* @example',
+      "* var d = require( '@stdlib/doc' );",
+      '*/',
+      "var r = require( '@stdlib/real' );",
+    ].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('ignores requires inside a block comment and a line comment', () => {
+    const src = [
+      '/*',
+      "var b = require( '@stdlib/block' );",
+      '*/',
+      "// var l = require( '@stdlib/line' );",
+      "var r = require( '@stdlib/real' ); // require( '@stdlib/trailing' )",
+    ].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('ignores requires inside string and template literals', () => {
+    const src = [
+      `var s = "require( '@stdlib/single' )";`,
+      `var d = 'require( "@stdlib/double" )';`,
+      'var t = `require( \'@stdlib/tmpl\' )`;',
+      "var r = require( '@stdlib/real' );",
+    ].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('does not treat a // or /* inside a string as a comment opener', () => {
+    const src = [
+      `var url = 'http://example.com';`,
+      `var glob = "/*";`,
+      "var r = require( '@stdlib/real' );",
+    ].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('does not treat a /* inside a regex literal as a comment opener', () => {
+    const src = ['var RE = /\\/\\*/;', "var r = require( '@stdlib/real' );"].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('ignores a require written inside a regex literal', () => {
+    const src = ["var RE = /require\\(\\s*'@stdlib\\/fake'\\s*\\)/;", "var r = require( '@stdlib/real' );"].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('reads division as division, not as the start of a regex literal', () => {
+    // `a / b / c` would swallow the rest of the line if `/` were read as a regex.
+    const src = ["var ratio = a / b / c;", "var r = require( '@stdlib/real' );"].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('handles escaped quotes without ending the string early', () => {
+    const src = [`var s = 'it\\'s require( "@stdlib/fake" ) here';`, "var r = require( '@stdlib/real' );"].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
+
+  it('reads code inside a template substitution', () => {
+    const src = ['var s = `x ${ require( "@stdlib/inner" ) } y require( "@stdlib/text" )`;'].join('\n');
+    expect(extractRequires(src)).toEqual(['inner']);
+  });
+
+  it('ignores an unterminated block comment rather than reading past it', () => {
+    const src = ["var r = require( '@stdlib/real' );", '/* trailing', "require( '@stdlib/fake' );"].join('\n');
+    expect(extractRequires(src)).toEqual(['real']);
+  });
 });
 
 describe('resolveSpec', () => {
@@ -66,6 +138,12 @@ describe('scanAll', () => {
   });
   it('drops native deps that are not packages', () => {
     expect([...byId.get('math/base/special/lnf')!.native]).toEqual([]);
+  });
+  it('counts only the real require in a file full of documented ones', () => {
+    // lnf/lib/index.js names five resolvable packages; four sit in an
+    // @example block, a block comment, a line comment, a string and a
+    // template. Only math/base/napi/binary is actually required.
+    expect([...byId.get('math/base/special/lnf')!.runtime]).toEqual(['math/base/napi/binary']);
   });
   it('includes native deps from confs with no task field', () => {
     expect([...byId.get('math/base/napi/binary')!.native]).toEqual(['math/base/special/lnf']);
