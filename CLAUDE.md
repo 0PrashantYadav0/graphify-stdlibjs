@@ -10,8 +10,14 @@ For vocabulary (package, namespace, variant, family, edge kinds, tags), see
 An unofficial, third-party viewer for `stdlib-js/stdlib`. It is not
 affiliated with, endorsed by, or sponsored by the stdlib project. Never edit
 copy, branding, or metadata in a way that would make the project read as an
-official stdlib product — keep the `graphify · stdlib` wordmark and the
-unofficial disclaimer (`NOTICE`, footer copy) intact.
+official stdlib product — keep the `graphify · stdlib` wordmark
+(`src/app/TopBar.tsx`) intact.
+
+The unofficial/not-affiliated disclaimer currently lives **only** in
+`NOTICE`. The app's own footer (`src/home/Home.tsx`) has no such wording
+today — it shows package stats and a "Made by" credit, nothing more. Adding
+disclaimer copy to the UI is tracked separately ([#9](https://github.com/0PrashantYadav0/graphify-stdlibjs/issues/9));
+don't assume it already exists there.
 
 Licensed Apache-2.0, matching stdlib. `NOTICE` records how `public/data/graph.json`
 is derived from a stdlib checkout and disclaims affiliation.

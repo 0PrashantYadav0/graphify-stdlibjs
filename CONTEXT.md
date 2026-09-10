@@ -71,15 +71,14 @@ dtype prefix in one namespace and just part of the stem in another; only the
 sibling counts within a given namespace disambiguate it.
 
 **Edge kind**:
-One of three distinct dependency relationships between packages, kept
-separate rather than merged into one generic "depends on": **runtime** (`A`
-calls `require('@stdlib/B')` under its own `lib/` — `A` cannot execute
-without `B`), **dev** (the same call, but only under `test/`, `benchmark/`,
-or `examples/` — `A` needs `B` to be tested or benchmarked, not to run), and
-**native** (`A` names `B` as a build dependency in its `manifest.json`, the
-C/Fortran add-on build description — a compile-time relationship, unrelated
-to any `require()` call). A single pair of packages can be connected by more
-than one edge kind at once.
+One of three distinct dependency relationships between two packages, kept
+separate rather than merged into one generic "depends on": **runtime** — `A`
+cannot execute without `B`; **dev** — `A` needs `B` only to be tested or
+benchmarked, never to run; **native** — a compile-time relationship between
+the two packages' native (C/Fortran) add-on builds, independent of either
+package's JavaScript. A single pair of packages can be connected by more
+than one edge kind at once, and the three are never collapsed into each
+other.
 
 **Tag**:
 A per-package marker describing what a package physically contains or
