@@ -73,8 +73,9 @@ sibling counts within a given namespace disambiguate it.
 **Edge kind**:
 One of three distinct dependency relationships between two packages, kept
 separate rather than merged into one generic "depends on": **runtime** — `A`
-cannot execute without `B`; **dev** — `A` needs `B` only to be tested or
-benchmarked, never to run; **native** — a compile-time relationship between
+cannot execute without `B`; **dev** — `A` needs `B` only to be tested,
+benchmarked, or demonstrated in an example, never to run; **native** — a
+compile-time relationship between
 the two packages' native (C/Fortran) add-on builds, independent of either
 package's JavaScript. A single pair of packages can be connected by more
 than one edge kind at once, and the three are never collapsed into each
