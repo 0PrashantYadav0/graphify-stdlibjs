@@ -74,7 +74,7 @@
   grid-area: copy;
   align-self: center;
   max-width: 34rem;
-  padding: 48px 20px 48px 64px;
+  padding: 48px 20px 48px clamp(40px, 5vw, 64px);
 }
 
 .hero-title {
@@ -94,6 +94,7 @@
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 14px;
 }
@@ -130,12 +131,15 @@
   color: var(--ink-muted);
 }
 
+/* Two columns: the graph's figures on the left, who made it and what it is
+   not on the right, mirroring the top bar's wordmark-left, search-right
+   arrangement. */
 .home-foot {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 14px 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px 40px;
+  padding: 16px 20px;
   border-top: 1px solid var(--line);
   background: var(--surface);
   font-size: var(--fs-2);
@@ -146,24 +150,66 @@
   margin: 0;
 }
 
-/* Full-width third line so the disclaimer never gets squeezed onto the same
-   row as the stats. stdlib's terms ask that nothing imply affiliation, so this
-   stays visible rather than shrinking away. */
+.home-stats {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+
+/* The figure carries the ink; the label stays muted so the four items scan
+   as numbers first. JetBrains Mono is loaded at 400 and 500 only. */
+.home-stats b {
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.home-about {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+
+/* stdlib's terms ask that nothing imply affiliation, so this stays visible
+   rather than shrinking away. Capped so it wraps to two lines under the
+   credit instead of dictating the footer's width. */
 .home-disclaimer {
-  flex-basis: 100%;
-  order: 3;
+  max-width: 40ch;
   font-size: var(--fs-1);
 }
 
 /* Narrow viewports stack: art on top, copy underneath. Same arrangement the
-   old absolute-positioned rules produced, expressed in the grid. */
-@media (max-width: 719px) {
+   old absolute-positioned rules produced, expressed in the grid. Below 900px
+   two columns leave each side under 450px — the lead wraps to four lines and
+   the ring's labels drop under 8px — so the page stacks earlier than it once
+   did (719px) and the footer follows suit at the same width. */
+@media (max-width: 899px) {
   .hero {
     grid-template-columns: minmax(0, 1fr);
     grid-template-rows: minmax(0, 1fr) auto;
     grid-template-areas: 'art' 'copy';
   }
 
-  .constellation { padding: 8px 16px 0; }
-  .hero-copy { max-width: none; padding: 20px 16px 28px; }
+  .constellation { padding: 8px 20px 0; }
+  .hero-copy { max-width: none; padding: 20px 20px 28px; }
+
+  .home-foot {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .home-about { text-align: left; }
+  .home-disclaimer { max-width: none; }
+}
+
+/* Phones: the four facts wrap raggedly at this width (one, two, one), so
+   they go one per line instead. */
+@media (max-width: 479px) {
+  .home-stats {
+    flex-direction: column;
+    gap: 2px;
+  }
 }
