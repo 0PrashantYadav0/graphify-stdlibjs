@@ -9,7 +9,7 @@ const FULL_SHA = /^[0-9a-f]{40}$/;
 export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }) {
   const runtime = countEdges(graph);
   const namespaces = graph.children(-1).length;
-  const source = FULL_SHA.test(graph.source) ? `Built from stdlib commit ${graph.source.slice(0, 7)}.` : 'Built from a local stdlib checkout.';
+  const sha = FULL_SHA.test(graph.source) ? graph.source : null;
   return (
     <section className="home">
       <div className="hero">
@@ -26,18 +26,36 @@ export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }
         </div>
       </div>
       <footer className="home-foot">
-        <p className="home-stats mono">
-          {fmt.format(graph.n)} packages. {fmt.format(runtime)} runtime {runtime === 1 ? 'link' : 'links'} across {namespaces} namespaces. {source}
-        </p>
-        <p className="home-credit">
-          Made by <a href={`https://github.com/${CREATOR}`} target="_blank" rel="noreferrer">{CREATOR}</a>
-        </p>
-        <p className="home-disclaimer">
-          An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the stdlib project.
-        </p>
+        {/* One fact per item, the figure set off from its label, the way the
+            focus view's `.module-facts` already reads. The build source sits
+            last: it is the provenance for the three figures before it. */}
+        <ul className="home-stats mono" aria-label="Graph summary">
+          <li><b>{fmt.format(graph.n)}</b> {plural(graph.n, 'package')}</li>
+          <li><b>{fmt.format(runtime)}</b> runtime {plural(runtime, 'link')}</li>
+          <li><b>{fmt.format(namespaces)}</b> {plural(namespaces, 'namespace')}</li>
+          <li>
+            {sha ? (
+              <>Built from stdlib commit <a href={`https://github.com/stdlib-js/stdlib/commit/${sha}`} target="_blank" rel="noreferrer">{sha.slice(0, 7)}</a></>
+            ) : (
+              'Built from a local stdlib checkout'
+            )}
+          </li>
+        </ul>
+        <div className="home-about">
+          <p className="home-credit">
+            Made by <a href={`https://github.com/${CREATOR}`} target="_blank" rel="noreferrer">{CREATOR}</a>
+          </p>
+          <p className="home-disclaimer">
+            An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the stdlib project.
+          </p>
+        </div>
       </footer>
     </section>
   );
+}
+
+function plural(n: number, word: string): string {
+  return n === 1 ? word : `${word}s`;
 }
 
 function countEdges(graph: Graph): number {
