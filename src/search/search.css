@@ -32,8 +32,10 @@
    while it is open, so a ring around it says nothing. It still marks focus
    the way the app does, as a 2px --trace edge -- drawn along the bottom
    rather than as an outline, which .palette's overflow: hidden would clip to
-   the same edge anyway (and base.css, imported last, would win over a plain
-   `outline: none` at this specificity). */
+   the same edge anyway. Replacing base.css's global ring takes the class and
+   the pseudo-class together: `.palette-input:focus-visible` out-specifies its
+   bare `:focus-visible`, where a plain `.palette-input` would tie and lose on
+   order. See docs/adr/0003-global-focus-ring-wins-the-cascade.md. */
 .palette-input:focus-visible {
   outline: none;
   border-bottom-color: var(--trace);

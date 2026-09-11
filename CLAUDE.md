@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 22 files, 143 tests, must stay green
+npm test                                 # Vitest — 23 files, 148 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -87,6 +87,22 @@ rather than `role="application"` on the canvas, mirrored arrows on the
 left-growing side, and panning instead of scrolling — are in
 `docs/adr/0001-svg-tree-widget-semantics.md`. Keyboard pan/zoom, a `?` help
 overlay, `g` go-to and unified Escape semantics are deliberately not built.
+
+`src/styles/base.css` is imported **after** `App` in `src/main.tsx`, so it
+enters the document after every component stylesheet and wins an
+equal-specificity tie. That is deliberate: its global
+`:focus-visible { outline: 2px solid var(--trace) }` at (0,1,0) cannot be
+switched off by a component writing `.thing { outline: none }` at the same
+specificity, which is the one-liner that silently deletes a focus ring.
+Components therefore **add** to the global ring rather than replace it — a
+focused graph node shows both its own 3px stroke and the outer outline, and
+that outer ring is the only focus mark on a selected node, whose box is
+already filled with `--trace`. To genuinely replace the ring a rule must
+out-specify `:focus-visible` — a class *and* the pseudo-class, as
+`.palette-input:focus-visible` (0,2,0) does — and supply its own indicator.
+`src/styles/cascade.test.ts` pins the import order and that specificity rule;
+`docs/adr/0003-global-focus-ring-wins-the-cascade.md` records what was
+measured in the browser, including why reordering was rejected.
 
 ## Where the data comes from
 

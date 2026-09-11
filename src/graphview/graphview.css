@@ -46,13 +46,15 @@
   stroke-width: 2;
 }
 
-/* `outline: none` here does not win: base.css is imported after every
-   component stylesheet, so its `:focus-visible` ring (same specificity)
-   paints around the <g> as well as the 3px stroke below. The double ring is
-   stronger than either alone and is left as-is on purpose. */
+/* A focused node carries two rings: the 3px stroke below, and base.css's
+   global `:focus-visible` outline around the whole <g>. Both are needed --
+   `.gnode.is-selected .gnode-box` fills with --trace and strokes with
+   --trace, so on a selected node the stroke is invisible against its own
+   fill and the outer ring is the only focus indicator there is. Do not add
+   `outline: none` here; see
+   docs/adr/0003-global-focus-ring-wins-the-cascade.md. */
 .gnode {
   cursor: pointer;
-  outline: none;
 }
 
 .gnode-centre {
