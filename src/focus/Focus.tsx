@@ -24,7 +24,7 @@ export function Focus({ graph, id, edges }: Props) {
 
   if (index < 0 || !n) {
     return (
-      <section className="focus-missing">
+      <section className="focus-missing app-note">
         <p>
           No package named <span className="mono">{id}</span>. <a href="#/explore">Browse from the top</a> or search with ⌘K.
         </p>

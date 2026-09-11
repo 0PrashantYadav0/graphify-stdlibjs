@@ -5,11 +5,6 @@
   flex-direction: column;
 }
 
-.focus-missing {
-  padding: 40px 20px;
-  max-width: 60ch;
-}
-
 .module-card {
   display: flex;
   justify-content: space-between;
@@ -23,10 +18,12 @@
   min-width: 0;
 }
 
+/* The mono path line above the content, same size as the explorer's
+   breadcrumb -- both are the "where am I" line and read as one thing. */
 .focus-back {
   display: inline-block;
   margin-bottom: 6px;
-  font-size: var(--fs-1);
+  font-size: var(--fs-2);
   color: var(--ink-muted);
   text-decoration: none;
 }
@@ -66,11 +63,14 @@
   font-size: var(--fs-2);
 }
 
+/* No overflow: hidden here -- it clipped the focus ring off every button in
+   the group, which made the toggle the one control a keyboard user could
+   not see they were on. The end buttons round themselves to the inside of
+   the group's border instead. */
 .edge-toggle {
   display: inline-flex;
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  overflow: hidden;
 }
 
 .edge-toggle button {
@@ -82,8 +82,20 @@
   color: var(--ink-muted);
 }
 
+.edge-toggle button:first-child {
+  border-radius: calc(var(--radius) - 1px) 0 0 calc(var(--radius) - 1px);
+}
+
+.edge-toggle button:last-child {
+  border-radius: 0 calc(var(--radius) - 1px) calc(var(--radius) - 1px) 0;
+}
+
 .edge-toggle button + button {
   border-left: 1px solid var(--line);
+}
+
+.edge-toggle button:not(.is-on):hover {
+  color: var(--ink);
 }
 
 .edge-toggle button.is-on {
@@ -96,6 +108,16 @@
   gap: 16px;
   margin: 0;
   font-size: var(--fs-2);
+}
+
+/* Head-bar actions, like the explorer's "Open <pkg>": quiet at rest,
+   underlined on hover. Prose links elsewhere keep their underline. */
+.module-links a {
+  text-decoration: none;
+}
+
+.module-links a:hover {
+  text-decoration: underline;
 }
 
 .focus-canvas {
