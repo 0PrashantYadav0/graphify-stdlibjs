@@ -8,12 +8,13 @@ Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces i
 
 - `#/` — landing page
 - `#/explore` and `#/explore/<path>` — the package graph, expanded to `<path>`
-- `#/module/<id>` — one package's dependency graph (`?edges=runtime,dev,native` to include dev or C edges)
+- `#/module/<id>` — one package's dependency graph (`?edges=runtime,dev,native` to include dev or native edges)
 
 ## Run
 
     npm install
     npm run extract -- --stdlib ../stdlib   # regenerate public/data/graph.json from a stdlib checkout
+                                             # (add --allow-dirty to proceed despite uncommitted changes)
     npm run dev                              # http://localhost:5173
 
 `public/data/graph.json` is committed, so `npm run dev` works without a stdlib checkout.
@@ -25,13 +26,20 @@ Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces i
 - `npm test` — unit tests (Vitest)
 - `npm run build` — typecheck + production build into `dist/`
 - `npm run preview` — serve `dist/`
-- `npm run extract` — rebuild the graph file (`--stdlib <path>`, `--out <file>`)
+- `npm run extract` — rebuild the graph file (`--stdlib <path>`, `--out <file>`,
+  `--allow-dirty` to proceed when the stdlib checkout has uncommitted changes)
 - `node e2e/smoke.mjs` — optional Playwright smoke run against `npm run preview` (needs a globally installed playwright)
 
 ## How it works
 
-The extractor scans every `package.json` under `lib/node_modules/@stdlib`, reads `require('@stdlib/…')` calls in `lib/` (runtime edges) and in `test/`, `benchmark/`, `examples/` (dev edges), and `manifest.json` build dependencies (C edges). It writes one JSON file with sorted package ids, a tag bitmask per package, and three CSR adjacency lists. The app loads that file once; hierarchy is answered by binary search over the sorted ids, dependents by a reverse CSR built at load, and search by a scored scan over ~6k ids.
+The extractor scans every `package.json` under `lib/node_modules/@stdlib`, reads `require('@stdlib/…')` calls in `lib/` (runtime edges) and in `test/`, `benchmark/`, `examples/` (dev edges), and `manifest.json` build dependencies (native edges). It writes one JSON file with sorted package ids, a tag bitmask per package, and three CSR adjacency lists. The app loads that file once; hierarchy is answered by binary search over the sorted ids, dependents by a reverse CSR built at load, and search by a scored scan over ~6k ids.
 
 The explorer folds sibling names using stdlib's naming convention: a dtype prefix (`d`, `s`, `dnan`, `snan`, `z`, `c`, `g`, …), an operation stem (`sum`, `variance`, …) and an algorithm suffix (`kbn`, `pw`, `ors`, …). The parse is sibling-aware — each name takes the stem shared by the most siblings — so `dsumors` is read as `d + sum + ors`, not `ds + um + ors`. Layout is a d3 tidy tree; everything else is plain SVG.
 
 Tags: `js` JavaScript implementation · `c` C implementation · `f` Fortran · `wasm` WebAssembly build · `native` JS bridge to the native add-on · `cli` command-line interface.
+
+## License
+
+Apache-2.0 — see [`LICENSE`](LICENSE). See [`NOTICE`](NOTICE) for the
+disclaimer of stdlib affiliation and how `public/data/graph.json` is
+derived from a stdlib checkout.
