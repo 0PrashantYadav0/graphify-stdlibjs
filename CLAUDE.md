@@ -13,13 +13,13 @@ copy, branding, or metadata in a way that would make the project read as an
 official stdlib product — keep the `graphify · stdlib` wordmark
 (`src/app/TopBar.tsx`) intact.
 
-The unofficial/not-affiliated disclaimer lives in three places and all three
+The unofficial/not-affiliated disclaimer lives in four places and all four
 have to stay in sync: `NOTICE`, the `README.md` blockquote under the title,
-and the app footer (`.home-disclaimer` in `src/home/Home.tsx`, asserted by
-`src/home/Home.test.tsx`). Don't remove or soften any of them — stdlib
-publishes no brand policy, and its terms of service ban implying
-affiliation, so this wording is the mitigation that makes the visual kinship
-legitimate.
+the app footer (`.home-disclaimer` in `src/home/Home.tsx`, asserted by
+`src/home/Home.test.tsx`), and the `<meta name="description">` in
+`index.html`. Don't remove or soften any of them — stdlib publishes no brand
+policy, and its terms of service ban implying affiliation, so this wording
+is the mitigation that makes the visual kinship legitimate.
 
 The palette in `src/styles/tokens.css` deliberately echoes stdlib.io's own
 served CSS: `--trace` is stdlib's blue (darkened in light mode to `#00759f`,
@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 21 files, 135 tests, must stay green
+npm test                                 # Vitest — 22 files, 143 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -110,10 +110,16 @@ search by a scored scan over the ~6k ids (`src/graph/search.ts`).
 
 `public/data/graph.json` (about 1.2 MB uncompressed) is **committed**, so
 `npm run dev` and `npm test` work without a stdlib checkout present. Only
-regenerate it deliberately — running `npm run extract` will silently produce
-a diff against whatever stdlib checkout happens to be at `../stdlib`, which
-may not match the committed `source` field (the stdlib commit SHA the current
-file was built from).
+regenerate it deliberately — `npm run extract` refuses to run (exit 1,
+nothing written) when `lib/node_modules/@stdlib` in the target checkout has
+uncommitted or untracked changes, since that would bake work-in-progress
+into `graph.json` while stamping it with a commit SHA that no longer
+reproduces it (a non-git checkout skips this check entirely and records
+`source` as `"unknown"`). Pass `--allow-dirty` to proceed anyway; the
+written file then also carries `sourceDirty: true` and a `dirtyFileCount`.
+The guard only checks for dirtiness, not which commit you're at — a clean
+checkout at a different commit than the one recorded in the committed
+`source` field is not blocked.
 
 ## Known gotchas
 
