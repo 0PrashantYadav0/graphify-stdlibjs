@@ -49,6 +49,9 @@
   text-decoration: underline;
 }
 
+/* Tighter vertically at phone width, but the 20px gutter stays: the topbar,
+   module card and legend all keep theirs, and this bar's left edge should
+   line up with the wordmark above it. */
 @media (max-width: 719px) {
-  .graph-explorer-head { padding: 8px 12px; }
+  .graph-explorer-head { padding: 8px 20px; }
 }
