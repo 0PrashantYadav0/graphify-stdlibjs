@@ -16,9 +16,9 @@
       name="description"
       content="An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the stdlib project."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- The two faces above the fold. Fonts always fetch in CORS mode, so preloads need crossorigin. -->
+    <link rel="preload" href="./fonts/lato-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="./fonts/jetbrains-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <div id="root"></div>
