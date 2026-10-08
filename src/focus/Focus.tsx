@@ -3,7 +3,6 @@ import type { Graph } from '../graph/Graph';
 import { EDGE_KINDS, type EdgeKind } from '../graph/types';
 import { formatRoute, navigate } from '../app/router';
 import { TagPills } from '../ui/TagPills';
-import { neighbourhood } from './neighbourhood';
 import { FocusGraph } from './FocusGraph';
 import './focus.css';
 
@@ -18,7 +17,12 @@ const FULL_SHA = /^[0-9a-f]{40}$/;
 
 export function Focus({ graph, id, edges }: Props) {
   const index = graph.indexOf(id);
-  const n = useMemo(() => (index >= 0 ? neighbourhood(graph, index, edges) : null), [graph, index, edges]);
+  const n = useMemo(() => {
+    if (index < 0) return null;
+    const requires = graph.neighbours(index, { kinds: edges, dir: 'requires' });
+    const requiredBy = graph.neighbours(index, { kinds: edges, dir: 'requiredBy' });
+    return { requires, requiredBy, connected: new Set([...requires, ...requiredBy]).size };
+  }, [graph, index, edges]);
   const ref = FULL_SHA.test(graph.source) ? graph.source : 'develop';
   const github = `https://github.com/stdlib-js/stdlib/tree/${ref}/lib/node_modules/@stdlib/`;
 

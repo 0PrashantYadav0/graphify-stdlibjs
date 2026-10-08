@@ -27,7 +27,7 @@ export function highlightRange(id: string, query: string): [number, number] | nu
   return at < 0 ? null : [at, at + q.length];
 }
 
-export function createSearch(ids: string[]): (query: string, limit?: number) => SearchHit[] {
+export function createSearch(ids: readonly string[]): (query: string, limit?: number) => SearchHit[] {
   const lower = ids.map((s) => s.toLowerCase());
   return (query, limit = 12) => {
     const q = query.trim().toLowerCase();

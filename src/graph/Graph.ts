@@ -1,6 +1,31 @@
-import type { Csr, EdgeKind, GraphFile } from './types';
+import { Tag } from './tags';
+import { EDGE_KINDS, type Csr, type EdgeKind, type GraphFile } from './types';
 
-export function lowerBound(arr: string[], key: string): number {
+export type Dir = 'requires' | 'requiredBy';
+
+export interface EdgeQuery {
+  kinds: readonly EdgeKind[];
+  dir: Dir;
+}
+
+/**
+ * Every package reached from one start package through the queried edges, each listed
+ * once at its shortest distance. Arrays are indexed by package and sized `n`.
+ */
+export interface Web {
+  /** Reached packages, nearest first and ascending by index within a distance; the start is excluded. */
+  order: Int32Array;
+  /** Steps from the start: 0 for the start itself, -1 when not reached. */
+  depth: Int32Array;
+  /** The package one step nearer the start on the shortest chain (lowest index on a tie); -1 for the start and the unreached. */
+  via: Int32Array;
+  size: number;
+  maxDepth: number;
+  /** The shortest chain start … j, or [] when j is not reached. */
+  chain(j: number): number[];
+}
+
+export function lowerBound(arr: readonly string[], key: string): number {
   let lo = 0;
   let hi = arr.length;
   while (lo < hi) {
@@ -27,14 +52,15 @@ export function reverseCsr(csr: Csr, n: number): Csr {
 
 export class Graph {
   readonly n: number;
-  readonly ids: string[];
-  readonly desc: string[];
-  readonly tags: number[];
+  readonly ids: readonly string[];
+  readonly desc: readonly string[];
+  readonly tags: readonly number[];
   readonly source: string;
   private readonly index = new Map<string, number>();
   private readonly fwd: Record<EdgeKind, Csr>;
   private readonly rev: Record<EdgeKind, Csr>;
   private readonly rootChildren: number[] = [];
+  private readonly sizes = new Map<string, number>();
 
   constructor(file: GraphFile) {
     this.ids = file.ids;
@@ -90,15 +116,89 @@ export class Graph {
     return j - start;
   }
 
-  private row(csr: Csr, i: number): number[] {
-    return csr.targets.slice(csr.offsets[i], csr.offsets[i + 1]);
+  /** Packages that have packages nested under them; bookkeeping folders are not packages. */
+  namespaceCount(): number {
+    return this.tags.filter((t) => (t & Tag.NAMESPACE) !== 0 && (t & Tag.FOLDER) === 0).length;
   }
 
-  deps(i: number, kind: EdgeKind): number[] {
-    return this.row(this.fwd[kind], i);
+  edgeCount(kind: EdgeKind): number {
+    return this.fwd[kind].targets.length;
   }
 
-  dependents(i: number, kind: EdgeKind): number[] {
-    return this.row(this.rev[kind], i);
+  /** Direct neighbours across the queried kinds: sorted, each once. */
+  neighbours(i: number, q: EdgeQuery): number[] {
+    const out = new Set<number>();
+    for (const { offsets, targets } of this.csrs(q)) {
+      for (let k = offsets[i]; k < offsets[i + 1]; k++) out.add(targets[k]);
+    }
+    return [...out].sort((a, b) => a - b);
+  }
+
+  degree(i: number, q: EdgeQuery): number {
+    const csrs = this.csrs(q);
+    if (csrs.length === 1) return csrs[0].offsets[i + 1] - csrs[0].offsets[i];
+    return csrs.length === 0 ? 0 : this.neighbours(i, q).length;
+  }
+
+  web(start: number, q: EdgeQuery): Web {
+    const csrs = this.csrs(q);
+    const depth = new Int32Array(this.n).fill(-1);
+    const via = new Int32Array(this.n).fill(-1);
+    const order = new Int32Array(this.n);
+    depth[start] = 0;
+    let size = 0;
+    let maxDepth = 0;
+    // Level by level, each level ascending, so the first package to reach j -- its via --
+    // is the lowest-index one at the nearer distance: the same chain on every render.
+    let level = [start];
+    while (level.length > 0) {
+      const next: number[] = [];
+      for (const u of level) {
+        for (const { offsets, targets } of csrs) {
+          for (let k = offsets[u]; k < offsets[u + 1]; k++) {
+            const v = targets[k];
+            if (depth[v] >= 0) continue;
+            depth[v] = depth[u] + 1;
+            via[v] = u;
+            next.push(v);
+          }
+        }
+      }
+      next.sort((a, b) => a - b);
+      order.set(next, size);
+      size += next.length;
+      if (next.length > 0) maxDepth++;
+      level = next;
+    }
+    return {
+      order: order.subarray(0, size),
+      depth,
+      via,
+      size,
+      maxDepth,
+      chain(j) {
+        if (depth[j] < 0) return [];
+        const out = [j];
+        while (via[out[0]] >= 0) out.unshift(via[out[0]]);
+        return out;
+      },
+    };
+  }
+
+  /** web(i, q).size, remembered: a view can ask for every row it renders. */
+  webSize(i: number, q: EdgeQuery): number {
+    const key = `${this.kindsOf(q).join(',')}|${q.dir}|${i}`;
+    let size = this.sizes.get(key);
+    if (size === undefined) this.sizes.set(key, (size = this.web(i, q).size));
+    return size;
+  }
+
+  private kindsOf(q: EdgeQuery): EdgeKind[] {
+    return EDGE_KINDS.filter((k) => q.kinds.includes(k));
+  }
+
+  private csrs(q: EdgeQuery): Csr[] {
+    const side = q.dir === 'requires' ? this.fwd : this.rev;
+    return this.kindsOf(q).map((k) => side[k]);
   }
 }
