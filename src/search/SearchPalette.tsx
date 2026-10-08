@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Graph } from '../graph/Graph';
 import { createSearch, highlightRange } from '../graph/search';
 import { hasTag } from '../graph/tags';
-import { navigate } from '../app/router';
+import { navigate, routes } from '../app/router';
 import { TagPills } from '../ui/TagPills';
 import './search.css';
 
@@ -44,8 +44,8 @@ export function SearchPalette({ graph, onClose }: Props) {
 
   const open = (index: number) => {
     const id = graph.ids[index];
-    if (hasTag(graph.tags[index], 'FOLDER')) navigate({ kind: 'explore', path: id });
-    else navigate({ kind: 'module', id, edges: ['runtime'] });
+    if (hasTag(graph.tags[index], 'FOLDER')) navigate(routes.explore(id));
+    else navigate(routes.module(id));
     onClose();
   };
 

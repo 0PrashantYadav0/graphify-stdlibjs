@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 25 files, 186 tests, must stay green
+npm test                                 # Vitest — 25 files, 191 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -77,7 +77,12 @@ tool.
   descriptions, opened from anywhere.
 
 `src/app/router.ts` parses/formats the hash-based routes above; that file is
-the source of truth if this list and the code ever disagree.
+the source of truth if this list and the code ever disagree. Build routes
+only with `routes.home()`, `routes.explore(path)` and `routes.module(id, {
+edges, view, dir })`: the router owns the defaults and canonical form (edge
+kinds de-duplicated in `EDGE_KINDS` order, none meaning `runtime`), and
+leaves defaults out of the URL. `view` (`direct|webbed`) and `dir`
+(`out|in`) are parsed now, ready for the Webbed and Impact views.
 
 The explorer and the focus view share `src/graphview/TreeLayer.tsx`, which
 renders each graph as an ARIA `tree`: one tab stop per tree (roving
