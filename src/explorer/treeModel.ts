@@ -1,4 +1,5 @@
 import type { Graph } from '../graph/Graph';
+import { describePackage } from '../graphview/describe';
 import { clusterSiblings } from '../graph/clusterSiblings';
 import { groupVariants } from '../graph/variants';
 
@@ -14,6 +15,10 @@ export interface TreeNode {
   /** Packages reachable below this node (0 for a leaf package). */
   count: number;
   hasChildren: boolean;
+  /** Tag bitmask (package nodes). */
+  mask?: number;
+  /** Full id and description, for the tooltip (package nodes). */
+  title?: string;
 }
 
 export const ROOT: TreeNode = { key: 'root', kind: 'root', label: 'stdlib', index: -1, count: 0, hasChildren: true };
@@ -25,9 +30,26 @@ interface Member {
   sublabel: string;
 }
 
+/** The tree key of the package node for `id`. Group nodes (operation, variant, cluster) have their own. */
+export const packageKey = (id: string): string => `p:${id}`;
+
+/** The package a tree key names, or -1 for the root or a group node. */
+export function indexOfKey(graph: Graph, key: string | null): number {
+  return key?.startsWith('p:') ? graph.indexOf(key.slice(2)) : -1;
+}
+
 export function packageNode(graph: Graph, index: number, sublabel = ''): TreeNode {
   const count = graph.descendantCount(index);
-  const node: TreeNode = { key: `p:${graph.ids[index]}`, kind: 'package', label: graph.name(index), index, count, hasChildren: count > 0 };
+  const node: TreeNode = {
+    key: packageKey(graph.ids[index]),
+    kind: 'package',
+    label: graph.name(index),
+    index,
+    count,
+    hasChildren: count > 0,
+    mask: graph.tags[index],
+    title: describePackage(graph, index, graph.ids[index]),
+  };
   if (sublabel) node.sublabel = sublabel;
   return node;
 }
@@ -115,7 +137,7 @@ export class TreeModel {
 
   /** Find the package child named `name` under `parent`, recording the group nodes passed through. */
   private locate(parent: TreeNode, name: string): { node: TreeNode; via: TreeNode[] } | null {
-    const wanted = `p:${parent.kind === 'root' ? '' : `${this.graph.ids[parent.index]}/`}${name}`;
+    const wanted = packageKey(`${parent.kind === 'root' ? '' : `${this.graph.ids[parent.index]}/`}${name}`);
     for (const child of this.children(parent)) {
       if (child.kind === 'package') {
         if (child.key === wanted) return { node: child, via: [] };

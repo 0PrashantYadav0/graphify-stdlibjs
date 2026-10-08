@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Graph } from '../graph/Graph';
-import { hasTag } from '../graph/tags';
 import { formatRoute, navigate, routes } from '../app/router';
 import { GraphCanvas, type Point } from '../graphview/GraphCanvas';
 import { TreeLayer } from '../graphview/TreeLayer';
 import type { LayoutResult } from '../graphview/layout';
-import { describePackage } from '../graphview/describe';
+import { useExpansion } from '../graphview/useExpansion';
+import { routeForPackage } from '../app/open';
 import { Breadcrumb } from './Breadcrumb';
-import { ROOT, TreeModel, type TreeNode } from './treeModel';
+import { indexOfKey, ROOT, TreeModel, type TreeNode } from './treeModel';
 import './graph-explorer.css';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 export function GraphExplorer({ graph, path }: Props) {
   const model = useMemo(() => new TreeModel(graph), [graph]);
   const route = useMemo(() => model.expandPathFor(path), [model, path]);
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(route.expanded));
+  const { expanded, toggle, merge } = useExpansion(route.expanded);
   const [selected, setSelected] = useState<string | null>(route.selected);
   const [focusKey, setFocusKey] = useState<string | null>(route.selected ?? route.expanded[route.expanded.length - 1]);
   const [focusMode, setFocusMode] = useState<'fit' | 'point'>('fit');
@@ -35,11 +35,11 @@ export function GraphExplorer({ graph, path }: Props) {
       lastNavigated.current = null;
       return;
     }
-    setExpanded((prev) => new Set([...prev, ...route.expanded]));
+    merge(route.expanded);
     setSelected(route.selected);
     setFocusKey(route.selected ?? route.expanded[route.expanded.length - 1]);
     setFocusMode('fit');
-  }, [route, path]);
+  }, [route, path, merge]);
 
   const childrenOf = useCallback((n: TreeNode) => model.children(n), [model]);
   const onLayout = useCallback((r: LayoutResult<TreeNode>) => {
@@ -49,13 +49,7 @@ export function GraphExplorer({ graph, path }: Props) {
   const pathKeys = useMemo(() => new Set(route.expanded.concat(route.selected ? [route.selected] : [])), [route]);
 
   const onToggle = (n: TreeNode) => {
-    const opening = !expanded.has(n.key);
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      if (opening) next.add(n.key);
-      else next.delete(n.key);
-      return next;
-    });
+    const opening = toggle(n.key);
     if (opening) {
       setFocusKey(n.key);
       setFocusMode('point');
@@ -74,7 +68,7 @@ export function GraphExplorer({ graph, path }: Props) {
   };
 
   const onOpen = (n: TreeNode) => {
-    if (n.index >= 0) navigate(routes.module(graph.ids[n.index]));
+    if (n.index >= 0) navigate(routeForPackage(graph, n.index));
   };
 
   // Esc from the tree leaves it for the breadcrumb's last link (#41).
@@ -85,7 +79,8 @@ export function GraphExplorer({ graph, path }: Props) {
     crumbs[crumbs.length - 1]?.focus();
   };
 
-  const selectedNode = selected && selected.startsWith('p:') ? graph.indexOf(selected.slice(2)) : -1;
+  const selectedNode = indexOfKey(graph, selected);
+  const openSelected = selectedNode >= 0 ? routeForPackage(graph, selectedNode) : null;
   const focusKeyPoint = focusKey ? positions.get(focusKey) ?? null : null;
   const focusPoint = focusMode === 'point' ? focusKeyPoint : null;
   const fitRange = focusMode === 'fit' && focusKeyPoint ? { x0: 0, x1: focusKeyPoint.x, y: focusKeyPoint.y } : null;
@@ -100,8 +95,9 @@ export function GraphExplorer({ graph, path }: Props) {
             No package at <span className="mono">{path}</span>; showing {route.found ? <>the closest match <span className="mono">{route.found}</span></> : 'the top'}.
           </p>
         )}
-        {selectedNode >= 0 && !hasTag(graph.tags[selectedNode], 'FOLDER') && (
-          <a className="graph-open" href={formatRoute(routes.module(graph.ids[selectedNode]))}>
+        {/* the explorer already shows a folder, so "Open" is only offered for a module view */}
+        {openSelected?.kind === 'module' && (
+          <a className="graph-open" href={formatRoute(openSelected)}>
             Open {graph.name(selectedNode)}
           </a>
         )}
@@ -116,10 +112,8 @@ export function GraphExplorer({ graph, path }: Props) {
           pathKeys={pathKeys}
           onToggle={onToggle}
           onOpen={onOpen}
-          getTagMask={(n) => graph.tags[n.index]}
           label="package tree"
           onLayout={onLayout}
-          describe={(n) => describePackage(graph, n.index, n.label)}
         />
       </GraphCanvas>
     </section>

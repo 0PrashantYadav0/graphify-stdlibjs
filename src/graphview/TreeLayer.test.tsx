@@ -6,13 +6,12 @@ import { TreeLayer, type GraphNodeLike } from './TreeLayer';
 import { CanvasViewportProvider, type Point } from './viewport';
 
 interface N extends GraphNodeLike { kids: N[] }
-const leaf = (key: string, label = key): N => ({ key, label, hasChildren: false, count: 0, index: 1, kind: 'package', kids: [] });
+const leaf = (key: string, label = key): N => ({ key, label, hasChildren: false, count: 0, index: 1, kind: 'package', mask: Tag.JS | Tag.C, kids: [] });
 const root: N = { key: 'root', label: 'stdlib', hasChildren: true, count: 3, index: -1, kind: 'root', kids: [
   { key: 'p:math', label: 'math', hasChildren: true, count: 2, index: -1, kind: 'package', kids: [leaf('p:math/lnf', 'lnf'), leaf('p:math/logf', 'logf')] },
   leaf('p:noop', 'noop'),
 ] };
 const childrenOf = (n: N) => n.kids;
-const tags = () => Tag.JS | Tag.C;
 
 afterEach(cleanup);
 
@@ -30,7 +29,7 @@ function mount(expanded: Set<string>, opts: MountOpts = {}) {
   render(
     <svg>
       <CanvasViewportProvider value={{ ensureVisible }}>
-        <TreeLayer root={root} childrenOf={childrenOf} expanded={expanded} direction={direction} selectedKey={selectedKey} pathKeys={new Set(['root', 'p:math'])} onToggle={onToggle} onOpen={onOpen} getTagMask={tags} label="package tree" hideRoot={hideRoot} />
+        <TreeLayer root={root} childrenOf={childrenOf} expanded={expanded} direction={direction} selectedKey={selectedKey} pathKeys={new Set(['root', 'p:math'])} onToggle={onToggle} onOpen={onOpen} label="package tree" hideRoot={hideRoot} />
       </CanvasViewportProvider>
     </svg>,
   );
