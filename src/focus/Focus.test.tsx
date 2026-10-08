@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { graphFromIds } from '../graph/testUtils';
 import { routes } from '../app/router';
 import { Focus } from './Focus';
@@ -14,15 +14,18 @@ const g = graphFromIds(
   },
 );
 
-afterEach(cleanup);
+const facts = () => [...document.querySelectorAll('.module-facts li')].map((li) => li.textContent);
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 describe('Focus', () => {
   it('shows the module card, counts, and both sides as graph nodes', () => {
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('math/base/special/logf');
-    expect(screen.getByText('Requires 1')).toBeTruthy();
-    expect(screen.getByText('Required by 1')).toBeTruthy();
-    expect(screen.getByText('Connected 2')).toBeTruthy();
+    expect(facts()).toEqual(['Requires 1 / 1 in web', 'Required by 1 / 1 in web']);
     expect(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ })).toBeTruthy();
     expect(screen.getByRole('treeitem', { name: /^math\/base\/special\/log10f$/ })).toBeTruthy();
     // the centre is a treeitem like any other node -- role="img" would have been an
@@ -73,8 +76,7 @@ describe('Focus', () => {
     expect(window.location.hash).toBe('#/module/math/base/special/logf?edges=runtime,dev');
     cleanup();
     render(<Focus graph={g} route={routes.module('math/base/special/logf', { edges: ['runtime', 'dev', 'native'] })} />);
-    expect(screen.getByText('Requires 2')).toBeTruthy();
-    expect(screen.getByText('Required by 2')).toBeTruthy();
+    expect(facts()).toEqual(['Requires 2 / 2 in web', 'Required by 2 / 2 in web']);
     expect(screen.getByRole('treeitem', { name: /^assert\/is-nan$/ })).toBeTruthy();
   });
 
@@ -101,5 +103,38 @@ describe('Focus', () => {
   it('explains an unknown id', () => {
     render(<Focus graph={g} route={routes.module('nope/nothing')} />);
     expect(screen.getByText(/No package named/).textContent).toContain('nope/nothing');
+  });
+
+  it('suggests what a mistyped id probably meant', () => {
+    render(<Focus graph={g} route={routes.module('math/base/special/lgf')} />);
+    expect(screen.getByText(/Did you mean/).textContent).toContain('math/base/special/logf');
+    expect(screen.getByRole('link', { name: 'math/base/special/logf' }).getAttribute('href')).toBe('#/module/math/base/special/logf');
+  });
+
+  it('explains each edge kind on its toggle', () => {
+    render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
+    expect(screen.getByRole('button', { name: 'native' }).getAttribute('title')).toBe('native: needed to build the C/Fortran add-on');
+    expect(screen.getByRole('button', { name: 'dev' }).getAttribute('title')).toBe('dev: needed only by tests, benchmarks or examples');
+  });
+
+  it('copies the require statement and says so', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('navigator', { ...navigator, clipboard: { writeText } });
+    render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
+    await act(async () => fireEvent.click(screen.getByRole('button', { name: 'Copy require' })));
+    expect(writeText).toHaveBeenCalledWith("const logf = require( '@stdlib/math/base/special/logf' );");
+    expect(screen.getByRole('button', { name: 'Copied' })).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe('Copied the require statement');
+    expect(screen.getByRole('link', { name: 'Docs' }).getAttribute('href')).toBe('https://stdlib.io/docs/api/latest/@stdlib/math/base/special/logf');
+  });
+
+  it('hides the snippet and docs for a bookkeeping folder, and offers Browse inside only for a namespace', () => {
+    render(<Focus graph={g} route={routes.module('math/base')} />);
+    expect(screen.queryByRole('button', { name: 'Copy require' })).toBeNull();
+    expect(screen.queryByRole('link', { name: 'Docs' })).toBeNull();
+    expect(screen.getByRole('link', { name: 'Browse inside' })).toBeTruthy();
+    cleanup();
+    render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
+    expect(screen.queryByRole('link', { name: 'Browse inside' })).toBeNull();
   });
 });
