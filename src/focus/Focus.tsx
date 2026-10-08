@@ -6,6 +6,7 @@ import { hasTag } from '../graph/tags';
 import { MOD_KEY } from '../search/useShortcut';
 import { TagPills } from '../ui/TagPills';
 import { Webbed } from '../webbed/Webbed';
+import { impactSet } from '../webbed/impact';
 import { didYouMean, requireSnippet } from './card';
 import { FocusGraph } from './FocusGraph';
 import './focus.css';
@@ -32,7 +33,8 @@ export function Focus({ graph, route }: Props) {
     const requiredBy = graph.neighbours(index, { kinds: edges, dir: 'requiredBy' });
     const webOut = graph.webSize(index, { kinds: edges, dir: 'requires' });
     const webIn = graph.webSize(index, { kinds: edges, dir: 'requiredBy' });
-    return { requires, requiredBy, webOut, webIn };
+    const impact = impactSet(graph, index);
+    return { requires, requiredBy, webOut, webIn, impact };
   }, [graph, index, edges]);
   const ref = graph.provenance.commit ?? 'develop';
   const github = `https://github.com/stdlib-js/stdlib/tree/${ref}/lib/node_modules/@stdlib/`;
@@ -118,6 +120,14 @@ export function Focus({ graph, route }: Props) {
               </>
             )}
             <a href={github + id} target="_blank" rel="noreferrer">Open on GitHub</a>
+            {!folder && (
+              <a
+                href={formatRoute(routes.module(id, { view: 'webbed', dir: 'in', edges: EDGE_KINDS }))}
+                title={`If it changes: ${fmt.format(n.impact.runtime.length)} runtime · ${fmt.format(n.impact.rebuild.length)} rebuild · ${fmt.format(n.impact.tests.length)} tests`}
+              >
+                Impact <span className="module-web">{fmt.format(n.impact.runtime.length + n.impact.rebuild.length + n.impact.tests.length)}</span>
+              </a>
+            )}
             {hasTag(graph.tags[index], 'NAMESPACE') && <a href={formatRoute(routes.explore(id))}>Browse inside</a>}
           </p>
           <span className="sr-only" role="status">{copied ? 'Copied the require statement' : ''}</span>

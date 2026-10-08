@@ -243,3 +243,64 @@
 .web-actions a:hover {
   text-decoration: underline;
 }
+
+/* Impact, on "What requires it": buckets, a namespace roll-up, Copy list. */
+.web-impact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  font-size: var(--fs-2);
+}
+
+.web-impact-label {
+  color: var(--ink-muted);
+}
+
+.web-impact .edge-toggle b {
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+.web-rollup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-1);
+}
+
+.web-rollup button,
+.web-copy {
+  padding: 2px 0;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.web-rollup button {
+  color: var(--ink);
+}
+
+.web-rollup button span {
+  color: var(--ink-muted);
+}
+
+.web-rollup button:hover,
+.web-rollup button.is-on {
+  border-bottom-color: var(--trace);
+}
+
+.web-copy {
+  margin-left: auto;
+  color: var(--trace);
+}
+
+.web-copy:hover {
+  text-decoration: underline;
+}

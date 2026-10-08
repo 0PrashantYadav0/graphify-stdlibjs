@@ -2,12 +2,20 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEve
 import type { EdgeQuery, Graph } from '../graph/Graph';
 import { formatRoute, navigate, routes, type ModuleRoute } from '../app/router';
 import { TagPills } from '../ui/TagPills';
+import { BUCKETS, impactList, impactSet, type Bucket } from './impact';
 import { webColumns, webLinks } from './webModel';
 import './webbed.css';
 
 const PAGE = 200;
 const fmt = new Intl.NumberFormat('en-US');
 const steps = (d: number) => (d === 1 ? '1 step' : `${d} steps`);
+const BUCKET_LABEL: Record<Bucket, string> = { runtime: 'Runtime', rebuild: 'Rebuild', tests: 'Tests' };
+const BUCKET_TITLE: Record<Bucket, string> = {
+  runtime: 'reach it through runtime edges: their behaviour can change',
+  rebuild: 'reach it through native edges: their add-on must be rebuilt',
+  tests: 'use it, or something above, only in tests, benchmarks or examples: their tests may break',
+};
+const ROLLUP = 8;
 
 /** Every package in the web, once, in columns by distance. Keyboard model: ADR-0004. */
 export function Webbed({ graph, index, route }: { graph: Graph; index: number; route: ModuleRoute }) {
@@ -19,15 +27,49 @@ export function Webbed({ graph, index, route }: { graph: Graph; index: number; r
   const [pages, setPages] = useState<Record<number, number>>({});
   const strata = useRef<HTMLDivElement>(null);
   const keyboard = useRef(false);
+  // Impact rides on "What requires it": the three buckets, a namespace roll-up, Copy list.
+  const impact = useMemo(() => (dir === 'in' ? impactSet(graph, index) : null), [graph, index, dir]);
+  const [bucket, setBucket] = useState<Bucket | null>(null);
+  const [ns, setNs] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // A new centre, direction or set of edge kinds is a new web: start over.
   useEffect(() => {
     setSel(null);
     setPages({});
+    setBucket(null);
+    setNs(null);
   }, [web]);
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(t);
+  }, [copied]);
+
+  const affected = useMemo(() => (impact ? (bucket ? impact[bucket] : BUCKETS.flatMap((b) => impact[b])) : []), [impact, bucket]);
+  const inBucket = useMemo(() => (bucket ? new Set(affected) : null), [bucket, affected]);
+  const rollup = useMemo(() => {
+    const count = new Map<string, number>();
+    for (const j of affected) {
+      const top = graph.ids[j].split('/')[0];
+      count.set(top, (count.get(top) ?? 0) + 1);
+    }
+    return [...count].sort((a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1)).slice(0, ROLLUP);
+  }, [affected, graph]);
 
   const needle = filter.trim().toLowerCase();
-  const cols = useMemo(() => webColumns(web, index, needle ? (j) => graph.ids[j].includes(needle) : undefined), [web, index, needle, graph]);
+  const filtering = !!(needle || inBucket || ns);
+  const cols = useMemo(
+    () =>
+      webColumns(
+        web,
+        index,
+        filtering
+          ? (j) => (!needle || graph.ids[j].includes(needle)) && (!inBucket || inBucket.has(j)) && (!ns || graph.ids[j].startsWith(`${ns}/`))
+          : undefined,
+      ),
+    [web, index, filtering, needle, inBucket, ns, graph],
+  );
   const links = useMemo(() => (sel === null ? null : webLinks(graph, web, q, sel)), [graph, web, q, sel]);
   const chain = useMemo(() => (sel === null ? [] : sel === index ? [index] : web.chain(sel)), [web, sel, index]);
   const onChain = useMemo(() => new Set(chain), [chain]);
@@ -103,8 +145,36 @@ export function Webbed({ graph, index, route }: { graph: Graph; index: number; r
         <input className="web-filter mono" type="search" placeholder="Filter…" aria-label="Filter the web by id" value={filter} onChange={(e) => setFilter(e.target.value)} />
       </div>
 
+      {impact && (
+        <div className="web-impact">
+          <span className="web-impact-label">If it changes</span>
+          <div className="edge-toggle" role="group" aria-label="impact buckets">
+            {BUCKETS.map((b) => (
+              <button key={b} type="button" title={BUCKET_TITLE[b]} aria-pressed={bucket === b} className={bucket === b ? 'is-on' : ''} onClick={() => setBucket(bucket === b ? null : b)}>
+                {BUCKET_LABEL[b]} <b className="mono">{fmt.format(impact[b].length)}</b>
+              </button>
+            ))}
+          </div>
+          {rollup.length > 0 && (
+            <div className="web-rollup" role="group" aria-label="by namespace">
+              {rollup.map(([name, count]) => (
+                <button key={name} type="button" aria-pressed={ns === name} className={ns === name ? 'is-on' : ''} onClick={() => setNs(ns === name ? null : name)}>
+                  {name} <span>{fmt.format(count)}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          <button type="button" className="web-copy" onClick={() => navigator.clipboard?.writeText(impactList(graph, impact)).then(() => setCopied(true), () => {})}>
+            {copied ? 'Copied' : 'Copy list'}
+          </button>
+          <span className="sr-only" role="status">{copied ? 'Copied the affected packages' : ''}</span>
+        </div>
+      )}
+
       <div className="web-strata" ref={strata}>
         {cols.map((col, c) => {
+          // A filter can empty a column; hide it rather than show "0 of 2,322" (the keyboard skips it too).
+          if (filtering && c > 0 && col.rows.length === 0) return null;
           const linked = linkedIn(col.rows).length;
           const label = c === 0 ? 'this package' : `${fmt.format(col.total)} ${col.total === 1 ? 'package' : 'packages'}, ${steps(c)} ${word}`;
           const selPos = sel === null ? -1 : col.rows.indexOf(sel);
@@ -117,7 +187,7 @@ export function Webbed({ graph, index, route }: { graph: Graph; index: number; r
                   'this package'
                 ) : (
                   <>
-                    <b className="mono">{needle ? `${fmt.format(col.rows.length)} of ${fmt.format(col.total)}` : fmt.format(col.total)}</b>
+                    <b className="mono">{filtering ? `${fmt.format(col.rows.length)} of ${fmt.format(col.total)}` : fmt.format(col.total)}</b>
                     {c === 1 ? 'direct' : `${steps(c)} ${word}`}
                     {linked > 0 && <span className="web-linked">{linked} linked</span>}
                   </>
