@@ -56,10 +56,8 @@ const pkgs = scanAll(root);
 console.timeEnd('scan');
 
 const file = buildGraphFile(pkgs, source);
-// sourceDirty/dirtyFileCount are appended to the written JSON without
-// changing the GraphFile shape/type in src/graph — they're additive fields
-// that existing consumers (e.g. src/home/Home.tsx, which only reads
-// graph.source and tests it against a 40-char SHA regex) simply ignore.
+// sourceDirty/dirtyFileCount are optional GraphFile fields, written only for a
+// dirty build; the app reads them as graph.provenance (src/graph/graphFile.ts).
 const output = sourceDirty ? { ...file, sourceDirty: true, dirtyFileCount } : file;
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, JSON.stringify(output));

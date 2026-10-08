@@ -34,6 +34,13 @@ describe('Home', () => {
     expect(screen.getByRole('link', { name: 'fd5bfb4' }).getAttribute('href')).toBe(`https://github.com/stdlib-js/stdlib/commit/${sha}`);
   });
 
+  it('says when the build carried uncommitted changes', () => {
+    const sha = 'fd5bfb49cac0b48b994a163effb4c3a1cc14d81d';
+    const file = buildGraphFile([{ id: 'array/base/a', desc: '', tags: Tag.JS, runtime: [], dev: [], native: [] }], sha);
+    render(<Home graph={new Graph({ ...file, sourceDirty: true, dirtyFileCount: 2 })} onSearch={() => {}} />);
+    expect(screen.getByText(/Built from/).textContent).toBe('Built from stdlib commit fd5bfb4 plus uncommitted changes');
+  });
+
   it('states in the footer that the project is unofficial and unaffiliated', () => {
     render(<Home graph={g} onSearch={() => {}} />);
     expect(screen.getByText(/unofficial, third-party project/i).textContent).toBe(
