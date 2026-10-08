@@ -73,8 +73,8 @@ tool.
 - **focus** (`#/module/<id>`, optional `?edges=runtime,dev,native`) — one
   package's neighbourhood: what it requires (left) and what requires it
   (right), split by edge kind.
-- **search palette** (⌘K / Ctrl+K) — a scored scan over package ids and
-  descriptions, opened from anywhere.
+- **search palette** (⌘K / Ctrl+K) — a scored scan over package ids (not
+  descriptions), opened from anywhere.
 
 `src/app/router.ts` parses/formats the hash-based routes above; that file is
 the source of truth if this list and the code ever disagree. Build routes

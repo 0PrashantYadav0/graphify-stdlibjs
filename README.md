@@ -6,11 +6,23 @@
 
 Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces into their packages, and see naming families like `sum` folded into variants (`float64 (d)`, `float32 (s)`, `float64 with NaN (dnan)`, …) and their algorithms (`dsum`, `dsumkbn`, `dsumpw`). Press ⌘K / Ctrl+K to search for a package and see what it requires (left) and what requires it (right).
 
+## Features
+
+- **Browse the hierarchy.** Start at `stdlib` and expand namespaces down to single packages. Naming families fold into variants and algorithms, so a namespace with hundreds of packages reads as a few dozen rows.
+- **See a package's direct dependencies.** `#/module/<id>` shows what it requires on the left and what requires it on the right, grouped by folder, along with its description, tags, and links to GitHub and the explorer.
+- **Choose edge kinds.** Toggle `runtime` (`lib/`), `dev` (tests, benchmarks, examples) and `C` (native build dependencies). Your choice stays on as you hop from package to package.
+- **Read tags at a glance.** `js`, `c`, `f`, `wasm`, `native`, `cli` show what a package actually ships.
+- **Search.** ⌘K / Ctrl+K from anywhere: a ranked match on package ids. A folder opens in the explorer, a package opens its own view.
+- **Use the keyboard.** Each graph is an ARIA tree: Up/Down to move, Left/Right to collapse or expand, Home/End, Enter to open.
+- **Share deep links.** Every view is a URL (`#/explore/math/base`, `#/module/ndarray/ctor?edges=runtime,native`), so you can paste one into an issue or a PR review.
+
 ## Routes
 
 - `#/` — landing page
 - `#/explore` and `#/explore/<path>` — the package graph, expanded to `<path>`
 - `#/module/<id>` — one package's dependency graph (`?edges=runtime,dev,native` to include dev or native edges)
+
+`public/data/graph.json` is regenerated from stdlib's `develop` branch every Monday by `.github/workflows/refresh-data.yml`, which opens a PR when the data changed.
 
 ## Run
 
@@ -30,6 +42,7 @@ The build uses relative asset URLs (`base: './'`), so `dist/` works at any sub-p
 - `npm test` — unit tests (Vitest)
 - `npm run build` — typecheck + production build into `dist/`
 - `npm run preview` — serve `dist/`
+- `npm run check:data` — validate `public/data/graph.json` the way the app loads it (CI runs this)
 - `npm run extract` — rebuild the graph file (`--stdlib <path>`, `--out <file>`,
   `--allow-dirty` to proceed when the stdlib checkout has uncommitted changes)
 - `node e2e/smoke.mjs` — optional Playwright smoke run against `npm run preview` (needs a globally installed playwright)
