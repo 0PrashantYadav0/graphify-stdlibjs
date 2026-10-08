@@ -3,6 +3,7 @@ import type { Graph } from '../graph/Graph';
 import { EDGE_KINDS, type EdgeKind } from '../graph/types';
 import { formatRoute, navigate, routes, type ModuleRoute } from '../app/router';
 import { TagPills } from '../ui/TagPills';
+import { Webbed } from '../webbed/Webbed';
 import { FocusGraph } from './FocusGraph';
 import './focus.css';
 
@@ -55,12 +56,21 @@ export function Focus({ graph, route }: Props) {
             <li>Required by {n.requiredBy.length}</li>
             <li>Connected {n.connected}</li>
           </ul>
-          <div className="edge-toggle" role="group" aria-label="edge kinds">
-            {EDGE_KINDS.map((kind) => (
-              <button key={kind} type="button" aria-pressed={edges.includes(kind)} className={edges.includes(kind) ? 'is-on' : ''} onClick={() => toggleKind(kind)}>
-                {KIND_LABEL[kind]}
-              </button>
-            ))}
+          <div className="module-controls">
+            <div className="edge-toggle" role="group" aria-label="view">
+              {(['direct', 'webbed'] as const).map((view) => (
+                <button key={view} type="button" aria-pressed={route.view === view} className={route.view === view ? 'is-on' : ''} onClick={() => navigate(routes.module(id, { ...route, view }))}>
+                  {view === 'direct' ? 'Direct' : 'Webbed'}
+                </button>
+              ))}
+            </div>
+            <div className="edge-toggle" role="group" aria-label="edge kinds">
+              {EDGE_KINDS.map((kind) => (
+                <button key={kind} type="button" aria-pressed={edges.includes(kind)} className={edges.includes(kind) ? 'is-on' : ''} onClick={() => toggleKind(kind)}>
+                  {KIND_LABEL[kind]}
+                </button>
+              ))}
+            </div>
           </div>
           <p className="module-links">
             <a href={github + id} target="_blank" rel="noreferrer">Open on GitHub</a>
@@ -68,7 +78,11 @@ export function Focus({ graph, route }: Props) {
           </p>
         </div>
       </header>
-      <FocusGraph graph={graph} index={index} edges={edges} requires={n.requires} requiredBy={n.requiredBy} />
+      {route.view === 'webbed' ? (
+        <Webbed key={index} graph={graph} index={index} route={route} />
+      ) : (
+        <FocusGraph graph={graph} index={index} edges={edges} requires={n.requires} requiredBy={n.requiredBy} />
+      )}
     </section>
   );
 }

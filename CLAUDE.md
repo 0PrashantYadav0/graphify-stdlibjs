@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 26 files, 194 tests, must stay green
+npm test                                 # Vitest — 28 files, 208 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -64,7 +64,7 @@ it. CI (`.github/workflows/`) runs test, typecheck, and build on a Node
 `e2e/smoke.mjs`, which needs a Playwright browser download and is a local-only
 tool.
 
-## The four surfaces
+## The surfaces
 
 - **home** (`#/`) — landing page.
 - **explorer** (`#/explore` and `#/explore/<path>`) — the full package tree,
@@ -73,6 +73,11 @@ tool.
 - **focus** (`#/module/<id>`, optional `?edges=runtime,dev,native`) — one
   package's neighbourhood: what it requires (left) and what requires it
   (right), split by edge kind.
+- **webbed** (`#/module/<id>?view=webbed`, plus `&dir=in` for "what requires
+  it") — the package's whole **web** (`CONTEXT.md`) as depth columns, every
+  package once, with a "Why it's here" chain for the selected row
+  (`src/webbed/`). It is a `listbox` per column, not a tree; the keyboard
+  model and why are in `docs/adr/0004-webbed-depth-columns-and-keyboard-model.md`.
 - **search palette** (⌘K / Ctrl+K) — a scored scan over package ids (not
   descriptions), opened from anywhere.
 

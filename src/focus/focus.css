@@ -103,6 +103,13 @@
   color: var(--trace-ink);
 }
 
+.module-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 10px;
+}
+
 .module-links {
   display: flex;
   gap: 16px;
@@ -131,6 +138,9 @@
   }
   .module-side {
     align-items: flex-start;
+  }
+  .module-controls {
+    justify-content: flex-start;
   }
   .module-facts {
     flex-wrap: wrap;
