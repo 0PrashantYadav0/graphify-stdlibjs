@@ -5,6 +5,7 @@ import type { EdgeKind } from '../graph/types';
 import { GraphCanvas } from '../graphview/GraphCanvas';
 import type { LayoutResult } from '../graphview/layout';
 import { TreeLayer, type GraphNodeLike } from '../graphview/TreeLayer';
+import { describePackage } from '../graphview/describe';
 import { buildSide, focusChildren, type FocusNode } from './focusModel';
 
 interface Props {
@@ -43,6 +44,7 @@ export function FocusGraph({ graph, index, edges, requires, requiredBy }: Props)
     if (n.index >= 0) navigate(routes.module(graph.ids[n.index], { edges }));
   };
   const mask = useCallback((n: GraphNodeLike) => (n.index >= 0 ? graph.tags[n.index] : 0), [graph]);
+  const describe = useCallback((n: FocusNode) => describePackage(graph, n.index, n.path || n.label), [graph]);
   const leftRoot = useMemo<FocusNode>(() => ({ ...centre, hasChildren: left.root.children.length > 0, count: left.root.count, children: left.root.children }), [centre, left]);
   const rightRoot = useMemo<FocusNode>(() => ({ ...centre, hasChildren: right.root.children.length > 0, count: right.root.count, children: right.root.children }), [centre, right]);
   const expandedWithCentre = useMemo(() => new Set([...expanded, 'centre']), [expanded]);
@@ -82,8 +84,8 @@ export function FocusGraph({ graph, index, edges, requires, requiredBy }: Props)
         {summary('requiredBy', requiredBy)}
       </div>
       <GraphCanvas focusPoint={null} fitRange={fitRange} minFitScale={MIN_READABLE_K} label="dependency graph" className="focus-canvas">
-        <TreeLayer root={leftRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="left" selectedKey={null} pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="requires" hideRoot onLayout={onLeftLayout} />
-        <TreeLayer root={rightRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="right" selectedKey="centre" pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="required by" onLayout={onRightLayout} />
+        <TreeLayer root={leftRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="left" selectedKey={null} pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="requires" hideRoot onLayout={onLeftLayout} describe={describe} />
+        <TreeLayer root={rightRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="right" selectedKey="centre" pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="required by" onLayout={onRightLayout} describe={describe} />
       </GraphCanvas>
     </div>
   );

@@ -29,4 +29,12 @@ describe('App loading', () => {
     expect(await screen.findByRole('heading', { level: 1 })).toBeTruthy();
     expect(fetch).toHaveBeenCalledTimes(2);
   });
+
+  it('sets the document title from the route', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(file))));
+    window.location.hash = '#/module/array/base/a';
+    render(<App />);
+    await screen.findByRole('heading', { level: 1 });
+    expect(document.title).toBe('array/base/a · graphify · stdlib');
+  });
 });
