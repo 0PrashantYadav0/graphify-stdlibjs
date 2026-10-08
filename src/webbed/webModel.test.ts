@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { Graph, type EdgeQuery } from '../graph/Graph';
+import type { GraphFile } from '../graph/types';
 import { graphFromIds } from '../graph/testUtils';
 import { webColumns, webLinks } from './webModel';
 
@@ -59,7 +60,7 @@ describe('webLinks', () => {
 });
 
 describe('webColumns over the committed graph', () => {
-  const real = new Graph(JSON.parse(readFileSync(new URL('../../public/data/graph.json', import.meta.url), 'utf8')));
+  const real = new Graph(JSON.parse(readFileSync(new URL('../../public/data/graph.json', import.meta.url), 'utf8')) as GraphFile);
   it.each(['ndarray/ctor', 'string/format'])('lists every package of %s once, in its depth column', (id) => {
     const i = real.indexOf(id);
     for (const q of [out, { ...out, dir: 'requiredBy' } as const]) {

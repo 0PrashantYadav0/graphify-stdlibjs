@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { select } from 'd3-selection';
-import { zoom, zoomIdentity, zoomTransform, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
+import { zoom, zoomIdentity, zoomTransform, type D3ZoomEvent, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
 import 'd3-transition';
 import { prefersReducedMotion } from './motion';
 import { fitTransform, type FitRange } from './fit';
@@ -47,8 +47,8 @@ export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, minFitScale 
     if (!svg) return;
     const z = zoom<SVGSVGElement, unknown>()
       .scaleExtent(SCALE_EXTENT)
-      .filter((e) => (!(e as MouseEvent).ctrlKey || e.type === 'wheel') && !(e as MouseEvent).button)
-      .on('zoom', (e) => setTransform(e.transform));
+      .filter((e: MouseEvent) => (!e.ctrlKey || e.type === 'wheel') && !e.button)
+      .on('zoom', (e: D3ZoomEvent<SVGSVGElement, unknown>) => setTransform(e.transform));
     select(svg).call(z);
     zoomRef.current = z;
     return () => {
@@ -67,9 +67,9 @@ export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, minFitScale 
     if (remember) lastTarget.current = target;
     try {
       if (animate && !prefersReducedMotion()) {
-        select(svg).transition().duration(PAN_MS).call(z.transform, target);
+        select(svg).transition().duration(PAN_MS).call((t) => z.transform(t, target));
       } else {
-        select(svg).call(z.transform, target);
+        select(svg).call((s) => z.transform(s, target));
       }
     } catch (err) {
       // jsdom's SVGSVGElement has no width/height baseVal, which d3-zoom's default extent reads
@@ -115,6 +115,7 @@ export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, minFitScale 
     if (focusPoint) panTo(focusPoint, transform.k, true);
     // Intentionally re-pan only when the focus point (or fitRange) changes, not on
     // every transform update -- otherwise a zoom/pan gesture would fight this effect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- deliberately keyed on the point's coordinates, not on transform (see above)
   }, [focusPoint?.x, focusPoint?.y, panTo, fitRange]);
 
   useEffect(() => {
@@ -124,6 +125,7 @@ export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, minFitScale 
     const { x, y, k } = fitTransform(fitRange, size(svg), { minK: minFitScale });
     apply(zoomIdentity.translate(x, y).scale(k), true);
     // Intentionally re-fit only when the range itself changes, not on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the range's numbers; a new object with the same numbers must not re-fit
   }, [fitRange?.x0, fitRange?.x1, fitRange?.x, fitRange?.y, fitRange?.y0, fitRange?.y1, minFitScale, apply]);
 
   const reset = () => {

@@ -22,7 +22,7 @@ function onCycles(graph: Graph, kind: EdgeKind): number {
 }
 
 try {
-  const graph = await Graph.load(async () => JSON.parse(fs.readFileSync(file, 'utf8')));
+  const graph = await Graph.load(() => Promise.resolve(JSON.parse(fs.readFileSync(file, 'utf8')) as unknown));
   const { commit, dirty, generatedAt } = graph.provenance;
   console.log(
     `${file} ok: ${graph.n} packages, runtime ${graph.edgeCount('runtime')}, dev ${graph.edgeCount('dev')}, native ${graph.edgeCount('native')}; ` +

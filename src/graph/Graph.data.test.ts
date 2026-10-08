@@ -30,7 +30,7 @@ describe('web over the committed graph', () => {
         const p = web.via[j];
         if (web.depth[p] !== web.depth[j] - 1) throw new Error(`${graph.ids[j]} sits ${web.depth[j]} out but its via is ${web.depth[p]} out`);
         const [from, to] = q.dir === 'requires' ? [p, j] : [j, p];
-        if (!hasEdge(q.kinds, from, to)) throw new Error(`no ${q.kinds} edge ${graph.ids[from]} -> ${graph.ids[to]}`);
+        if (!hasEdge(q.kinds, from, to)) throw new Error(`no ${q.kinds.join('+')} edge ${graph.ids[from]} -> ${graph.ids[to]}`);
       }
       if (web.size > 0 && web.chain(web.order[web.size - 1])[0] !== i) throw new Error(`${graph.ids[i]}: chain does not start at the package`);
     }
