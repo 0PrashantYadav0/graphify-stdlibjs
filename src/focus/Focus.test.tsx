@@ -145,4 +145,19 @@ describe('Focus', () => {
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
     expect(screen.queryByRole('link', { name: 'Browse inside' })).toBeNull();
   });
+
+  it('leaves a tree, or the Webbed columns, for the module card on Escape', () => {
+    render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
+    const node = screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ });
+    node.focus();
+    fireEvent.keyDown(node, { key: 'Escape' });
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: /explore math\/base\/special/ }));
+    cleanup();
+    render(<Focus graph={g} route={routes.module('math/base/special/logf', { view: 'webbed' })} />);
+    const row = screen.getAllByRole('option')[0];
+    row.focus();
+    fireEvent.keyDown(row, { key: 'Escape' });
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: /explore math\/base\/special/ }));
+  });
 });
+

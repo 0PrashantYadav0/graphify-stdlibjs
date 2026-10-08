@@ -8,6 +8,7 @@ import { TopBar } from './TopBar';
 import { useGraph } from './useGraph';
 import { titleFor, useRoute } from './router';
 import { Legend } from '../ui/Legend';
+import { ShortcutsSheet } from '../ui/ShortcutsSheet';
 import './app.css';
 
 export default function App() {
@@ -16,7 +17,10 @@ export default function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
-  useShortcut(openSearch);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const openHelp = useCallback(() => setHelpOpen(true), []);
+  const closeHelp = useCallback(() => setHelpOpen(false), []);
+  useShortcut(openSearch, searchOpen || helpOpen ? undefined : openHelp);
   useEffect(() => {
     document.title = titleFor(route);
   }, [route]);
@@ -36,10 +40,11 @@ export default function App() {
 
   return (
     <div className="app">
-      <TopBar onSearch={openSearch} />
+      <TopBar onSearch={openSearch} onHelp={openHelp} />
       <main className="app-main">{content}</main>
       {route.kind !== 'home' && <Legend />}
       {searchOpen && state.status === 'ready' && <SearchPalette graph={state.graph} onClose={closeSearch} />}
+      {helpOpen && <ShortcutsSheet onClose={closeHelp} />}
     </div>
   );
 }

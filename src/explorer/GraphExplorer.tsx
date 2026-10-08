@@ -77,13 +77,21 @@ export function GraphExplorer({ graph, path }: Props) {
     if (n.index >= 0) navigate(routes.module(graph.ids[n.index]));
   };
 
+  // Esc from the tree leaves it for the breadcrumb's last link (#41).
+  const onEscape = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key !== 'Escape' || !(e.target as Element).closest('[role="tree"]')) return;
+    e.preventDefault();
+    const crumbs = e.currentTarget.querySelectorAll<HTMLElement>('.breadcrumb a');
+    crumbs[crumbs.length - 1]?.focus();
+  };
+
   const selectedNode = selected && selected.startsWith('p:') ? graph.indexOf(selected.slice(2)) : -1;
   const focusKeyPoint = focusKey ? positions.get(focusKey) ?? null : null;
   const focusPoint = focusMode === 'point' ? focusKeyPoint : null;
   const fitRange = focusMode === 'fit' && focusKeyPoint ? { x0: 0, x1: focusKeyPoint.x, y: focusKeyPoint.y } : null;
 
   return (
-    <section className="graph-explorer">
+    <section className="graph-explorer" onKeyDown={onEscape}>
       <div className="graph-explorer-head">
         <Breadcrumb path={route.found} />
         {route.found !== path && (
