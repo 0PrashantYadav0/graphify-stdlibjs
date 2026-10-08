@@ -1,5 +1,6 @@
 import type { Graph } from '../graph/Graph';
 import { buildPathTree, type PathNode } from '../graph/pathTree';
+import { describePackage } from '../graphview/describe';
 import type { GraphNodeLike } from '../graphview/TreeLayer';
 
 export type Side = 'requires' | 'requiredBy';
@@ -9,12 +10,17 @@ export interface FocusNode extends GraphNodeLike {
   children: FocusNode[];
 }
 
+/** The key of the focused package itself, shared by both sides as their root. */
+export const CENTRE_KEY = 'centre';
+
 const COLLAPSE_ABOVE = 40;
 const COLLAPSE_DEEP_ABOVE = 200;
 
-function wrap(side: Side, n: PathNode): FocusNode {
-  const children = n.children.map((c) => wrap(side, c));
+function wrap(graph: Graph, side: Side, n: PathNode): FocusNode {
+  const children = n.children.map((c) => wrap(graph, side, c));
   return {
+    mask: n.index >= 0 ? graph.tags[n.index] : 0,
+    title: describePackage(graph, n.index, n.path || n.label),
     key: `${side}:${n.path}`,
     label: n.label,
     path: n.path,
@@ -41,7 +47,7 @@ function bySize(n: FocusNode): void {
 
 export function buildSide(graph: Graph, side: Side, indexes: number[]): { root: FocusNode; defaultExpanded: Set<string> } {
   const tree = buildPathTree(indexes.map((i) => graph.ids[i]), (id) => graph.indexOf(id));
-  const root = wrap(side, tree);
+  const root = wrap(graph, side, tree);
   if (root.count > COLLAPSE_ABOVE) bySize(root);
   const defaultExpanded = new Set<string>();
   // <= COLLAPSE_ABOVE: everything starts expanded. Above it, only the root and its
@@ -59,3 +65,8 @@ export function buildSide(graph: Graph, side: Side, indexes: number[]): { root: 
 }
 
 export const focusChildren = (n: FocusNode): FocusNode[] => n.children;
+
+/** The focused package, drawn at the meeting point of both sides; it opens nothing. */
+export function centreNode(graph: Graph, index: number): FocusNode {
+  return { key: CENTRE_KEY, label: graph.name(index), path: graph.ids[index], index, kind: 'centre', inert: true, mask: graph.tags[index], title: describePackage(graph, index, graph.ids[index]), hasChildren: false, count: 0, children: [] };
+}

@@ -11,7 +11,15 @@ export interface GraphNodeLike {
   count: number;
   index: number;
   kind: string;
+  /** Drawn but not interactive: no count, no click (the focus view's centre). */
+  inert?: boolean;
+  /** Tag bitmask for the pills; 0 or absent for a group. */
+  mask?: number;
+  /** Full text for the tooltip (the label may be truncated); defaults to the label. */
+  title?: string;
 }
+
+const NO_KEYS: ReadonlySet<string> = new Set();
 
 interface Props<T extends GraphNodeLike> {
   root: T;
@@ -19,16 +27,14 @@ interface Props<T extends GraphNodeLike> {
   expanded: Set<string>;
   direction: Direction;
   selectedKey: string | null;
-  pathKeys: Set<string>;
+  /** Nodes on the path to the selection, drawn with a highlighted link. */
+  pathKeys?: ReadonlySet<string>;
   onToggle: (n: T) => void;
   onOpen: (n: T) => void;
-  getTagMask: (n: T) => number;
   /** Accessible name of the tree widget this layer renders. */
   label: string;
   hideRoot?: boolean;
   onLayout?: (result: LayoutResult<T>) => void;
-  /** Full text for a node's tooltip (the label may be truncated): e.g. its id and description. */
-  describe?: (n: T) => string;
 }
 
 const CHAR_W = 7.8;
@@ -90,8 +96,8 @@ function toRows<T extends GraphNodeLike>(layout: LayoutResult<T>, rootKey: strin
   return rows;
 }
 
-export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded, direction, selectedKey, pathKeys, onToggle, onOpen, getTagMask, label, hideRoot = false, onLayout, describe }: Props<T>) {
-  const tooltip = (n: T) => describe?.(n) ?? n.label;
+export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded, direction, selectedKey, pathKeys = NO_KEYS, onToggle, onOpen, label, hideRoot = false, onLayout }: Props<T>) {
+  const tooltip = (n: T) => n.title ?? n.label;
   const layout = useMemo(() => layoutTree(root, childrenOf, (n) => expanded.has(n.key), direction), [root, childrenOf, expanded, direction]);
   const rows = useMemo(() => toRows(layout, root.key, hideRoot), [layout, root.key, hideRoot]);
   const treeRef = useRef<SVGGElement>(null);
@@ -122,7 +128,7 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
     el?.focus();
   }, []);
 
-  const isStatic = (n: T) => n.kind === 'centre';
+  const isStatic = (n: T) => n.inert === true;
   const activate = (n: T) => {
     if (isStatic(n)) return;
     if (n.hasChildren) onToggle(n);
@@ -181,7 +187,7 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
       </g>
       {rows.map((row, i) => {
         const n = row.node;
-        const mask = n.index >= 0 ? getTagMask(n) : 0;
+        const mask = n.mask ?? 0;
         const showCount = n.hasChildren && !isStatic(n);
         const rightText = showCount ? `${n.count} ${chevron}` : '';
         const reserved = showCount ? rightText.length * CHAR_W + PAD_X : pillsWidth(mask) + (mask ? PAD_X : 0);
