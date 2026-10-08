@@ -1,0 +1,245 @@
+/* Webbed: one column per step away from the package, every package once (ADR-0004).
+   Existing tokens only; the segmented controls reuse .edge-toggle from focus.css. */
+.web {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.web-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-2);
+}
+
+.web-summary {
+  margin: 0 auto 0 0;
+  color: var(--ink-muted);
+}
+
+.web-filter {
+  width: 240px;
+  max-width: 100%;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: var(--fs-2);
+}
+
+.web-strata {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow-x: auto;
+}
+
+.web-col {
+  flex: 0 0 240px;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--line);
+}
+
+.web-col.is-centre {
+  flex-basis: 200px;
+  background: var(--surface);
+}
+
+.web-head {
+  margin: 0;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-1);
+  font-weight: 400;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.web-head b {
+  margin-right: 4px;
+  font-size: var(--fs-2);
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.web-linked {
+  margin-left: 6px;
+  color: var(--trace);
+}
+
+.web-rows {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+/* Name, own-web size and pills on the first line; the namespace under them. */
+.web-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: baseline;
+  gap: 1px 8px;
+  padding: 5px 14px 5px 11px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+}
+
+.web-row:hover {
+  background: var(--trace-soft);
+}
+
+.web-name {
+  font-size: var(--fs-2);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.web-own {
+  font-size: var(--fs-1);
+  color: var(--ink-muted);
+}
+
+.web-row .pill {
+  font-size: 9px;
+  padding: 2px 3px;
+}
+
+.web-ns {
+  grid-column: 1 / -1;
+  font-size: var(--fs-1);
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Selection states. Dimmed rows change colour, never opacity, so their text
+   keeps its contrast: the name drops to --ink-muted and pills lose their tint. */
+.web-row.is-sel {
+  background: var(--trace);
+  border-left-color: var(--trace);
+  color: var(--trace-ink);
+}
+
+.web-row.is-sel .web-own,
+.web-row.is-sel .web-ns {
+  color: var(--trace-ink);
+}
+
+.web-row.is-sel .pill {
+  --pill: var(--trace-ink);
+  background: transparent;
+}
+
+.web-row.is-down {
+  background: var(--trace-soft);
+  border-left-color: var(--trace);
+}
+
+.web-row.is-up {
+  background: var(--surface);
+  border-left-color: var(--ink-muted);
+}
+
+.web-row.is-chain {
+  border-left-color: var(--trace);
+}
+
+.web-row.is-dim .web-name {
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+
+/* Outline-only pills wherever the row itself is tinted or dimmed: a pill's own
+   10% tint over --trace-soft drops js to 3.69:1 in light, outline-only holds 4.5. */
+.web-row:hover .pill,
+.web-row.is-down .pill,
+.web-row.is-dim .pill {
+  background: transparent;
+}
+
+/* A component may add to the global focus ring, not replace it (ADR-0003);
+   inset it so the column's overflow does not clip it. */
+.web-row:focus-visible {
+  outline-offset: -2px;
+}
+
+.web-more {
+  margin: 4px 14px 10px;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--trace);
+  font-size: var(--fs-1);
+  cursor: pointer;
+}
+
+.web-why {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  min-height: 46px;
+  padding: 10px 20px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
+  font-size: var(--fs-2);
+}
+
+.web-why-label {
+  color: var(--ink-muted);
+}
+
+.web-chain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.web-chain li + li::before {
+  content: '›';
+  margin: 0 6px 0 2px;
+  color: var(--ink-muted);
+}
+
+.web-chain li:last-child:not(.web-hint) {
+  font-weight: 700;
+  color: var(--trace);
+}
+
+.web-hint {
+  font-family: var(--font-ui);
+  color: var(--ink-muted);
+}
+
+.web-actions {
+  display: flex;
+  gap: 14px;
+  margin: 0 0 0 auto;
+}
+
+.web-actions a {
+  text-decoration: none;
+}
+
+.web-actions a:hover {
+  text-decoration: underline;
+}
