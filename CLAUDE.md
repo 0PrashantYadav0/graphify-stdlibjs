@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 25 files, 191 tests, must stay green
+npm test                                 # Vitest — 26 files, 194 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -145,6 +145,18 @@ written file then also carries `sourceDirty: true` and a `dirtyFileCount`.
 The guard only checks for dirtiness, not which commit you're at — a clean
 checkout at a different commit than the one recorded in the committed
 `source` field is not blocked.
+
+You rarely need to regenerate by hand: `.github/workflows/refresh-data.yml`
+does it every Monday at 06:00 UTC, and on demand (`workflow_dispatch`, with an
+optional stdlib `ref`). It makes a shallow sparse checkout of
+`stdlib-js/stdlib` (`develop` by default), runs `npm run extract`, and
+compares the result with the committed file using `scripts/extract/diff.ts`,
+ignoring `generatedAt`. When the data changed, it runs `check:data`, `npm
+test` and `npm run build`, then opens or updates a PR on the `data/refresh`
+branch, with a table of what changed. The PR is opened with `GITHUB_TOKEN`,
+so CI does not run on it; the refresh job's own checks stand in for CI. The
+manual path above still works and is what to use for a local or dirty
+checkout.
 
 ## Known gotchas
 
