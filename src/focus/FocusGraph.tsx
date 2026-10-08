@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Graph } from '../graph/Graph';
-import { navigate } from '../app/router';
+import { navigate, routes } from '../app/router';
+import type { EdgeKind } from '../graph/types';
 import { GraphCanvas } from '../graphview/GraphCanvas';
 import type { LayoutResult } from '../graphview/layout';
 import { TreeLayer, type GraphNodeLike } from '../graphview/TreeLayer';
@@ -9,11 +10,13 @@ import { buildSide, focusChildren, type FocusNode } from './focusModel';
 interface Props {
   graph: Graph;
   index: number;
+  /** Kept on every hop, so a neighbour opens with the same edge kinds switched on. */
+  edges: EdgeKind[];
   requires: number[];
   requiredBy: number[];
 }
 
-export function FocusGraph({ graph, index, requires, requiredBy }: Props) {
+export function FocusGraph({ graph, index, edges, requires, requiredBy }: Props) {
   const left = useMemo(() => buildSide(graph, 'requires', requires), [graph, requires]);
   const right = useMemo(() => buildSide(graph, 'requiredBy', requiredBy), [graph, requiredBy]);
   const centre = useMemo<FocusNode>(
@@ -33,7 +36,7 @@ export function FocusGraph({ graph, index, requires, requiredBy }: Props) {
       return next;
     });
   const open = (n: GraphNodeLike) => {
-    if (n.index >= 0) navigate({ kind: 'module', id: graph.ids[n.index], edges: ['runtime'] });
+    if (n.index >= 0) navigate(routes.module(graph.ids[n.index], { edges }));
   };
   const mask = useCallback((n: GraphNodeLike) => (n.index >= 0 ? graph.tags[n.index] : 0), [graph]);
   const leftRoot = useMemo<FocusNode>(() => ({ ...centre, hasChildren: left.root.children.length > 0, count: left.root.count, children: left.root.children }), [centre, left]);

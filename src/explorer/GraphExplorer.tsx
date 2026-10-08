@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Graph } from '../graph/Graph';
 import { hasTag } from '../graph/tags';
-import { formatRoute, navigate } from '../app/router';
+import { formatRoute, navigate, routes } from '../app/router';
 import { GraphCanvas, type Point } from '../graphview/GraphCanvas';
 import { TreeLayer } from '../graphview/TreeLayer';
 import type { LayoutResult } from '../graphview/layout';
@@ -63,13 +63,13 @@ export function GraphExplorer({ graph, path }: Props) {
       setSelected(n.key);
       if (opening) {
         lastNavigated.current = graph.ids[n.index];
-        navigate({ kind: 'explore', path: graph.ids[n.index] });
+        navigate(routes.explore(graph.ids[n.index]));
       }
     }
   };
 
   const onOpen = (n: TreeNode) => {
-    if (n.index >= 0) navigate({ kind: 'module', id: graph.ids[n.index], edges: ['runtime'] });
+    if (n.index >= 0) navigate(routes.module(graph.ids[n.index]));
   };
 
   const selectedNode = selected && selected.startsWith('p:') ? graph.indexOf(selected.slice(2)) : -1;
@@ -82,7 +82,7 @@ export function GraphExplorer({ graph, path }: Props) {
       <div className="graph-explorer-head">
         <Breadcrumb path={path} />
         {selectedNode >= 0 && !hasTag(graph.tags[selectedNode], 'FOLDER') && (
-          <a className="graph-open" href={formatRoute({ kind: 'module', id: graph.ids[selectedNode], edges: ['runtime'] })}>
+          <a className="graph-open" href={formatRoute(routes.module(graph.ids[selectedNode]))}>
             Open {graph.name(selectedNode)}
           </a>
         )}
