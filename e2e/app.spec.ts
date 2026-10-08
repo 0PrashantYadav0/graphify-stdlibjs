@@ -87,6 +87,9 @@ for (const [name, hash] of [
   ['impact', '#/module/ndarray/ctor?view=webbed&dir=in&edges=runtime,dev,native'],
 ] as const) {
   test(`no serious or critical axe violations: ${name}`, async ({ page }) => {
+    // axe, not the app, is the slow part: the impact page renders in ~0.4s but has ~9k
+    // elements, which axe takes ~16s to scan locally and past the 30s default on CI runners.
+    test.slow();
     await page.goto(hash);
     await expect(page.locator('.app-main > *').first()).toBeVisible();
     await page.waitForTimeout(400);
