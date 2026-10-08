@@ -2,6 +2,8 @@
 
 > An unofficial, third-party project. Not affiliated with, endorsed by, or sponsored by the [stdlib](https://stdlib.io) project. It reads a stdlib checkout; it is not part of stdlib. "stdlib" is used here only to name the library this tool reads.
 
+**Live:** <https://0prashantyadav0.github.io/graphify-stdlibjs/>
+
 Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces into their packages, and see naming families like `sum` folded into variants (`float64 (d)`, `float32 (s)`, `float64 with NaN (dnan)`, …) and their algorithms (`dsum`, `dsumkbn`, `dsumpw`). Press ⌘K / Ctrl+K to search for a package and see what it requires (left) and what requires it (right).
 
 ## Routes
@@ -20,6 +22,8 @@ Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces i
 `public/data/graph.json` is committed, so `npm run dev` works without a stdlib checkout.
 
 `public/data/graph.json` is 1.2 MB uncompressed (≈190 KB gzipped) — make sure your static host serves it compressed.
+
+The build uses relative asset URLs (`base: './'`), so `dist/` works at any sub-path. Every push to `main` deploys it to GitHub Pages (`.github/workflows/pages.yml`).
 
 ## Scripts
 
