@@ -148,8 +148,39 @@
   text-decoration: underline;
 }
 
+.focus-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .focus-canvas {
   flex: 1;
+}
+
+/* One line per side, in a bar over the canvas rather than on it, so it never covers a node. */
+.focus-summaries {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px 16px;
+  flex-wrap: wrap;
+  padding: 6px 16px;
+  color: var(--ink-muted);
+  font-size: var(--fs-1);
+}
+
+.focus-summary {
+  margin: 0;
+}
+
+.focus-summary a {
+  text-decoration: none;
+}
+
+.focus-summary a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 899px) {

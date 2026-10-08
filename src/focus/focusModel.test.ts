@@ -44,4 +44,18 @@ describe('buildSide', () => {
     expect(root.count).toBe(250);
     expect(defaultExpanded).toEqual(new Set(['requiredBy:']));
   });
+
+  it('puts the largest groups nearest the centre once a side is big enough to fold', () => {
+    const many = [
+      ...Array.from({ length: 30 }, (_, i) => `stats/base/p${i}`),
+      ...Array.from({ length: 5 }, (_, i) => `array/base/p${i}`),
+      ...Array.from({ length: 10 }, (_, i) => `math/base/p${i}`),
+    ];
+    const big = graphFromIds(many);
+    const { root } = buildSide(big, 'requiredBy', many.map((id) => big.indexOf(id)));
+    // largest in the middle, then alternating below and above it
+    expect(root.children.map((c) => [c.label, c.count])).toEqual([['array/base', 5], ['stats/base', 30], ['math/base', 10]]);
+    // a small side keeps id order
+    expect(buildSide(g, 'requires', ids.map(idx)).root.children[0].label).toBe('blas/base');
+  });
 });

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Graph } from '../graph/Graph';
-import { navigate, routes } from '../app/router';
+import { formatRoute, navigate, routes } from '../app/router';
 import type { EdgeKind } from '../graph/types';
 import { GraphCanvas } from '../graphview/GraphCanvas';
 import type { LayoutResult } from '../graphview/layout';
@@ -15,6 +15,10 @@ interface Props {
   requires: number[];
   requiredBy: number[];
 }
+
+// Node labels are 13px; at this scale they render at 11px, the smallest the first view may show.
+const MIN_READABLE_K = 11 / 13;
+const fmt = new Intl.NumberFormat('en-US');
 
 export function FocusGraph({ graph, index, edges, requires, requiredBy }: Props) {
   const left = useMemo(() => buildSide(graph, 'requires', requires), [graph, requires]);
@@ -51,16 +55,36 @@ export function FocusGraph({ graph, index, edges, requires, requiredBy }: Props)
     ? {
         x0: leftBounds.minX,
         x1: rightBounds.maxX,
+        x: 0,
         y: 0,
         y0: Math.min(leftBounds.minY, rightBounds.minY),
         y1: Math.max(leftBounds.maxY, rightBounds.maxY),
       }
     : null;
 
+  // One line over each side: how much is there, and the way to all of it.
+  const summary = (side: 'requires' | 'requiredBy', list: number[]) => {
+    if (list.length === 0) return null;
+    const namespaces = new Set(list.map((i) => graph.ids[i].split('/')[0])).size;
+    const all = graph.webSize(index, { kinds: edges, dir: side });
+    return (
+      <p className={`focus-summary is-${side === 'requires' ? 'left' : 'right'}`}>
+        {fmt.format(list.length)} {list.length === 1 ? 'package' : 'packages'} in {namespaces} {namespaces === 1 ? 'namespace' : 'namespaces'} ·{' '}
+        <a href={formatRoute(routes.module(graph.ids[index], { edges, view: 'webbed', dir: side === 'requires' ? 'out' : 'in' }))}>Webbed shows all {fmt.format(all)}</a>
+      </p>
+    );
+  };
+
   return (
-    <GraphCanvas focusPoint={null} fitRange={fitRange} label="dependency graph" className="focus-canvas">
-      <TreeLayer root={leftRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="left" selectedKey={null} pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="requires" hideRoot onLayout={onLeftLayout} />
-      <TreeLayer root={rightRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="right" selectedKey="centre" pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="required by" onLayout={onRightLayout} />
-    </GraphCanvas>
+    <div className="focus-stage">
+      <div className="focus-summaries">
+        {summary('requires', requires) ?? <span />}
+        {summary('requiredBy', requiredBy)}
+      </div>
+      <GraphCanvas focusPoint={null} fitRange={fitRange} minFitScale={MIN_READABLE_K} label="dependency graph" className="focus-canvas">
+        <TreeLayer root={leftRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="left" selectedKey={null} pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="requires" hideRoot onLayout={onLeftLayout} />
+        <TreeLayer root={rightRoot} childrenOf={focusChildren} expanded={expandedWithCentre} direction="right" selectedKey="centre" pathKeys={new Set()} onToggle={toggle} onOpen={open} getTagMask={mask} label="required by" onLayout={onRightLayout} />
+      </GraphCanvas>
+    </div>
   );
 }
