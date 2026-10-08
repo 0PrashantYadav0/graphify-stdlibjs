@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 32 files, 250 tests, must stay green
+npm test                                 # Vitest — 33 files, 260 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -103,8 +103,13 @@ Home/End. Focus pans itself into view via the canvas. The four decisions
 behind that shape — flat treeitems with no `role="group"`, `role="group"`
 rather than `role="application"` on the canvas, mirrored arrows on the
 left-growing side, and panning instead of scrolling — are in
-`docs/adr/0001-svg-tree-widget-semantics.md`. Keyboard pan/zoom, a `?` help
-overlay, `g` go-to and unified Escape semantics are deliberately not built.
+`docs/adr/0001-svg-tree-widget-semantics.md`. `?` (or the top bar's Keyboard
+button) opens a sheet listing every binding. It renders `src/ui/shortcuts.ts`,
+and `src/ui/shortcuts.test.tsx` fails if a handler compares against a key that
+module doesn't list, so add new bindings there. Escape leaves a tree or the
+Webbed columns: in the explorer it moves to the breadcrumb's last link, and in
+the focus view to the module card's back link. Keyboard pan/zoom and `g` go-to
+are deliberately not built.
 
 `src/styles/base.css` is imported **after** `App` in `src/main.tsx`, so it
 enters the document after every component stylesheet and wins an
