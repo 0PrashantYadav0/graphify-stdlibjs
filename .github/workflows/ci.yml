@@ -37,8 +37,9 @@ jobs:
       - name: Check graph.json
         run: npm run check:data
 
-      - name: Typecheck
-        run: npx tsc --noEmit
-
-      - name: Build
+      # npm run build runs tsc --noEmit first, so it is the typecheck too.
+      - name: Typecheck and build
         run: npm run build
+
+      - name: Check size budgets
+        run: npm run check:size

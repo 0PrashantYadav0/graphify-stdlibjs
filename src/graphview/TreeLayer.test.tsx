@@ -1,9 +1,9 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { Tag } from '../graph/tags';
 import { TreeLayer, type GraphNodeLike } from './TreeLayer';
-import { CanvasViewportProvider } from './viewport';
+import { CanvasViewportProvider, type Point } from './viewport';
 
 interface N extends GraphNodeLike { kids: N[] }
 const leaf = (key: string, label = key): N => ({ key, label, hasChildren: false, count: 0, index: 1, kind: 'package', kids: [] });
@@ -17,16 +17,16 @@ const tags = () => Tag.JS | Tag.C;
 afterEach(cleanup);
 
 interface MountOpts {
-  onToggle?: ReturnType<typeof vi.fn>;
-  onOpen?: ReturnType<typeof vi.fn>;
+  onToggle?: Mock<(n: N) => void>;
+  onOpen?: Mock<(n: N) => void>;
   direction?: 'right' | 'left';
   selectedKey?: string | null;
   hideRoot?: boolean;
-  ensureVisible?: ReturnType<typeof vi.fn>;
+  ensureVisible?: Mock<(p: Point) => void>;
 }
 
 function mount(expanded: Set<string>, opts: MountOpts = {}) {
-  const { onToggle = vi.fn(), onOpen = vi.fn(), direction = 'right', selectedKey = null, hideRoot = false, ensureVisible = vi.fn() } = opts;
+  const { onToggle = vi.fn<(n: N) => void>(), onOpen = vi.fn<(n: N) => void>(), direction = 'right', selectedKey = null, hideRoot = false, ensureVisible = vi.fn<(p: Point) => void>() } = opts;
   render(
     <svg>
       <CanvasViewportProvider value={{ ensureVisible }}>
