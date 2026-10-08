@@ -68,6 +68,11 @@
   background: var(--trace-soft);
 }
 
+/* A pill's own 10% tint over --trace-soft drops js to 4.39:1 (axe, light); outline-only holds 4.5. */
+.palette-hit.is-active .pill {
+  background: transparent;
+}
+
 .palette-text {
   min-width: 0;
   display: flex;

@@ -57,16 +57,20 @@ npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
 npm run check:data                       # validate graph.json as the app loads it (CI runs this)
 npm run check:size                       # after a build: JS ≤ 90 kB and graph.json ≤ 220 kB gzip (CI runs this)
-node e2e/smoke.mjs                       # optional local Playwright smoke run against `npm run preview`
+npm run e2e                              # Playwright specs (e2e/) against a production build; first run: npx playwright install chromium
 ```
 
 `npx tsc --noEmit` is the standalone typecheck; `npm run build` already runs
 it. CI (`.github/workflows/`) runs lint, test, `check:data`, build (which typechecks),
 and `check:size` on a Node 22.x/24.x matrix for every PR and push to `main`.
 Dependabot (`.github/dependabot.yml`) opens weekly npm updates, with dev
-minor/patch updates grouped, and monthly Actions updates. CI does not run
-`e2e/smoke.mjs`, which needs a Playwright browser download and is a local-only
-tool.
+minor/patch updates grouped, and monthly Actions updates. A separate `e2e`
+CI job (Node 24) runs `npm run e2e`: Playwright and Chromium against `npm run
+build && npm run preview`, covering home stats against `graph.json`, an explorer
+deep link, search, Webbed, keyboard entry into the tree, and an axe check on
+each surface (no serious or critical findings). The specs read the committed
+`graph.json` through `Graph`, so they never pin figures the weekly refresh
+would change. On failure, the job uploads the report and traces.
 
 ## The surfaces
 
