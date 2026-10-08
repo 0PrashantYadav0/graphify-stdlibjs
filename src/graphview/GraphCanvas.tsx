@@ -3,20 +3,12 @@ import { select } from 'd3-selection';
 import { zoom, zoomIdentity, zoomTransform, type ZoomBehavior, type ZoomTransform } from 'd3-zoom';
 import 'd3-transition';
 import { prefersReducedMotion } from './motion';
+import { fitTransform, type FitRange } from './fit';
 import { NODE_H, NODE_W } from './layout';
 import { CanvasViewportProvider, type CanvasViewport, type Point } from './viewport';
 import './graphview.css';
 
-export type { Point };
-
-export interface FitRange {
-  x0: number;
-  x1: number;
-  y: number;
-  /** When set together with y1, fits this vertical span too, centring the whole range. */
-  y0?: number;
-  y1?: number;
-}
+export type { Point, FitRange };
 
 interface Props {
   focusPoint: Point | null;
@@ -24,6 +16,8 @@ interface Props {
   fitRange?: FitRange | null;
   /** Fraction of the canvas width where focusPoint lands. Defaults to 1/3. */
   anchor?: number;
+  /** The smallest scale a fit may choose (the user can still zoom further out). Defaults to the zoom floor. */
+  minFitScale?: number;
   label: string;
   className?: string;
   children: ReactNode;
@@ -42,7 +36,7 @@ function size(svg: SVGSVGElement | null) {
   return w > 0 && h > 0 ? { width: w, height: h } : FALLBACK;
 }
 
-export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, label, className, children }: Props) {
+export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, minFitScale = SCALE_EXTENT[0], label, className, children }: Props) {
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const lastTarget = useRef<ZoomTransform | null>(null);
@@ -127,23 +121,10 @@ export function GraphCanvas({ focusPoint, fitRange, anchor = 1 / 3, label, class
     if (!fitRange) return;
     const svg = svgRef.current;
     if (!svg) return;
-    const { width, height } = size(svg);
-    const { x0, x1, y, y0, y1 } = fitRange;
-    let target: ZoomTransform;
-    if (y0 !== undefined && y1 !== undefined) {
-      const dx = x1 - x0 + NODE_W;
-      const dy = y1 - y0 + NODE_H;
-      const k = Math.min(1, Math.max(0.4, Math.min((width - 80) / dx, (height - 80) / dy)));
-      const cx = (x0 + x1) / 2;
-      const cy = (y0 + y1) / 2;
-      target = zoomIdentity.translate(width / 2 - cx * k, height / 2 - cy * k).scale(k);
-    } else {
-      const k = Math.min(1, Math.max(0.4, (width - 80) / (x1 - x0 + NODE_W)));
-      target = zoomIdentity.translate(40 - (x0 - NODE_W / 2) * k, height / 2 - y * k).scale(k);
-    }
-    apply(target, true);
+    const { x, y, k } = fitTransform(fitRange, size(svg), { minK: minFitScale });
+    apply(zoomIdentity.translate(x, y).scale(k), true);
     // Intentionally re-fit only when the range itself changes, not on every render.
-  }, [fitRange?.x0, fitRange?.x1, fitRange?.y, fitRange?.y0, fitRange?.y1, apply]);
+  }, [fitRange?.x0, fitRange?.x1, fitRange?.x, fitRange?.y, fitRange?.y0, fitRange?.y1, minFitScale, apply]);
 
   const reset = () => {
     if (lastTarget.current) apply(lastTarget.current, true);

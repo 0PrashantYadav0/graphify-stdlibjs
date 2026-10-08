@@ -36,6 +36,14 @@ describe('Focus', () => {
     expect(centre.querySelector('.gnode-count')).toBeNull();
   });
 
+  it('sums up each side and links to the whole web', () => {
+    render(<Focus graph={g} route={routes.module('math/base/special/logf', { edges: ['runtime', 'dev'] })} />);
+    const [left, right] = [...document.querySelectorAll('.focus-summary')];
+    expect(left.textContent).toBe('2 packages in 2 namespaces · Webbed shows all 2');
+    expect(within(left as HTMLElement).getByRole('link').getAttribute('href')).toBe('#/module/math/base/special/logf?view=webbed&edges=runtime,dev');
+    expect(within(right as HTMLElement).getByRole('link').getAttribute('href')).toBe('#/module/math/base/special/logf?view=webbed&dir=in&edges=runtime,dev');
+  });
+
   it('splits the neighbourhood into two named trees, each with its own single tab stop', () => {
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
     const requires = screen.getByRole('tree', { name: 'requires' });

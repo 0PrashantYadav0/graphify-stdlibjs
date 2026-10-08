@@ -26,9 +26,23 @@ function wrap(side: Side, n: PathNode): FocusNode {
   };
 }
 
+/**
+ * Heaviest groups nearest the centre: a parent sits level with the middle of its children,
+ * and the first view is fitted on the centre node, so the largest group goes in the middle
+ * and the rest alternate below and above it, smaller as they get further away.
+ */
+function bySize(n: FocusNode): void {
+  const sorted = [...n.children].sort((a, b) => b.count - a.count || (a.label < b.label ? -1 : a.label > b.label ? 1 : 0));
+  const out: FocusNode[] = [];
+  sorted.forEach((c, i) => (i % 2 === 0 ? out.unshift(c) : out.push(c)));
+  n.children = out;
+  n.children.forEach(bySize);
+}
+
 export function buildSide(graph: Graph, side: Side, indexes: number[]): { root: FocusNode; defaultExpanded: Set<string> } {
   const tree = buildPathTree(indexes.map((i) => graph.ids[i]), (id) => graph.indexOf(id));
   const root = wrap(side, tree);
+  if (root.count > COLLAPSE_ABOVE) bySize(root);
   const defaultExpanded = new Set<string>();
   // <= COLLAPSE_ABOVE: everything starts expanded. Above it, only the root and its
   // own direct ("depth-0") children start expanded -- everything deeper waits for a
