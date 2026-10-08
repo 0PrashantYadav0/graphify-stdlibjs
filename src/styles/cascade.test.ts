@@ -66,6 +66,13 @@ function rules(css: string): { selector: string; body: string }[] {
 const FOCUS_VISIBLE: [number, number, number] = [0, 1, 0]; // base.css's bare `:focus-visible`
 
 describe('focus-ring cascade (ADR 0003)', () => {
+  it('imports fonts.css before base.css, so base.css still enters the document last', () => {
+    const main = readFileSync(join(SRC, 'main.tsx'), 'utf8');
+    const fonts = main.indexOf("import './styles/fonts.css'");
+    expect(fonts, 'main.tsx should import ./styles/fonts.css').toBeGreaterThan(-1);
+    expect(fonts).toBeLessThan(main.indexOf("import './styles/base.css'"));
+  });
+
   it('imports base.css after App, so component styles lose an equal-specificity tie', () => {
     const main = readFileSync(join(SRC, 'main.tsx'), 'utf8');
     const appIndex = main.indexOf("from './app/App'");

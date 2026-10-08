@@ -26,7 +26,11 @@ served CSS: `--trace` is stdlib's blue (darkened in light mode to `#00759f`,
 which measures 5.19:1 on `--surface` and 4.76:1 on `--ground` — check both,
 since `body` paints `--ground` and that is where most links land),
 `--spark` is stdlib's orange at its literal values, and
-`--font-ui` is Lato, stdlib's UI face. `--spark` is a sparing decorative
+`--font-ui` is Lato, stdlib's UI face. Both faces are self-hosted from
+`public/fonts/` (`src/styles/fonts.css`, OFL licences beside the files, listed in
+`NOTICE`), in exactly the weights the old Google Fonts link loaded: Lato
+300/400/700 and JetBrains Mono 400/500. Adding a weight means adding a file, not
+re-linking Google. `--spark` is a sparing decorative
 accent only — the wordmark separator and the constellation's centre node —
 never text or a large fill. No stdlib logo or icon is reproduced anywhere,
 and none should be.
@@ -50,7 +54,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 33 files, 260 tests, must stay green
+npm test                                 # Vitest — 33 files, 261 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run lint                             # ESLint 9: typescript-eslint (type-checked), react-hooks, jsx-a11y
 npm run preview                          # serve the dist/ build
