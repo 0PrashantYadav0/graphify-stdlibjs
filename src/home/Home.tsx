@@ -7,8 +7,8 @@ const CREATOR = '0PrashantYadav0';
 const FULL_SHA = /^[0-9a-f]{40}$/;
 
 export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }) {
-  const runtime = countEdges(graph);
-  const namespaces = graph.children(-1).length;
+  const runtime = graph.edgeCount('runtime');
+  const namespaces = graph.namespaceCount();
   const sha = FULL_SHA.test(graph.source) ? graph.source : null;
   return (
     <section className="home">
@@ -56,10 +56,4 @@ export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }
 
 function plural(n: number, word: string): string {
   return n === 1 ? word : `${word}s`;
-}
-
-function countEdges(graph: Graph): number {
-  let total = 0;
-  for (let i = 0; i < graph.n; i++) total += graph.deps(i, 'runtime').length;
-  return total;
 }
