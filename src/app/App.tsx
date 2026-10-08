@@ -29,7 +29,7 @@ export default function App() {
     );
   else if (route.kind === 'home') content = <Home graph={state.graph} onSearch={openSearch} />;
   else if (route.kind === 'explore') content = <GraphExplorer graph={state.graph} path={route.path} />;
-  else content = <Focus graph={state.graph} id={route.id} edges={route.edges} />;
+  else content = <Focus graph={state.graph} route={route} />;
 
   return (
     <div className="app">

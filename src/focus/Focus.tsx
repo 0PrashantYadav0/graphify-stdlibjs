@@ -1,20 +1,20 @@
 import { useMemo } from 'react';
 import type { Graph } from '../graph/Graph';
 import { EDGE_KINDS, type EdgeKind } from '../graph/types';
-import { formatRoute, navigate } from '../app/router';
+import { formatRoute, navigate, routes, type ModuleRoute } from '../app/router';
 import { TagPills } from '../ui/TagPills';
 import { FocusGraph } from './FocusGraph';
 import './focus.css';
 
 interface Props {
   graph: Graph;
-  id: string;
-  edges: EdgeKind[];
+  route: ModuleRoute;
 }
 
 const KIND_LABEL: Record<EdgeKind, string> = { runtime: 'runtime', dev: 'dev', native: 'C' };
 
-export function Focus({ graph, id, edges }: Props) {
+export function Focus({ graph, route }: Props) {
+  const { id, edges } = route;
   const index = graph.indexOf(id);
   const n = useMemo(() => {
     if (index < 0) return null;
@@ -37,15 +37,14 @@ export function Focus({ graph, id, edges }: Props) {
 
   const parent = id.includes('/') ? id.slice(0, id.lastIndexOf('/')) : '';
   const toggleKind = (kind: EdgeKind) => {
-    const next = edges.includes(kind) ? edges.filter((k) => k !== kind) : EDGE_KINDS.filter((k) => k === kind || edges.includes(k));
-    navigate({ kind: 'module', id, edges: next.length ? next : ['runtime'] });
+    navigate(routes.module(id, { ...route, edges: edges.includes(kind) ? edges.filter((k) => k !== kind) : [...edges, kind] }));
   };
 
   return (
     <section className="focus">
       <header className="module-card">
         <div className="module-main">
-          <a className="focus-back mono" href={formatRoute({ kind: 'explore', path: parent })}>‹ explore {parent || 'stdlib'}</a>
+          <a className="focus-back mono" href={formatRoute(routes.explore(parent))}>‹ explore {parent || 'stdlib'}</a>
           <h1 className="module-id mono">{id}</h1>
           {graph.desc[index] && <p className="module-desc">{graph.desc[index]}</p>}
           <TagPills mask={graph.tags[index]} />
@@ -65,11 +64,11 @@ export function Focus({ graph, id, edges }: Props) {
           </div>
           <p className="module-links">
             <a href={github + id} target="_blank" rel="noreferrer">Open on GitHub</a>
-            <a href={formatRoute({ kind: 'explore', path: id })}>Browse inside</a>
+            <a href={formatRoute(routes.explore(id))}>Browse inside</a>
           </p>
         </div>
       </header>
-      <FocusGraph graph={graph} index={index} requires={n.requires} requiredBy={n.requiredBy} />
+      <FocusGraph graph={graph} index={index} edges={edges} requires={n.requires} requiredBy={n.requiredBy} />
     </section>
   );
 }
