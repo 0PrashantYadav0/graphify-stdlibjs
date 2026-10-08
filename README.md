@@ -12,7 +12,7 @@ Browse the stdlib-js monorepo as a graph: start at `stdlib`, expand namespaces i
 - **See a package's direct dependencies.** `#/module/<id>` shows what it requires on the left and what requires it on the right, grouped by folder, along with its description, tags, and links to GitHub and the explorer.
 - **Choose edge kinds.** Toggle `runtime` (`lib/`), `dev` (tests, benchmarks, examples) and `C` (native build dependencies). Your choice stays on as you hop from package to package.
 - **Read tags at a glance.** `js`, `c`, `f`, `wasm`, `native`, `cli` show what a package actually ships.
-- **Search.** ⌘K / Ctrl+K from anywhere: a ranked match on package ids. A folder opens in the explorer, a package opens its own view.
+- **Search.** ⌘K / Ctrl+K (or `/`) from anywhere: a ranked match on package ids, then descriptions, with what matched highlighted. A folder opens in the explorer, a package opens its own view.
 - **Use the keyboard.** Each graph is an ARIA tree: Up/Down to move, Left/Right to collapse or expand, Home/End, Enter to open.
 - **Share deep links.** Every view is a URL (`#/explore/math/base`, `#/module/ndarray/ctor?edges=runtime,native`), so you can paste one into an issue or a PR review.
 

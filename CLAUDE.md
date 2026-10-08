@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 31 files, 231 tests, must stay green
+npm test                                 # Vitest — 31 files, 241 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -82,8 +82,11 @@ tool.
   `src/webbed/impact.ts`) as Runtime, Rebuild and Tests buckets that filter
   the columns, a namespace roll-up, and Copy list. The card's Impact link
   opens it with all three edge kinds on.
-- **search palette** (⌘K / Ctrl+K) — a scored scan over package ids (not
-  descriptions), opened from anywhere.
+- **search palette** (⌘K / Ctrl+K, or `/`) — `graph.search`, a scored scan
+  over package ids and then descriptions (a description match always ranks
+  below any id match), opened from anywhere. The index is built once per
+  `Graph`, and each hit carries the ranges it matched on, which the palette
+  highlights.
 
 `src/app/router.ts` parses/formats the hash-based routes above; that file is
 the source of truth if this list and the code ever disagree. Build routes
@@ -140,7 +143,7 @@ from it client-side. `Graph.load` validates the file first (the checks are in
 with a Retry button instead of a blank page. After that, `Graph`
 (`src/graph/Graph.ts`) answers hierarchy by binary search over the sorted
 ids and dependents by a reverse CSR built once at load; search is a scored
-scan over the ~6k ids (`src/graph/search.ts`).
+scan over the ~6k ids and their descriptions (`src/graph/search.ts`).
 
 `public/data/graph.json` (about 1.2 MB uncompressed) is **committed**, so
 `npm run dev` and `npm test` work without a stdlib checkout present. Only
