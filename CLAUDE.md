@@ -54,7 +54,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 33 files, 261 tests, must stay green
+npm test                                 # Vitest — 34 files, 263 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run lint                             # ESLint 9: typescript-eslint (type-checked), react-hooks, jsx-a11y
 npm run preview                          # serve the dist/ build
