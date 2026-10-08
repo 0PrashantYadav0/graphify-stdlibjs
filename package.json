@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "extract": "tsx scripts/extract/index.ts"
+    "extract": "tsx scripts/extract/index.ts",
+    "check:data": "tsx scripts/check-data/index.ts"
   },
   "dependencies": {
     "d3-hierarchy": "^3.1.2",

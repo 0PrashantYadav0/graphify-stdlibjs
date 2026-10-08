@@ -1,3 +1,4 @@
+import { parseGraphFile, provenanceOf, LoadError, type Provenance } from './graphFile';
 import { Tag } from './tags';
 import { EDGE_KINDS, type Csr, type EdgeKind, type GraphFile } from './types';
 
@@ -55,7 +56,7 @@ export class Graph {
   readonly ids: readonly string[];
   readonly desc: readonly string[];
   readonly tags: readonly number[];
-  readonly source: string;
+  readonly provenance: Provenance;
   private readonly index = new Map<string, number>();
   private readonly fwd: Record<EdgeKind, Csr>;
   private readonly rev: Record<EdgeKind, Csr>;
@@ -66,7 +67,7 @@ export class Graph {
     this.ids = file.ids;
     this.desc = file.desc;
     this.tags = file.tags;
-    this.source = file.source;
+    this.provenance = provenanceOf(file);
     this.n = file.ids.length;
     file.ids.forEach((id, i) => {
       this.index.set(id, i);
@@ -78,6 +79,13 @@ export class Graph {
       dev: reverseCsr(file.dev, this.n),
       native: reverseCsr(file.native, this.n),
     };
+  }
+
+  /** Validate and build from any source of parsed JSON: fetch in the app, fs in scripts, a fixture in tests. */
+  static async load(read: () => Promise<unknown>): Promise<Graph> {
+    const file = parseGraphFile(await read());
+    if (file instanceof LoadError) throw file;
+    return new Graph(file);
   }
 
   indexOf(id: string): number {
