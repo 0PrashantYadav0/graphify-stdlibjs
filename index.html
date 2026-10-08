@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f4f5f6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1c1e" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <!-- Start the data download alongside the JS rather than after it runs. The
+         credentials mode (anonymous = same-origin) has to match fetch()'s default,
+         or the browser fetches the file twice. -->
+    <link rel="preload" href="./data/graph.json" as="fetch" crossorigin="anonymous" />
     <title>graphify · stdlib</title>
     <meta
       name="description"
