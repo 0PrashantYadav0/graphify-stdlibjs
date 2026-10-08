@@ -55,12 +55,15 @@ npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
 npm run check:data                       # validate graph.json as the app loads it (CI runs this)
+npm run check:size                       # after a build: JS ≤ 90 kB and graph.json ≤ 220 kB gzip (CI runs this)
 node e2e/smoke.mjs                       # optional local Playwright smoke run against `npm run preview`
 ```
 
 `npx tsc --noEmit` is the standalone typecheck; `npm run build` already runs
-it. CI (`.github/workflows/`) runs test, typecheck, and build on a Node
-22.x/24.x matrix for every PR and push to `main`; it does not run
+it. CI (`.github/workflows/`) runs test, `check:data`, build (which typechecks),
+and `check:size` on a Node 22.x/24.x matrix for every PR and push to `main`.
+Dependabot (`.github/dependabot.yml`) opens weekly npm updates, with dev
+minor/patch updates grouped, and monthly Actions updates. CI does not run
 `e2e/smoke.mjs`, which needs a Playwright browser download and is a local-only
 tool.
 
