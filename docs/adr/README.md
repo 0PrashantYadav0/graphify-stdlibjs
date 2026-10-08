@@ -46,3 +46,4 @@ Existing records:
 - `0001-svg-tree-widget-semantics.md`
 - `0002-comment-aware-require-extraction.md`
 - `0003-global-focus-ring-wins-the-cascade.md`
+- `0004-webbed-depth-columns-and-keyboard-model.md`
