@@ -1,7 +1,8 @@
 # CLAUDE.md
 
 Agent-facing guide to `graphify-stdlibjs`, a Vite + React + TypeScript SPA
-(~3,800 LOC) that renders the stdlib-js monorepo as an interactive graph.
+(~5,300 LOC of source, plus ~2,600 of tests) that renders the stdlib-js
+monorepo as an interactive graph.
 For vocabulary (package, namespace, variant, family, edge kinds, tags), see
 `CONTEXT.md` — read that first if any of those words show up in a task.
 
@@ -65,7 +66,12 @@ npm run e2e                              # Playwright specs (e2e/) against a pro
 ```
 
 `npx tsc --noEmit` is the standalone typecheck; `npm run build` already runs
-it. CI (`.github/workflows/`) runs lint, test, `check:data`, build (which typechecks),
+it. Two workflows besides CI touch `main`'s output: `pages.yml` builds and
+deploys every push to `main` to GitHub Pages
+(<https://0prashantyadav0.github.io/graphify-stdlibjs/>; the Vercel project
+deploys the same build, since `base: './'` works at a root and at a sub-path),
+and `refresh-data.yml` regenerates `graph.json` weekly (see "Where the data
+comes from"). CI (`.github/workflows/`) runs lint, test, `check:data`, build (which typechecks),
 and `check:size` on a Node 22.x/24.x matrix for every PR and push to `main`.
 Dependabot (`.github/dependabot.yml`) opens weekly npm updates, with dev
 minor/patch updates grouped, and monthly Actions updates. A separate `e2e`
@@ -106,7 +112,7 @@ only with `routes.home()`, `routes.explore(path)` and `routes.module(id, {
 edges, view, dir })`: the router owns the defaults and canonical form (edge
 kinds de-duplicated in `EDGE_KINDS` order, none meaning `runtime`), and
 leaves defaults out of the URL. `view` (`direct|webbed`) and `dir`
-(`out|in`) are parsed now, ready for the Webbed and Impact views.
+(`out|in`) select the Webbed view and its direction.
 
 The explorer and the focus view share `src/graphview/TreeLayer.tsx`, which
 renders each graph as an ARIA `tree`: one tab stop per tree (roving
