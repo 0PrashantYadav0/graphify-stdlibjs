@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { GraphExplorer } from '../explorer/GraphExplorer';
 import { Focus } from '../focus/Focus';
 import { Home } from '../home/Home';
@@ -6,7 +6,7 @@ import { SearchPalette } from '../search/SearchPalette';
 import { useShortcut } from '../search/useShortcut';
 import { TopBar } from './TopBar';
 import { useGraph } from './useGraph';
-import { useRoute } from './router';
+import { titleFor, useRoute } from './router';
 import { Legend } from '../ui/Legend';
 import './app.css';
 
@@ -17,6 +17,9 @@ export default function App() {
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
   useShortcut(openSearch);
+  useEffect(() => {
+    document.title = titleFor(route);
+  }, [route]);
 
   let content;
   if (state.status === 'loading') content = <p className="app-note muted">Loading the package map…</p>;

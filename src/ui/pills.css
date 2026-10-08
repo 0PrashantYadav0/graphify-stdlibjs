@@ -24,14 +24,38 @@
 .pill-cli { --pill: var(--tag-cli); }
 
 .legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 20px;
   padding: 10px 20px;
   border-top: 1px solid var(--line);
   background: var(--surface);
   font-size: var(--fs-1);
   color: var(--ink-muted);
+}
+
+.legend-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+}
+
+.legend-edges b {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* The summary only matters where the legend can be closed: on a phone. */
+.legend-summary {
+  display: none;
+  cursor: pointer;
+}
+
+@media (max-width: 719px) {
+  .legend-summary {
+    display: list-item;
+  }
+  .legend[open] .legend-summary {
+    margin-bottom: 6px;
+  }
 }
 
 .legend-item {

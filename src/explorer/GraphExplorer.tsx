@@ -5,6 +5,7 @@ import { formatRoute, navigate, routes } from '../app/router';
 import { GraphCanvas, type Point } from '../graphview/GraphCanvas';
 import { TreeLayer } from '../graphview/TreeLayer';
 import type { LayoutResult } from '../graphview/layout';
+import { describePackage } from '../graphview/describe';
 import { Breadcrumb } from './Breadcrumb';
 import { ROOT, TreeModel, type TreeNode } from './treeModel';
 import './graph-explorer.css';
@@ -61,9 +62,13 @@ export function GraphExplorer({ graph, path }: Props) {
     }
     if (n.kind === 'package') {
       setSelected(n.key);
-      if (opening) {
-        lastNavigated.current = graph.ids[n.index];
-        navigate(routes.explore(graph.ids[n.index]));
+      // Expanding and collapsing adjust the view, so they rewrite the current history entry
+      // rather than add one: Back leaves the explorer instead of replaying every click.
+      const id = graph.ids[n.index];
+      const next = opening ? id : path.startsWith(`${id}/`) ? id : null;
+      if (next !== null && next !== path) {
+        lastNavigated.current = next;
+        navigate(routes.explore(next), { replace: true });
       }
     }
   };
@@ -80,7 +85,12 @@ export function GraphExplorer({ graph, path }: Props) {
   return (
     <section className="graph-explorer">
       <div className="graph-explorer-head">
-        <Breadcrumb path={path} />
+        <Breadcrumb path={route.found} />
+        {route.found !== path && (
+          <p className="graph-missing" role="status">
+            No package at <span className="mono">{path}</span>; showing {route.found ? <>the closest match <span className="mono">{route.found}</span></> : 'the top'}.
+          </p>
+        )}
         {selectedNode >= 0 && !hasTag(graph.tags[selectedNode], 'FOLDER') && (
           <a className="graph-open" href={formatRoute(routes.module(graph.ids[selectedNode]))}>
             Open {graph.name(selectedNode)}
@@ -100,6 +110,7 @@ export function GraphExplorer({ graph, path }: Props) {
           getTagMask={(n) => graph.tags[n.index]}
           label="package tree"
           onLayout={onLayout}
+          describe={(n) => describePackage(graph, n.index, n.label)}
         />
       </GraphCanvas>
     </section>

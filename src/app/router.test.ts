@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { formatRoute, parseHash, routes, type Route } from './router';
+import { describe, expect, it, vi } from 'vitest';
+import { formatRoute, parseHash, routes, titleFor, type Route } from './router';
 
 const mod = (id: string, edges = ['runtime'], view = 'direct', dir = 'out') => ({ kind: 'module', id, edges, view, dir });
 
@@ -29,6 +29,12 @@ describe('parseHash', () => {
   it('treats a bare /module as home', () => {
     expect(parseHash('#/module')).toEqual({ kind: 'home' });
   });
+  it('falls back to home for an unknown route, and says so in the console', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(parseHash('#/nowhere/x')).toEqual({ kind: 'home' });
+    expect(warn).toHaveBeenCalledWith('graphify: no route for "#/nowhere/x"; showing home.');
+    warn.mockRestore();
+  });
 });
 
 describe('routes', () => {
@@ -53,5 +59,15 @@ describe('formatRoute', () => {
         for (const view of ['direct', 'webbed'] as const)
           for (const dir of ['out', 'in'] as const) table.push(routes.module(id, { edges, view, dir }));
     for (const r of table) expect(parseHash(formatRoute(r))).toEqual(r);
+  });
+});
+
+describe('titleFor', () => {
+  it('names the page in every tab and history entry', () => {
+    expect(titleFor(routes.home())).toBe('graphify · stdlib');
+    expect(titleFor(routes.explore())).toBe('explore stdlib · graphify · stdlib');
+    expect(titleFor(routes.explore('blas/ext'))).toBe('explore blas/ext · graphify · stdlib');
+    expect(titleFor(routes.module('ndarray/ctor'))).toBe('ndarray/ctor · graphify · stdlib');
+    expect(titleFor(routes.module('ndarray/ctor', { view: 'webbed', dir: 'in' }))).toBe('ndarray/ctor (what requires it) · graphify · stdlib');
   });
 });

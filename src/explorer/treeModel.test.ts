@@ -50,13 +50,17 @@ describe('TreeModel.expandPathFor', () => {
     expect(model.expandPathFor('blas/ext/base/dsumkbn')).toEqual({
       expanded: ['root', 'p:blas', 'p:blas/ext', 'p:blas/ext/base', 'op:blas/ext/base:sum', 'v:blas/ext/base:sum:d'],
       selected: 'p:blas/ext/base/dsumkbn',
+      found: 'blas/ext/base/dsumkbn',
     });
   });
   it('expands a namespace path and selects it', () => {
-    expect(model.expandPathFor('math/base')).toEqual({ expanded: ['root', 'p:math', 'p:math/base'], selected: 'p:math/base' });
+    expect(model.expandPathFor('math/base')).toEqual({ expanded: ['root', 'p:math', 'p:math/base'], selected: 'p:math/base', found: 'math/base' });
   });
   it('returns just the root for an empty or unknown path', () => {
-    expect(model.expandPathFor('')).toEqual({ expanded: ['root'], selected: null });
-    expect(model.expandPathFor('nope/x')).toEqual({ expanded: ['root'], selected: null });
+    expect(model.expandPathFor('')).toEqual({ expanded: ['root'], selected: null, found: '' });
+    expect(model.expandPathFor('nope/x')).toEqual({ expanded: ['root'], selected: null, found: '' });
+  });
+  it('falls back to the closest match when the path runs off the tree', () => {
+    expect(model.expandPathFor('math/base/nope/deeper')).toEqual({ expanded: ['root', 'p:math', 'p:math/base'], selected: 'p:math/base', found: 'math/base' });
   });
 });

@@ -27,6 +27,8 @@ interface Props<T extends GraphNodeLike> {
   label: string;
   hideRoot?: boolean;
   onLayout?: (result: LayoutResult<T>) => void;
+  /** Full text for a node's tooltip (the label may be truncated): e.g. its id and description. */
+  describe?: (n: T) => string;
 }
 
 const CHAR_W = 7.8;
@@ -88,7 +90,8 @@ function toRows<T extends GraphNodeLike>(layout: LayoutResult<T>, rootKey: strin
   return rows;
 }
 
-export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded, direction, selectedKey, pathKeys, onToggle, onOpen, getTagMask, label, hideRoot = false, onLayout }: Props<T>) {
+export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded, direction, selectedKey, pathKeys, onToggle, onOpen, getTagMask, label, hideRoot = false, onLayout, describe }: Props<T>) {
+  const tooltip = (n: T) => describe?.(n) ?? n.label;
   const layout = useMemo(() => layoutTree(root, childrenOf, (n) => expanded.has(n.key), direction), [root, childrenOf, expanded, direction]);
   const rows = useMemo(() => toRows(layout, root.key, hideRoot), [layout, root.key, hideRoot]);
   const treeRef = useRef<SVGGElement>(null);
@@ -205,6 +208,8 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
             }}
             onKeyDown={(e) => onKeyDown(e, i)}
           >
+            {/* A tooltip with the full name; skipped when it would only repeat the accessible name. */}
+            {tooltip(n) !== ariaLabelFor(n) && <title>{tooltip(n)}</title>}
             <rect className="gnode-box" width={NODE_W} height={NODE_H} rx={4} />
             <text className="gnode-label" x={PAD_X} y={n.sublabel ? 17 : NODE_H / 2 + 4.5}>
               {truncate(n.label, labelMax)}
