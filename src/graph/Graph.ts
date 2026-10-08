@@ -1,4 +1,5 @@
 import { parseGraphFile, provenanceOf, LoadError, type Provenance } from './graphFile';
+import { createSearch, type SearchResult } from './search';
 import { Tag } from './tags';
 import { EDGE_KINDS, type Csr, type EdgeKind, type GraphFile } from './types';
 
@@ -62,6 +63,7 @@ export class Graph {
   private readonly rev: Record<EdgeKind, Csr>;
   private readonly rootChildren: number[] = [];
   private readonly sizes = new Map<string, number>();
+  private searcher?: (query: string, limit?: number) => SearchResult;
 
   constructor(file: GraphFile) {
     this.ids = file.ids;
@@ -86,6 +88,12 @@ export class Graph {
     const file = parseGraphFile(await read());
     if (file instanceof LoadError) throw file;
     return new Graph(file);
+  }
+
+  /** Ids first, then descriptions; the index is built on the first query and kept. */
+  search(query: string, limit?: number): SearchResult {
+    this.searcher ??= createSearch(this.ids, this.desc);
+    return this.searcher(query, limit);
   }
 
   indexOf(id: string): number {

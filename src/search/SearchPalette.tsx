@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Graph } from '../graph/Graph';
-import { createSearch, highlightRange } from '../graph/search';
+import type { Range } from '../graph/search';
 import { hasTag } from '../graph/tags';
 import { navigate, routes } from '../app/router';
 import { TagPills } from '../ui/TagPills';
@@ -11,25 +11,26 @@ interface Props {
   onClose: () => void;
 }
 
-function Highlighted({ id, query }: { id: string; query: string }) {
-  const range = highlightRange(id, query);
-  if (!range) return <>{id}</>;
-  const [a, b] = range;
-  return (
-    <>
-      {id.slice(0, a)}
-      <mark>{id.slice(a, b)}</mark>
-      {id.slice(b)}
-    </>
-  );
+const LIMIT = 12;
+const fmt = new Intl.NumberFormat('en-US');
+
+/** Marks the ranges search scored on, so what is highlighted is exactly what matched. */
+function Marked({ text, ranges }: { text: string; ranges: Range[] }) {
+  const out = [];
+  let at = 0;
+  for (const [a, b] of ranges) {
+    out.push(text.slice(at, a), <mark key={a}>{text.slice(a, b)}</mark>);
+    at = b;
+  }
+  out.push(text.slice(at));
+  return <>{out}</>;
 }
 
 export function SearchPalette({ graph, onClose }: Props) {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const search = useMemo(() => createSearch(graph.ids), [graph]);
-  const hits = useMemo(() => search(query, 12), [search, query]);
+  const { hits, total } = useMemo(() => graph.search(query, LIMIT), [graph, query]);
 
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
@@ -55,7 +56,7 @@ export function SearchPalette({ graph, onClose }: Props) {
       onClose();
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActive((i) => Math.min(i + 1, hits.length - 1));
+      if (hits.length) setActive((i) => Math.min(i + 1, hits.length - 1));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActive((i) => Math.max(i - 1, 0));
@@ -65,11 +66,18 @@ export function SearchPalette({ graph, onClose }: Props) {
     }
   };
 
+  // aria-modal promises nothing behind the sheet is reachable; the input is its only stop, so Tab stays on it.
+  const trapTab = (e: React.KeyboardEvent) => {
+    if (e.key !== 'Tab') return;
+    e.preventDefault();
+    inputRef.current?.focus();
+  };
+
   const trimmed = query.trim();
 
   return (
     <div className="palette-backdrop" onMouseDown={onClose}>
-      <div className="palette" role="dialog" aria-modal="true" aria-label="Search packages" onMouseDown={(e) => e.stopPropagation()}>
+      <div className="palette" role="dialog" aria-modal="true" aria-label="Search packages" onMouseDown={(e) => e.stopPropagation()} onKeyDown={trapTab}>
         <input
           ref={inputRef}
           className="palette-input mono"
@@ -78,7 +86,7 @@ export function SearchPalette({ graph, onClose }: Props) {
           aria-controls={hits.length ? 'palette-results' : undefined}
           aria-activedescendant={hits[active] ? `hit-${hits[active].index}` : undefined}
           aria-autocomplete="list"
-          placeholder="Package name or path, e.g. logf or blas/base"
+          placeholder="Package name, path or description, e.g. logf or blas/base"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={onKeyDown}
@@ -86,26 +94,34 @@ export function SearchPalette({ graph, onClose }: Props) {
         {trimmed && hits.length === 0 && <p className="palette-empty muted">No package matches “{trimmed}”.</p>}
         {hits.length > 0 && (
           <ul id="palette-results" className="palette-results" role="listbox">
-            {hits.map((h, i) => (
-              <li
-                key={h.index}
-                id={`hit-${h.index}`}
-                role="option"
-                aria-selected={i === active}
-                aria-label={graph.ids[h.index]}
-                className={`palette-hit${i === active ? ' is-active' : ''}`}
-                onMouseEnter={() => setActive(i)}
-                onClick={() => open(h.index)}
-              >
-                <span className="palette-id mono">
-                  <Highlighted id={graph.ids[h.index]} query={query} />
-                </span>
-                <TagPills mask={graph.tags[h.index]} />
-              </li>
-            ))}
+            {hits.map((h, i) => {
+              const id = graph.ids[h.index];
+              const desc = graph.desc[h.index];
+              return (
+                <li
+                  key={h.index}
+                  id={`hit-${h.index}`}
+                  role="option"
+                  aria-selected={i === active}
+                  aria-label={desc ? `${id}, ${desc}` : id}
+                  className={`palette-hit${i === active ? ' is-active' : ''}`}
+                  onMouseEnter={() => setActive(i)}
+                  onClick={() => open(h.index)}
+                >
+                  <span className="palette-text">
+                    <span className="palette-id mono">{h.field === 'id' ? <Marked text={id} ranges={h.ranges} /> : id}</span>
+                    {desc && <span className="palette-desc">{h.field === 'desc' ? <Marked text={desc} ranges={h.ranges} /> : desc}</span>}
+                  </span>
+                  <TagPills mask={graph.tags[h.index]} />
+                </li>
+              );
+            })}
           </ul>
         )}
-        <p className="palette-hint muted">↑ ↓ to move, Enter to open, Esc to close</p>
+        <p className="palette-hint muted">
+          {hits.length > 0 && <span className="palette-count">{fmt.format(hits.length)} of {fmt.format(total)} · </span>}
+          ↑↓ to move · Enter to open · Esc to close · / also opens search
+        </p>
       </div>
     </div>
   );
