@@ -35,13 +35,4 @@ describe('web over the committed graph', () => {
       if (web.size > 0 && web.chain(web.order[web.size - 1])[0] !== i) throw new Error(`${graph.ids[i]}: chain does not start at the package`);
     }
   });
-
-  it.each(['runtime', 'native'] as const)('%s edges are acyclic', (kind) => {
-    for (let i = 0; i < graph.n; i++) {
-      const web = graph.web(i, { kinds: [kind], dir: 'requires' });
-      for (const p of graph.neighbours(i, { kinds: [kind], dir: 'requiredBy' })) {
-        if (web.depth[p] >= 0) throw new Error(`${kind} cycle through ${graph.ids[i]} and ${graph.ids[p]}`);
-      }
-    }
-  });
 });

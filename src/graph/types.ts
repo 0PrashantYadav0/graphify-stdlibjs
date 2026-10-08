@@ -17,6 +17,9 @@ export interface GraphFile {
   runtime: Csr;
   dev: Csr;
   native: Csr;
+  /** Written by the extractor only for a --allow-dirty build. */
+  sourceDirty?: true;
+  dirtyFileCount?: number;
 }
 
 export interface PackageInput {
