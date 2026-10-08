@@ -82,3 +82,9 @@ auto-scroll can reach a row that isn't in the DOM.
   tabindex; one model is easier to keep right than two).
 - Paging means a "find in page" search can miss rows that aren't rendered
   yet. The view's own Filter searches every row, which is why it exists.
+- axe's `scrollable-region-focusable` flags every column that doesn't hold the
+  tab stop, since it wants a tab stop in each scrolling region. This is
+  accepted, not fixed: arrow keys reach every row and focusing a row scrolls
+  its column, and a tab stop per column would undo the single-stop decision
+  above. The e2e axe check (`e2e/app.spec.ts`) excludes exactly this rule on
+  the column listboxes.

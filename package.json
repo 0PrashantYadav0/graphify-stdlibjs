@@ -13,7 +13,8 @@
     "extract": "tsx scripts/extract/index.ts",
     "check:data": "tsx scripts/check-data/index.ts",
     "check:size": "tsx scripts/check-size/index.ts",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "d3-hierarchy": "^3.1.2",
@@ -25,7 +26,9 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.64.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.1",
     "@types/d3-hierarchy": "^3.1.7",

@@ -45,7 +45,9 @@ The build uses relative asset URLs (`base: './'`), so `dist/` works at any sub-p
 - `npm run check:data` — validate `public/data/graph.json` the way the app loads it (CI runs this)
 - `npm run extract` — rebuild the graph file (`--stdlib <path>`, `--out <file>`,
   `--allow-dirty` to proceed when the stdlib checkout has uncommitted changes)
-- `node e2e/smoke.mjs` — optional Playwright smoke run against `npm run preview` (needs a globally installed playwright)
+- `npm run lint` — ESLint (typescript-eslint, react-hooks, jsx-a11y)
+- `npm run check:size` — size budgets for the built JS and `graph.json`
+- `npm run e2e` — Playwright specs against a production build (run `npx playwright install chromium` once)
 
 ## How it works
 
