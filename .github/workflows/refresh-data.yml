@@ -76,7 +76,7 @@ jobs:
 
       - name: Open or update the PR
         if: steps.diff.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: data/refresh
           delete-branch: true
