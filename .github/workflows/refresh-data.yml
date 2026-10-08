@@ -30,10 +30,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check out stdlib (sparse, shallow)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: stdlib-js/stdlib
           ref: ${{ inputs.ref || 'develop' }}
