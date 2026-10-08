@@ -91,6 +91,18 @@ requires 22 packages directly, but its runtime web holds 219.
 _Avoid_: dependency tree (the same package would repeat under every package
 that pulls it in), closure, reach.
 
+**Impact set**:
+What a change to one package can break, as three buckets that never overlap.
+**Runtime**: every package that reaches it through runtime edges, directly or
+not; their behaviour can change. **Rebuild**: every package that reaches it
+through native edges and is not already in Runtime; their native add-on must
+be rebuilt. **Tests**: every package that uses the changed package, or anything
+in the first two buckets, directly through a dev edge and is not already
+counted; their tests, benchmarks or examples may break. Dev edges stop after
+one step, because a broken test changes no one else's behaviour.
+`string/format`'s impact set is 4,921 runtime and 1,171 tests.
+_Avoid_: blast radius, dependents (that is only the first step).
+
 **Tag**:
 A per-package marker describing what a package physically contains or
 provides: `js` (has a JavaScript implementation), `c` (has a C
