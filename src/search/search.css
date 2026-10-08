@@ -68,12 +68,29 @@
   background: var(--trace-soft);
 }
 
+.palette-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .palette-id {
   font-size: var(--fs-2);
   overflow-wrap: anywhere;
 }
 
-.palette-id mark {
+/* One line, muted: enough to tell two similar ids apart without crowding the list. */
+.palette-desc {
+  color: var(--ink-muted);
+  font-size: var(--fs-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.palette-id mark,
+.palette-desc mark {
   background: transparent;
   color: var(--trace);
   font-weight: 700;

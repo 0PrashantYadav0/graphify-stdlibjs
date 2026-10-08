@@ -1,5 +1,4 @@
 import type { Graph } from '../graph/Graph';
-import { createSearch } from '../graph/search';
 
 // Last segments that are reserved words in stdlib's tree (utils/while, utils/eval, napi/export, …).
 const RESERVED = new Set(['with', 'function', 'export', 'while', 'eval', 'for', 'do', 'if', 'new', 'delete', 'in', 'default', 'class', 'import', 'return', 'switch', 'case', 'try', 'void', 'var', 'let', 'const']);
@@ -30,8 +29,7 @@ const last = (id: string) => id.slice(id.lastIndexOf('/') + 1);
  * `ndarray/ctr` finds `ndarray/ctor` rather than `blas/ext/base/ndarray/ctril`.
  */
 export function didYouMean(graph: Graph, id: string): number[] {
-  const search = createSearch(graph.ids);
-  const seen = new Set([...search(id, 50), ...search(last(id), 500)].map((h) => h.index));
+  const seen = new Set([...graph.search(id, 50).hits, ...graph.search(last(id), 500).hits].map((h) => h.index));
   const key = (i: number) => [editDistance(last(id), last(graph.ids[i])), editDistance(id, graph.ids[i])];
   return [...seen]
     .map((i) => ({ i, k: key(i) }))
