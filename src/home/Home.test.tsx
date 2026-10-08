@@ -7,7 +7,9 @@ import { Tag } from '../graph/tags';
 import { graphFromIds } from '../graph/testUtils';
 import { Home } from './Home';
 
-const g = graphFromIds(['array/base/a', 'math/base/special/lnf', 'stats/base/a'], { runtime: [['math/base/special/lnf', 'array/base/a']] });
+// 'stats/base' is a real package with one nested under it: the one namespace. Every other
+// interior path ('array', 'math/base', …) is a bookkeeping folder and does not count.
+const g = graphFromIds(['array/base/a', 'math/base/special/lnf', 'stats/base', 'stats/base/a'], { runtime: [['math/base/special/lnf', 'array/base/a']] });
 
 afterEach(cleanup);
 
@@ -18,7 +20,7 @@ describe('Home', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Every stdlib package, wired.');
     expect(screen.getByRole('link', { name: 'Get started' }).getAttribute('href')).toBe('#/explore');
     const facts = within(screen.getByRole('list', { name: 'Graph summary' })).getAllByRole('listitem');
-    expect(facts.map((li) => li.textContent)).toEqual([`${g.n} packages`, '1 runtime link', '3 namespaces', 'Built from a local stdlib checkout']);
+    expect(facts.map((li) => li.textContent)).toEqual([`${g.n} packages`, '1 runtime link', '1 namespace', 'Built from a local stdlib checkout']);
     expect(screen.getByRole('link', { name: '0PrashantYadav0' }).getAttribute('href')).toBe('https://github.com/0PrashantYadav0');
     fireEvent.click(screen.getByRole('button', { name: /Search/ }));
     expect(onSearch).toHaveBeenCalled();

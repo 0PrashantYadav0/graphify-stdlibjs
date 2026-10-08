@@ -81,6 +81,16 @@ package's JavaScript. A single pair of packages can be connected by more
 than one edge kind at once, and the three are never collapsed into each
 other.
 
+**Web**:
+Every package a given package reaches by following edges of the selected
+kinds, directly or through other packages, in one direction: what it
+requires, or what requires it. Each package in a web is counted once, at its
+**distance**, the fewest steps it takes to reach it. Direct neighbours sit at
+distance 1. A web never contains the package it starts from. `ndarray/ctor`
+requires 22 packages directly, but its runtime web holds 219.
+_Avoid_: dependency tree (the same package would repeat under every package
+that pulls it in), closure, reach.
+
 **Tag**:
 A per-package marker describing what a package physically contains or
 provides: `js` (has a JavaScript implementation), `c` (has a C
