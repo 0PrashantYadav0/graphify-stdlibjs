@@ -11,5 +11,13 @@ by scanning the `package.json` manifests and source files of a stdlib-js/stdlib
 checkout; it lists stdlib package identifiers and their dependency relationships.
 No stdlib source code is redistributed by this project.
 
+`public/fonts/` redistributes Latin subsets of two typefaces, both under the
+SIL Open Font License 1.1 (full texts beside the files):
+
+  Lato, Copyright (c) 2010-2011 by tyPoland Lukasz Dziedzic
+    (public/fonts/LICENSE-Lato.txt)
+  JetBrains Mono, Copyright 2020 The JetBrains Mono Project Authors
+    (public/fonts/LICENSE-JetBrainsMono.txt)
+
 graphify-stdlibjs is an independent, unofficial project and is not affiliated
 with, endorsed by, or sponsored by the stdlib project or The Stdlib Authors.

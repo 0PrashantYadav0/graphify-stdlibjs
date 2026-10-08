@@ -15,6 +15,10 @@ async function focusIsVisible(page: Page) {
 }
 
 test('home shows the constellation and stats that match graph.json', async ({ page }) => {
+  const thirdParty: string[] = [];
+  page.on('request', (r) => {
+    if (/fonts\.(googleapis|gstatic)\.com/.test(r.url())) thirdParty.push(r.url());
+  });
   await page.goto('#/');
   await expect(page.locator('.constellation')).toBeVisible();
   const { commit } = graph.provenance;
@@ -24,6 +28,9 @@ test('home shows the constellation and stats that match graph.json', async ({ pa
     `${fmt.format(graph.namespaceCount())} namespaces`,
     commit ? `Built from stdlib commit ${commit.slice(0, 7)}` : 'Built from a local stdlib checkout',
   ]);
+  // fonts are self-hosted (#45): nothing goes to Google
+  await page.evaluate(() => document.fonts.ready);
+  expect(thirdParty).toEqual([]);
 });
 
 test('a deep link into the explorer lands on the package, selected and on screen', async ({ page }) => {
