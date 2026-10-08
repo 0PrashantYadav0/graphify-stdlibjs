@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 29 files, 216 tests, must stay green
+npm test                                 # Vitest — 30 files, 224 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
@@ -78,6 +78,10 @@ tool.
   package once, with a "Why it's here" chain for the selected row
   (`src/webbed/`). It is a `listbox` per column, not a tree; the keyboard
   model and why are in `docs/adr/0004-webbed-depth-columns-and-keyboard-model.md`.
+  On `dir=in` it also shows **Impact**: the impact set (`CONTEXT.md`,
+  `src/webbed/impact.ts`) as Runtime, Rebuild and Tests buckets that filter
+  the columns, a namespace roll-up, and Copy list. The card's Impact link
+  opens it with all three edge kinds on.
 - **search palette** (⌘K / Ctrl+K) — a scored scan over package ids (not
   descriptions), opened from anywhere.
 
