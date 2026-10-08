@@ -4,3 +4,5 @@ dist
 .superpowers
 e2e/*.png
 .claude/*
+test-results/
+playwright-report/
