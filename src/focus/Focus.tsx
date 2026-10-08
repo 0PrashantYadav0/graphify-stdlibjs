@@ -78,8 +78,15 @@ export function Focus({ graph, route }: Props) {
     navigate(routes.module(id, { ...route, edges: edges.includes(kind) ? edges.filter((k) => k !== kind) : [...edges, kind] }));
   };
 
+  // Esc from a tree or the Webbed columns leaves them for the module card (#41).
+  const onEscape = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.key !== 'Escape' || !(e.target as Element).closest('[role="tree"], [role="listbox"]')) return;
+    e.preventDefault();
+    e.currentTarget.querySelector<HTMLElement>('.focus-back')?.focus();
+  };
+
   return (
-    <section className="focus">
+    <section className="focus" onKeyDown={onEscape}>
       <header className="module-card">
         <div className="module-main">
           <a className="focus-back mono" href={formatRoute(routes.explore(parent))}>‹ explore {parent || 'stdlib'}</a>
