@@ -50,7 +50,7 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 28 files, 208 tests, must stay green
+npm test                                 # Vitest — 29 files, 216 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout

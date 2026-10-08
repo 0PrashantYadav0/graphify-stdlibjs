@@ -1,5 +1,9 @@
 import { useEffect } from 'react';
 
+const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+/** The modifier for the search shortcut, as this platform labels it. */
+export const MOD_KEY = isMac ? '⌘' : 'Ctrl';
+
 /** Opens the palette on ⌘K / Ctrl+K anywhere, and on "/" when not typing in a field. */
 export function useShortcut(onOpen: () => void): void {
   useEffect(() => {

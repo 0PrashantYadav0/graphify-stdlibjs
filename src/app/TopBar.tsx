@@ -1,6 +1,5 @@
+import { MOD_KEY } from '../search/useShortcut';
 import './topbar.css';
-
-const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 export function TopBar({ onSearch }: { onSearch: () => void }) {
   return (
@@ -10,7 +9,7 @@ export function TopBar({ onSearch }: { onSearch: () => void }) {
       </a>
       <button type="button" className="search-trigger" onClick={onSearch}>
         <span>Search packages</span>
-        <kbd>{isMac ? '⌘' : 'Ctrl'} K</kbd>
+        <kbd>{MOD_KEY} K</kbd>
       </button>
     </header>
   );

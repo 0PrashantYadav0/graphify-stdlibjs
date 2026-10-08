@@ -103,6 +103,14 @@
   color: var(--trace-ink);
 }
 
+.module-facts b {
+  font-weight: 700;
+}
+
+.module-web {
+  color: var(--ink-muted);
+}
+
 .module-controls {
   display: flex;
   flex-wrap: wrap;
@@ -119,11 +127,24 @@
 
 /* Head-bar actions, like the explorer's "Open <pkg>": quiet at rest,
    underlined on hover. Prose links elsewhere keep their underline. */
-.module-links a {
+.module-links a,
+.module-links button {
   text-decoration: none;
 }
 
-.module-links a:hover {
+/* Copy require is an action, not a navigation, so it is a button, dressed as
+   the links beside it. */
+.module-links button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--trace);
+  font: inherit;
+  cursor: pointer;
+}
+
+.module-links a:hover,
+.module-links button:hover {
   text-decoration: underline;
 }
 

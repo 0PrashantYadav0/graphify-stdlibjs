@@ -1,9 +1,12 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Graph } from '../graph/Graph';
 import { EDGE_KINDS, type EdgeKind } from '../graph/types';
 import { formatRoute, navigate, routes, type ModuleRoute } from '../app/router';
+import { hasTag } from '../graph/tags';
+import { MOD_KEY } from '../search/useShortcut';
 import { TagPills } from '../ui/TagPills';
 import { Webbed } from '../webbed/Webbed';
+import { didYouMean, requireSnippet } from './card';
 import { FocusGraph } from './FocusGraph';
 import './focus.css';
 
@@ -12,7 +15,13 @@ interface Props {
   route: ModuleRoute;
 }
 
-const KIND_LABEL: Record<EdgeKind, string> = { runtime: 'runtime', dev: 'dev', native: 'C' };
+// Same meaning as CONTEXT.md, "Edge kind".
+const KIND_TITLE: Record<EdgeKind, string> = {
+  runtime: 'runtime: needed to run',
+  dev: 'dev: needed only by tests, benchmarks or examples',
+  native: 'native: needed to build the C/Fortran add-on',
+};
+const fmt = new Intl.NumberFormat('en-US');
 
 export function Focus({ graph, route }: Props) {
   const { id, edges } = route;
@@ -21,22 +30,48 @@ export function Focus({ graph, route }: Props) {
     if (index < 0) return null;
     const requires = graph.neighbours(index, { kinds: edges, dir: 'requires' });
     const requiredBy = graph.neighbours(index, { kinds: edges, dir: 'requiredBy' });
-    return { requires, requiredBy, connected: new Set([...requires, ...requiredBy]).size };
+    const webOut = graph.webSize(index, { kinds: edges, dir: 'requires' });
+    const webIn = graph.webSize(index, { kinds: edges, dir: 'requiredBy' });
+    return { requires, requiredBy, webOut, webIn };
   }, [graph, index, edges]);
   const ref = graph.provenance.commit ?? 'develop';
   const github = `https://github.com/stdlib-js/stdlib/tree/${ref}/lib/node_modules/@stdlib/`;
+  const [copied, setCopied] = useState(false);
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(false), 2000);
+    return () => clearTimeout(t);
+  }, [copied]);
 
   if (index < 0 || !n) {
+    const guesses = didYouMean(graph, id);
     return (
       <section className="focus-missing app-note">
         <p>
-          No package named <span className="mono">{id}</span>. <a href="#/explore">Browse from the top</a> or search with ⌘K.
+          No package named <span className="mono">{id}</span>.
+          {guesses.length > 0 && (
+            <>
+              {' '}Did you mean{' '}
+              {guesses.map((j, k) => (
+                <span key={j}>
+                  {k > 0 && (k === guesses.length - 1 ? ' or ' : ', ')}
+                  <a className="mono" href={formatRoute(routes.module(graph.ids[j]))}>{graph.ids[j]}</a>
+                </span>
+              ))}
+              ?
+            </>
+          )}
+        </p>
+        <p>
+          <a href="#/explore">Browse from the top</a> or search with {MOD_KEY} K.
         </p>
       </section>
     );
   }
 
   const parent = id.includes('/') ? id.slice(0, id.lastIndexOf('/')) : '';
+  const folder = hasTag(graph.tags[index], 'FOLDER');
+  const copy = () => navigator.clipboard?.writeText(requireSnippet(id)).then(() => setCopied(true), () => {});
   const toggleKind = (kind: EdgeKind) => {
     navigate(routes.module(id, { ...route, edges: edges.includes(kind) ? edges.filter((k) => k !== kind) : [...edges, kind] }));
   };
@@ -52,9 +87,12 @@ export function Focus({ graph, route }: Props) {
         </div>
         <div className="module-side">
           <ul className="module-facts">
-            <li>Requires {n.requires.length}</li>
-            <li>Required by {n.requiredBy.length}</li>
-            <li>Connected {n.connected}</li>
+            <li>
+              Requires <b>{fmt.format(n.requires.length)}</b> <span className="module-web">/ {fmt.format(n.webOut)} in web</span>
+            </li>
+            <li>
+              Required by <b>{fmt.format(n.requiredBy.length)}</b> <span className="module-web">/ {fmt.format(n.webIn)} in web</span>
+            </li>
           </ul>
           <div className="module-controls">
             <div className="edge-toggle" role="group" aria-label="view">
@@ -66,16 +104,23 @@ export function Focus({ graph, route }: Props) {
             </div>
             <div className="edge-toggle" role="group" aria-label="edge kinds">
               {EDGE_KINDS.map((kind) => (
-                <button key={kind} type="button" aria-pressed={edges.includes(kind)} className={edges.includes(kind) ? 'is-on' : ''} onClick={() => toggleKind(kind)}>
-                  {KIND_LABEL[kind]}
+                <button key={kind} type="button" title={KIND_TITLE[kind]} aria-pressed={edges.includes(kind)} className={edges.includes(kind) ? 'is-on' : ''} onClick={() => toggleKind(kind)}>
+                  {kind}
                 </button>
               ))}
             </div>
           </div>
           <p className="module-links">
+            {!folder && (
+              <>
+                <button type="button" onClick={copy}>{copied ? 'Copied' : 'Copy require'}</button>
+                <a href={`https://stdlib.io/docs/api/latest/@stdlib/${id}`} target="_blank" rel="noreferrer">Docs</a>
+              </>
+            )}
             <a href={github + id} target="_blank" rel="noreferrer">Open on GitHub</a>
-            <a href={formatRoute(routes.explore(id))}>Browse inside</a>
+            {hasTag(graph.tags[index], 'NAMESPACE') && <a href={formatRoute(routes.explore(id))}>Browse inside</a>}
           </p>
+          <span className="sr-only" role="status">{copied ? 'Copied the require statement' : ''}</span>
         </div>
       </header>
       {route.view === 'webbed' ? (
