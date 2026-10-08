@@ -164,7 +164,7 @@ export function Webbed({ graph, index, route }: { graph: Graph; index: number; r
               ))}
             </div>
           )}
-          <button type="button" className="web-copy" onClick={() => navigator.clipboard?.writeText(impactList(graph, impact)).then(() => setCopied(true), () => {})}>
+          <button type="button" className="web-copy" onClick={() => void navigator.clipboard?.writeText(impactList(graph, impact)).then(() => setCopied(true), () => {})}>
             {copied ? 'Copied' : 'Copy list'}
           </button>
           <span className="sr-only" role="status">{copied ? 'Copied the affected packages' : ''}</span>

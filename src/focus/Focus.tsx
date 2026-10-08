@@ -86,6 +86,7 @@ export function Focus({ graph, route }: Props) {
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- only catches Escape bubbling up from the tree or listbox inside; the section itself takes no input
     <section className="focus" onKeyDown={onEscape}>
       <header className="module-card">
         <div className="module-main">
@@ -122,7 +123,7 @@ export function Focus({ graph, route }: Props) {
           <p className="module-links">
             {!folder && (
               <>
-                <button type="button" onClick={copy}>{copied ? 'Copied' : 'Copy require'}</button>
+                <button type="button" onClick={() => void copy()}>{copied ? 'Copied' : 'Copy require'}</button>
                 <a href={`https://stdlib.io/docs/api/latest/@stdlib/${id}`} target="_blank" rel="noreferrer">Docs</a>
               </>
             )}

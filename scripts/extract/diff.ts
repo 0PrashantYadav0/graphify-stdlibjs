@@ -8,8 +8,8 @@ import type { GraphFile } from '../../src/graph/types';
 const LIST_MAX = 50;
 const fmt = new Intl.NumberFormat('en-US');
 
-/** Everything but generatedAt, which changes on every run. */
-const content = ({ generatedAt: _, ...rest }: GraphFile) => JSON.stringify(rest);
+/** Everything but generatedAt, which changes on every run (JSON.stringify drops undefined). */
+const content = (f: GraphFile) => JSON.stringify({ ...f, generatedAt: undefined });
 
 export function diffGraphFiles(before: GraphFile, after: GraphFile): { changed: boolean; markdown: string } {
   if (content(before) === content(after)) return { changed: false, markdown: '' };
