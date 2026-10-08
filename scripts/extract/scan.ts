@@ -119,7 +119,7 @@ export function readNativeDeps(dir: string): string[] {
   if (!fs.existsSync(file)) return [];
   let manifest: { confs?: Array<{ task?: string; dependencies?: string[] }> };
   try {
-    manifest = JSON.parse(fs.readFileSync(file, 'utf8'));
+    manifest = JSON.parse(fs.readFileSync(file, 'utf8')) as typeof manifest;
   } catch {
     return [];
   }
@@ -141,7 +141,7 @@ function requiresIn(dir: string): string[] {
 
 export function scanPackage(root: string, dir: string, ids: Set<string>): ScannedPackage {
   const id = idFromDir(root, dir);
-  const pkgJson = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
+  const pkgJson = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8')) as Parameters<typeof detectTags>[1] & { description?: unknown };
   const resolveAll = (specs: string[]): Set<string> => {
     const out = new Set<string>();
     for (const s of specs) {

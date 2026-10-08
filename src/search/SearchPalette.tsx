@@ -76,7 +76,9 @@ export function SearchPalette({ graph, onClose }: Props) {
   const trimmed = query.trim();
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- the scrim closes on a pointer press; keyboard users close with Esc
     <div className="palette-backdrop" onMouseDown={onClose}>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- stops scrim presses from closing the sheet, and traps Tab inside the aria-modal dialog */}
       <div className="palette" role="dialog" aria-modal="true" aria-label="Search packages" onMouseDown={(e) => e.stopPropagation()} onKeyDown={trapTab}>
         <input
           ref={inputRef}
@@ -98,6 +100,7 @@ export function SearchPalette({ graph, onClose }: Props) {
               const id = graph.ids[h.index];
               const desc = graph.desc[h.index];
               return (
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events -- options are chosen from the combobox's keys (aria-activedescendant); click is the pointer path
                 <li
                   key={h.index}
                   id={`hit-${h.index}`}
