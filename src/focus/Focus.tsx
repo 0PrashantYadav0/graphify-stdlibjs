@@ -13,7 +13,6 @@ interface Props {
 }
 
 const KIND_LABEL: Record<EdgeKind, string> = { runtime: 'runtime', dev: 'dev', native: 'C' };
-const FULL_SHA = /^[0-9a-f]{40}$/;
 
 export function Focus({ graph, id, edges }: Props) {
   const index = graph.indexOf(id);
@@ -23,7 +22,7 @@ export function Focus({ graph, id, edges }: Props) {
     const requiredBy = graph.neighbours(index, { kinds: edges, dir: 'requiredBy' });
     return { requires, requiredBy, connected: new Set([...requires, ...requiredBy]).size };
   }, [graph, index, edges]);
-  const ref = FULL_SHA.test(graph.source) ? graph.source : 'develop';
+  const ref = graph.provenance.commit ?? 'develop';
   const github = `https://github.com/stdlib-js/stdlib/tree/${ref}/lib/node_modules/@stdlib/`;
 
   if (index < 0 || !n) {

@@ -4,12 +4,11 @@ import './home.css';
 
 const fmt = new Intl.NumberFormat('en-US');
 const CREATOR = '0PrashantYadav0';
-const FULL_SHA = /^[0-9a-f]{40}$/;
 
 export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }) {
   const runtime = graph.edgeCount('runtime');
   const namespaces = graph.namespaceCount();
-  const sha = FULL_SHA.test(graph.source) ? graph.source : null;
+  const { commit: sha, dirty } = graph.provenance;
   return (
     <section className="home">
       <div className="hero">
@@ -35,9 +34,9 @@ export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }
           <li><b>{fmt.format(namespaces)}</b> {plural(namespaces, 'namespace')}</li>
           <li>
             {sha ? (
-              <>Built from stdlib commit <a href={`https://github.com/stdlib-js/stdlib/commit/${sha}`} target="_blank" rel="noreferrer">{sha.slice(0, 7)}</a></>
+              <>Built from stdlib commit <a href={`https://github.com/stdlib-js/stdlib/commit/${sha}`} target="_blank" rel="noreferrer">{sha.slice(0, 7)}</a>{dirty && ' plus uncommitted changes'}</>
             ) : (
-              'Built from a local stdlib checkout'
+              `Built from a local stdlib checkout${dirty ? ' with uncommitted changes' : ''}`
             )}
           </li>
         </ul>

@@ -50,10 +50,11 @@ on faith if the repo has moved on.
 ```
 npm install
 npm run dev                              # Vite dev server, http://localhost:5173
-npm test                                 # Vitest — 23 files, 165 tests, must stay green
+npm test                                 # Vitest — 25 files, 186 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
+npm run check:data                       # validate graph.json as the app loads it (CI runs this)
 node e2e/smoke.mjs                       # optional local Playwright smoke run against `npm run preview`
 ```
 
@@ -120,9 +121,12 @@ directory:
 The result is written as one JSON file: sorted package ids, a description and
 a tag bitmask per id, and three CSR (compressed sparse row) adjacency lists,
 one per edge kind. The app fetches that single file and answers everything
-from it client-side: hierarchy by binary search over the sorted ids (`Graph`
-in `src/graph/Graph.ts`), dependents by a reverse CSR built once at load,
-search by a scored scan over the ~6k ids (`src/graph/search.ts`).
+from it client-side. `Graph.load` validates the file first (the checks are in
+`src/graph/graphFile.ts`), so a malformed `graph.json` shows visitors an error
+with a Retry button instead of a blank page. After that, `Graph`
+(`src/graph/Graph.ts`) answers hierarchy by binary search over the sorted
+ids and dependents by a reverse CSR built once at load; search is a scored
+scan over the ~6k ids (`src/graph/search.ts`).
 
 `public/data/graph.json` (about 1.2 MB uncompressed) is **committed**, so
 `npm run dev` and `npm test` work without a stdlib checkout present. Only

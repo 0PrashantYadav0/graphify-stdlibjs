@@ -20,7 +20,13 @@ export default function App() {
 
   let content;
   if (state.status === 'loading') content = <p className="app-note muted">Loading the package map…</p>;
-  else if (state.status === 'error') content = <p className="app-note">{state.message}</p>;
+  else if (state.status === 'error')
+    content = (
+      <div className="app-note" role="alert">
+        <p>{state.message}</p>
+        <button type="button" className="button-quiet" onClick={state.retry}>Retry</button>
+      </div>
+    );
   else if (route.kind === 'home') content = <Home graph={state.graph} onSearch={openSearch} />;
   else if (route.kind === 'explore') content = <GraphExplorer graph={state.graph} path={route.path} />;
   else content = <Focus graph={state.graph} id={route.id} edges={route.edges} />;
