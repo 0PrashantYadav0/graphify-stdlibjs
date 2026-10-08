@@ -26,6 +26,26 @@
   padding: 0 1px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Quiet, like the module card's links: the sheet is a reference, not a destination. */
+.keys-trigger {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-muted);
+  font-size: var(--fs-2);
+  cursor: pointer;
+}
+
+.keys-trigger:hover {
+  color: var(--trace);
+}
+
 .search-trigger {
   display: flex;
   align-items: center;
@@ -58,4 +78,5 @@
 @media (max-width: 719px) {
   .search-trigger { min-width: 0; }
   .search-trigger span { display: none; }
+  .keys-trigger { display: none; }
 }

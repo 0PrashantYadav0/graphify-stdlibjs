@@ -121,4 +121,13 @@ describe('GraphExplorer', () => {
     const lnf = screen.getByRole('treeitem', { name: /^lnf/ });
     expect(lnf.querySelector('title')!.textContent).toBe('math/base/special/lnf — math/base/special/lnf description');
   });
+
+  it('leaves the tree for the breadcrumb on Escape', () => {
+    render(<GraphExplorer graph={g} path="blas/ext" />);
+    const node = screen.getByRole('treeitem', { name: /^ext, / });
+    node.focus();
+    fireEvent.keyDown(node, { key: 'Escape' });
+    expect(document.activeElement).toBe(screen.getByRole('link', { name: 'ext' }));
+  });
 });
+
