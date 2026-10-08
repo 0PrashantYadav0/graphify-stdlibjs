@@ -52,6 +52,7 @@ npm install
 npm run dev                              # Vite dev server, http://localhost:5173
 npm test                                 # Vitest — 33 files, 260 tests, must stay green
 npm run build                            # tsc --noEmit && vite build
+npm run lint                             # ESLint 9: typescript-eslint (type-checked), react-hooks, jsx-a11y
 npm run preview                          # serve the dist/ build
 npm run extract -- --stdlib ../stdlib    # rebuild public/data/graph.json from a stdlib checkout
 npm run check:data                       # validate graph.json as the app loads it (CI runs this)
@@ -60,7 +61,7 @@ node e2e/smoke.mjs                       # optional local Playwright smoke run a
 ```
 
 `npx tsc --noEmit` is the standalone typecheck; `npm run build` already runs
-it. CI (`.github/workflows/`) runs test, `check:data`, build (which typechecks),
+it. CI (`.github/workflows/`) runs lint, test, `check:data`, build (which typechecks),
 and `check:size` on a Node 22.x/24.x matrix for every PR and push to `main`.
 Dependabot (`.github/dependabot.yml`) opens weekly npm updates, with dev
 minor/patch updates grouped, and monthly Actions updates. CI does not run
@@ -210,6 +211,12 @@ checkout.
   `manifest.json`) are hardcoded intentionally.
 
 ## Conventions
+
+- `npm run lint` must stay at zero findings. A rule that is wrong for one
+  line gets `// eslint-disable-next-line <rule> -- <reason>`, never a bare
+  disable. The JSX ones mark deliberate patterns: scrims that close on a
+  pointer press, Escape catchers on sections, and combobox options chosen
+  by keys.
 
 - Branch per ticket/issue; one PR per ticket; PR body closes the issue it
   addresses. No direct commits to `main`.

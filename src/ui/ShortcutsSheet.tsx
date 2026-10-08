@@ -24,7 +24,9 @@ export function ShortcutsSheet({ onClose }: { onClose: () => void }) {
     }
   };
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- the scrim closes on a pointer press; keyboard users close with Esc
     <div className="palette-backdrop" onMouseDown={onClose}>
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- stops scrim presses from closing the sheet, and handles Esc and the Tab trap for the aria-modal dialog */}
       <div className="palette shortcuts" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title" onMouseDown={(e) => e.stopPropagation()} onKeyDown={onKeyDown}>
         <header className="shortcuts-head">
           <h2 id="shortcuts-title">Keyboard shortcuts</h2>

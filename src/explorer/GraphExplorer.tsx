@@ -91,6 +91,7 @@ export function GraphExplorer({ graph, path }: Props) {
   const fitRange = focusMode === 'fit' && focusKeyPoint ? { x0: 0, x1: focusKeyPoint.x, y: focusKeyPoint.y } : null;
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-static-element-interactions -- only catches Escape bubbling up from the tree inside; the section itself takes no input
     <section className="graph-explorer" onKeyDown={onEscape}>
       <div className="graph-explorer-head">
         <Breadcrumb path={route.found} />
