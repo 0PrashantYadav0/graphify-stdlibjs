@@ -1,4 +1,5 @@
 import type { Graph } from '../graph/Graph';
+import { MOD_KEY } from '../search/useShortcut';
 import { Constellation } from './ConstellationView';
 import './home.css';
 
@@ -20,7 +21,7 @@ export function Home({ graph, onSearch }: { graph: Graph; onSearch: () => void }
           </p>
           <div className="hero-actions">
             <a className="button-primary" href="#/explore">Get started</a>
-            <button type="button" className="button-quiet" onClick={onSearch}>Search <kbd>⌘ K</kbd></button>
+            <button type="button" className="button-quiet" onClick={onSearch}>Search <kbd>{MOD_KEY} K</kbd></button>
           </div>
         </div>
       </div>

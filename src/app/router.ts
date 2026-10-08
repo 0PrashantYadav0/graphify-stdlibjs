@@ -36,7 +36,16 @@ export function parseHash(hash: string): Route {
     });
   }
   if (segs[0] === 'explore') return routes.explore(segs.slice(1).join('/'));
+  console.warn(`graphify: no route for "#${raw}"; showing home.`);
   return routes.home();
+}
+
+/** document.title for a route, so tabs and history entries say where they lead. */
+export function titleFor(r: Route): string {
+  const app = 'graphify · stdlib';
+  if (r.kind === 'home') return app;
+  if (r.kind === 'explore') return `explore ${r.path || 'stdlib'} · ${app}`;
+  return `${r.id}${r.view === 'webbed' ? ` (${r.dir === 'in' ? 'what requires it' : 'webbed'})` : ''} · ${app}`;
 }
 
 const encodePath = (path: string) => path.split('/').map(encodeURIComponent).join('/');
@@ -53,8 +62,19 @@ export function formatRoute(r: Route): string {
   return `#/module/${encodePath(r.id)}${query.length ? `?${query.join('&')}` : ''}`;
 }
 
-export function navigate(r: Route): void {
-  window.location.hash = formatRoute(r);
+/**
+ * Go to a route. `replace` rewrites the current history entry instead of adding one: for
+ * changes that only adjust the view (expanding a folder), so Back skips past them.
+ */
+export function navigate(r: Route, { replace = false } = {}): void {
+  if (!replace) {
+    window.location.hash = formatRoute(r);
+    return;
+  }
+  const before = window.location.hash;
+  history.replaceState(history.state, '', formatRoute(r));
+  // replaceState fires no hashchange; send one so useRoute follows.
+  if (window.location.hash !== before) window.dispatchEvent(new HashChangeEvent('hashchange'));
 }
 
 export function useRoute(): Route {

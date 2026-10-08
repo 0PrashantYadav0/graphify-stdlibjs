@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { graphFromIds } from '../graph/testUtils';
 import { GraphExplorer } from './GraphExplorer';
@@ -9,7 +9,10 @@ const g = graphFromIds(['blas/ext/base/sum', 'blas/ext/base/dsum', 'blas/ext/bas
 beforeEach(() => {
   window.location.hash = '';
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe('GraphExplorer', () => {
   it('shows stdlib expanded to its namespaces at the root, as one named tree', () => {
@@ -86,5 +89,36 @@ describe('GraphExplorer', () => {
     // the hashchange this navigate() triggered arrives late, after the user already collapsed the node
     rerender(<GraphExplorer graph={g} path="blas" />);
     expect(screen.queryByRole('treeitem', { name: /^ext/ })).toBeNull();
+  });
+
+  it('rewrites the history entry when expanding or collapsing, rather than adding one', () => {
+    const replace = vi.spyOn(history, 'replaceState');
+    const push = vi.spyOn(history, 'pushState');
+    window.location.hash = '#/explore';
+    render(<GraphExplorer graph={g} path="" />);
+    fireEvent.click(screen.getByRole('treeitem', { name: /^blas/ }));
+    expect(window.location.hash).toBe('#/explore/blas');
+    expect(replace).toHaveBeenCalledTimes(1);
+    expect(push).not.toHaveBeenCalled();
+    cleanup();
+    // collapsing a package above the current path brings the url back up to it
+    window.location.hash = '#/explore/blas/ext';
+    render(<GraphExplorer graph={g} path="blas/ext" />);
+    fireEvent.click(screen.getByRole('treeitem', { name: /^blas, / }));
+    expect(window.location.hash).toBe('#/explore/blas');
+  });
+
+  it('says when a path runs off the tree, and shows the closest match', () => {
+    render(<GraphExplorer graph={g} path="blas/ext/nope/deeper" />);
+    expect(screen.getByRole('status').textContent).toBe('No package at blas/ext/nope/deeper; showing the closest match blas/ext.');
+    const crumbs = screen.getByRole('navigation', { name: 'path' });
+    expect([...crumbs.querySelectorAll('a')].map((a) => a.textContent)).toEqual(['stdlib', 'blas', 'ext']);
+    expect(screen.getByRole('treeitem', { name: /^ext, / }).classList.contains('is-selected')).toBe(true);
+  });
+
+  it('gives each package node its full id and description as a tooltip', () => {
+    render(<GraphExplorer graph={g} path="math/base/special" />);
+    const lnf = screen.getByRole('treeitem', { name: /^lnf/ });
+    expect(lnf.querySelector('title')!.textContent).toBe('math/base/special/lnf — math/base/special/lnf description');
   });
 });
