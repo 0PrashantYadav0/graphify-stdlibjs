@@ -84,25 +84,33 @@ export class TreeModel {
     return (this.members.get(node.key) ?? []).map((m) => packageNode(this.graph, m.index, m.sublabel));
   }
 
-  /** Keys to expand so the package at `path` is visible, plus the key to select. */
-  expandPathFor(path: string): { expanded: string[]; selected: string | null } {
+  /**
+   * Keys to expand so the package at `path` is visible, plus the key to select. `found` is
+   * the longest prefix of `path` that exists; for a path that runs off the tree, that is
+   * the closest match, and it is what gets selected.
+   */
+  expandPathFor(path: string): { expanded: string[]; selected: string | null; found: string } {
     const expanded = [ROOT.key];
-    if (!path) return { expanded, selected: null };
+    if (!path) return { expanded, selected: null, found: '' };
     let current = ROOT;
     const segs = path.split('/');
     for (let i = 0; i < segs.length; i++) {
       const seg = segs[i];
       const found = this.locate(current, seg);
-      if (!found) return { expanded, selected: null };
+      if (!found) {
+        // expanded ends with the deepest package reached; select it, unless that is the root
+        const last = current === ROOT ? null : current.key;
+        return { expanded, selected: last, found: segs.slice(0, i).join('/') };
+      }
       for (const via of found.via) expanded.push(via.key);
       if (i === segs.length - 1) {
         if (found.node.hasChildren) expanded.push(found.node.key);
-        return { expanded, selected: found.node.key };
+        return { expanded, selected: found.node.key, found: path };
       }
       expanded.push(found.node.key);
       current = found.node;
     }
-    return { expanded, selected: null };
+    return { expanded, selected: null, found: '' };
   }
 
   /** Find the package child named `name` under `parent`, recording the group nodes passed through. */

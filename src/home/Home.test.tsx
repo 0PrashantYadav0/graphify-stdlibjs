@@ -22,6 +22,8 @@ describe('Home', () => {
     const facts = within(screen.getByRole('list', { name: 'Graph summary' })).getAllByRole('listitem');
     expect(facts.map((li) => li.textContent)).toEqual([`${g.n} packages`, '1 runtime link', '1 namespace', 'Built from a local stdlib checkout']);
     expect(screen.getByRole('link', { name: '0PrashantYadav0' }).getAttribute('href')).toBe('https://github.com/0PrashantYadav0');
+    // the shortcut label follows the platform (jsdom is not a Mac)
+    expect(screen.getByRole('button', { name: /Search/ }).textContent).toBe('Search Ctrl K');
     fireEvent.click(screen.getByRole('button', { name: /Search/ }));
     expect(onSearch).toHaveBeenCalled();
   });
