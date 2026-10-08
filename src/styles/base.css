@@ -50,3 +50,14 @@ button {
     transition: none !important;
   }
 }
+
+/* Read by assistive technology, never painted (status messages, for example). */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
