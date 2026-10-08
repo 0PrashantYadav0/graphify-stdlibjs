@@ -1,0 +1,86 @@
+name: Refresh data
+
+# Regenerates public/data/graph.json from stdlib-js/stdlib and opens (or updates)
+# a PR on the data/refresh branch when the graph changed.
+#
+# The PR is opened with GITHUB_TOKEN, and GitHub does not run other workflows
+# (CI) for PRs a GITHUB_TOKEN opens. So this job runs the same checks CI would,
+# test, check:data and build, against the new data before opening the PR, and
+# the PR body says so. Swap in a PAT or app token if CI on the PR is wanted.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: stdlib-js/stdlib ref to extract from
+        default: develop
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out stdlib (sparse, shallow)
+        uses: actions/checkout@v4
+        with:
+          repository: stdlib-js/stdlib
+          ref: ${{ inputs.ref || 'develop' }}
+          path: stdlib
+          fetch-depth: 1
+          sparse-checkout: lib/node_modules/@stdlib
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+
+      - name: Extract
+        run: |
+          cp public/data/graph.json "$RUNNER_TEMP/graph.old.json"
+          npm run extract -- --stdlib ./stdlib
+
+      - name: Diff
+        id: diff
+        run: npx tsx scripts/extract/diff.ts "$RUNNER_TEMP/graph.old.json" public/data/graph.json "$RUNNER_TEMP/delta.md" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the new data the way CI would
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          npm run check:data
+          npm test
+          npm run build
+
+      - name: Write PR body
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          {
+            echo "Weekly regeneration of \`public/data/graph.json\` from stdlib-js/stdlib \`${{ inputs.ref || 'develop' }}\`."
+            echo
+            cat "$RUNNER_TEMP/delta.md"
+            echo
+            echo "CI does not run on PRs opened by this workflow's token. The [refresh run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID) ran \`npm run check:data\`, \`npm test\` and \`npm run build\` against this data before opening it."
+          } > "$RUNNER_TEMP/body.md"
+
+      - name: Open or update the PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: data/refresh
+          delete-branch: true
+          add-paths: public/data/graph.json
+          commit-message: 'data: refresh graph.json from stdlib-js/stdlib'
+          title: 'data: refresh graph.json from stdlib-js/stdlib'
+          body-path: ${{ runner.temp }}/body.md
