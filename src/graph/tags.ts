@@ -41,6 +41,11 @@ export function decodeTags(mask: number): TagName[] {
   return TAG_ORDER.filter((t) => (mask & Tag[t]) !== 0);
 }
 
+/** The pills' text, in pill order, for building names that contain what a pill shows. */
+export function shownTagLabels(mask: number): string[] {
+  return decodeTags(mask).filter((t) => SHOWN_TAGS.includes(t)).map((t) => TAG_LABEL[t]);
+}
+
 export function hasTag(mask: number, name: TagName): boolean {
   return (mask & Tag[name]) !== 0;
 }

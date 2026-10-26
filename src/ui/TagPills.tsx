@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { decodeTags, SHOWN_TAGS, TAG_LABEL } from '../graph/tags';
 import './pills.css';
 
@@ -7,9 +8,12 @@ export function TagPills({ mask }: { mask: number }) {
   return (
     <span className="pills" aria-label={`implementations: ${tags.map((t) => TAG_LABEL[t]).join(', ')}`}>
       {tags.map((t) => (
-        <span key={t} className={`pill pill-${TAG_LABEL[t]}`} data-testid="pill">
-          {TAG_LABEL[t]}
-        </span>
+        // The space keeps text extraction from running the pills into one word ("jsc").
+        <Fragment key={t}>
+          <span className={`pill pill-${TAG_LABEL[t]}`} data-testid="pill">
+            {TAG_LABEL[t]}
+          </span>{' '}
+        </Fragment>
       ))}
     </span>
   );

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { layoutTree, linkPath, NODE_H, NODE_W, type Direction, type LayoutResult } from './layout';
+import { shownTagLabels } from '../graph/tags';
 import { pillsWidth, SvgPills } from './SvgPills';
 import { useCanvasViewport } from './viewport';
 
@@ -58,8 +59,21 @@ function truncate(text: string, maxPx: number): string {
   return text.length <= max ? text : `${text.slice(0, max - 1)}…`;
 }
 
+/**
+ * The node's accessible name: everything the box shows, in the order it shows it, so the
+ * visible text is contained in the name (WCAG 2.5.3) -- label, sublabel, then either the
+ * count or the pills. A static node with children shows pills but is still named by its count.
+ */
 export function ariaLabelFor(n: GraphNodeLike): string {
-  return n.hasChildren ? `${n.label}, ${n.count} package${n.count === 1 ? '' : 's'}` : n.label;
+  const showCount = n.hasChildren && n.inert !== true;
+  return [
+    n.label,
+    n.sublabel,
+    ...(showCount ? [] : shownTagLabels(n.mask ?? 0)),
+    n.hasChildren ? `${n.count} package${n.count === 1 ? '' : 's'}` : '',
+  ]
+    .filter(Boolean)
+    .join(', ');
 }
 
 /**
@@ -192,6 +206,7 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
         const rightText = showCount ? `${n.count} ${chevron}` : '';
         const reserved = showCount ? rightText.length * CHAR_W + PAD_X : pillsWidth(mask) + (mask ? PAD_X : 0);
         const labelMax = NODE_W - PAD_X * 2 - reserved;
+        const shownLabel = truncate(n.label, labelMax);
         const cls = ['gnode', `gnode-${n.kind}`, n.key === selectedKey ? 'is-selected' : '', pathKeys.has(n.key) ? 'on-path' : '', expanded.has(n.key) ? 'is-expanded' : ''].filter(Boolean).join(' ');
         return (
           <g
@@ -214,17 +229,19 @@ export function TreeLayer<T extends GraphNodeLike>({ root, childrenOf, expanded,
             }}
             onKeyDown={(e) => onKeyDown(e, i)}
           >
-            {/* A tooltip with the full name; skipped when it would only repeat the accessible name. */}
-            {tooltip(n) !== ariaLabelFor(n) && <title>{tooltip(n)}</title>}
+            {/* A tooltip with the full name; skipped when it would only repeat the label on screen. */}
+            {(tooltip(n) !== n.label || shownLabel !== n.label) && <title>{tooltip(n)}</title>}
             <rect className="gnode-box" width={NODE_W} height={NODE_H} rx={4} />
             <text className="gnode-label" x={PAD_X} y={n.sublabel ? 17 : NODE_H / 2 + 4.5}>
-              {truncate(n.label, labelMax)}
+              {shownLabel}
             </text>
+            {/* SVG draws no whitespace between <text>s, but text extraction (axe's label-in-name
+                check among it) would otherwise run "stdlib" and "6420" together into one word. */}{' '}
             {n.sublabel && (
               <text className="gnode-sub" x={PAD_X} y={32}>
                 {truncate(n.sublabel, labelMax)}
               </text>
-            )}
+            )}{' '}
             {showCount ? (
               <text className="gnode-count" x={NODE_W - PAD_X} y={NODE_H / 2 + 4} textAnchor="end">{rightText}</text>
             ) : (

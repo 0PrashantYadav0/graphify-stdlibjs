@@ -39,13 +39,14 @@ function mount(expanded: Set<string>, opts: MountOpts = {}) {
 const items = () => screen.getAllByRole('treeitem');
 const labels = () => items().map((el) => el.getAttribute('aria-label'));
 const tabStops = () => items().filter((el) => el.getAttribute('tabindex') === '0');
-const item = (name: string) => screen.getByRole('treeitem', { name });
+// Leaves are named by label then pills (every fixture leaf is js and c), groups by label then count.
+const item = (label: string) => screen.getByRole('treeitem', { name: (n) => n === label || n.startsWith(`${label}, `) });
 
 describe('TreeLayer', () => {
   it('renders only expanded branches as treeitems inside a named tree', () => {
     mount(new Set(['root']));
     expect(screen.getByRole('tree', { name: 'package tree' })).toBeTruthy();
-    expect(labels()).toEqual(['stdlib, 3 packages', 'math, 2 packages', 'noop']);
+    expect(labels()).toEqual(['stdlib, 3 packages', 'math, 2 packages', 'noop, js, c']);
     expect(item('math, 2 packages').getAttribute('aria-expanded')).toBe('false');
     expect(item('stdlib, 3 packages').getAttribute('aria-expanded')).toBe('true');
     expect(item('noop').hasAttribute('aria-expanded')).toBe(false);
@@ -53,7 +54,7 @@ describe('TreeLayer', () => {
 
   it('orders rows depth-first and numbers them with aria-level, posinset and setsize', () => {
     mount(new Set(['root', 'p:math']));
-    expect(labels()).toEqual(['stdlib, 3 packages', 'math, 2 packages', 'lnf', 'logf', 'noop']);
+    expect(labels()).toEqual(['stdlib, 3 packages', 'math, 2 packages', 'lnf, js, c', 'logf, js, c', 'noop, js, c']);
     const aria = (name: string) => {
       const el = item(name);
       return [el.getAttribute('aria-level'), el.getAttribute('aria-posinset'), el.getAttribute('aria-setsize')];
@@ -67,7 +68,7 @@ describe('TreeLayer', () => {
 
   it('lifts the hidden root’s children to level 1 when hideRoot is set', () => {
     mount(new Set(['root']), { hideRoot: true });
-    expect(labels()).toEqual(['math, 2 packages', 'noop']);
+    expect(labels()).toEqual(['math, 2 packages', 'noop, js, c']);
     expect(item('math, 2 packages').getAttribute('aria-level')).toBe('1');
     expect(item('noop').getAttribute('aria-posinset')).toBe('2');
     expect(item('noop').getAttribute('aria-setsize')).toBe('2');
@@ -87,10 +88,10 @@ describe('TreeLayer', () => {
 
   it('keeps exactly one tab stop, starting on the selected node and following focus', () => {
     mount(new Set(['root', 'p:math']), { selectedKey: 'p:math/logf' });
-    expect(tabStops().map((el) => el.getAttribute('aria-label'))).toEqual(['logf']);
+    expect(tabStops().map((el) => el.getAttribute('aria-label'))).toEqual(['logf, js, c']);
     fireEvent.keyDown(item('logf'), { key: 'ArrowDown' });
     expect(document.activeElement).toBe(item('noop'));
-    expect(tabStops().map((el) => el.getAttribute('aria-label'))).toEqual(['noop']);
+    expect(tabStops().map((el) => el.getAttribute('aria-label'))).toEqual(['noop, js, c']);
     expect(item('logf').getAttribute('tabindex')).toBe('-1');
   });
 

@@ -3,6 +3,7 @@ import type { Graph } from '../graph/Graph';
 import type { Range } from '../graph/search';
 import { routeForPackage } from '../app/open';
 import { navigate } from '../app/router';
+import { shownTagLabels } from '../graph/tags';
 import { TagPills } from '../ui/TagPills';
 import './search.css';
 
@@ -104,15 +105,15 @@ export function SearchPalette({ graph, onClose }: Props) {
                   id={`hit-${h.index}`}
                   role="option"
                   aria-selected={i === active}
-                  aria-label={desc ? `${id}, ${desc}` : id}
+                  aria-label={[id, desc, ...shownTagLabels(graph.tags[h.index])].filter(Boolean).join(', ')}
                   className={`palette-hit${i === active ? ' is-active' : ''}`}
                   onMouseEnter={() => setActive(i)}
                   onClick={() => open(h.index)}
                 >
                   <span className="palette-text">
-                    <span className="palette-id mono">{h.field === 'id' ? <Marked text={id} ranges={h.ranges} /> : id}</span>
+                    <span className="palette-id mono">{h.field === 'id' ? <Marked text={id} ranges={h.ranges} /> : id}</span>{' '}
                     {desc && <span className="palette-desc">{h.field === 'desc' ? <Marked text={desc} ranges={h.ranges} /> : desc}</span>}
-                  </span>
+                  </span>{' '}
                   <TagPills mask={graph.tags[h.index]} />
                 </li>
               );

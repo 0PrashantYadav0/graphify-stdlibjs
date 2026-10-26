@@ -35,7 +35,7 @@ test('home shows the constellation and stats that match graph.json', async ({ pa
 
 test('a deep link into the explorer lands on the package, selected and on screen', async ({ page }) => {
   await page.goto('#/explore/blas/ext/base/dsumkbn');
-  const node = page.getByRole('treeitem', { name: 'dsumkbn', exact: true });
+  const node = page.getByRole('treeitem', { name: /^dsumkbn(,|$)/ });
   await expect(node).toHaveAttribute('aria-selected', 'true');
   await expect(node).toBeInViewport();
   await expect(page).toHaveTitle('explore blas/ext/base/dsumkbn · graphify · stdlib');
@@ -59,7 +59,7 @@ test('Webbed shows the whole web, and selecting a row explains why it is there',
   await expect(page.getByText(`${fmt.format(web.size)} packages, ${web.maxDepth} steps deep`)).toBeVisible();
   await expect(page.getByRole('listbox')).toHaveCount(web.maxDepth + 1);
   const deepest = web.order[web.size - 1];
-  await page.getByRole('option', { name: new RegExp(`^${graph.ids[deepest]},`) }).click();
+  await page.getByRole('option').and(page.locator(`[data-index="${deepest}"]`)).click();
   await expect(page.getByRole('list', { name: 'shortest chain' }).getByRole('listitem')).toHaveText(web.chain(deepest).map((j) => graph.ids[j]));
 });
 
@@ -96,10 +96,17 @@ for (const [name, hash] of [
     // ADR-0004: the Webbed columns share one roving tab stop, and arrow keys move focus (and so
     // scroll) between them, so a column without the tab stop is still reachable. axe's
     // scrollable-region-focusable asks for a tab stop per scrolling column; accepted, not fixed.
+    // label-content-name-mismatch: every name lists what its node shows, in order, but a label cut
+    // to fit its box ("is-nonnegative-integ…") drops whole words that the full name still has, so
+    // axe's word-for-word match fails. Accepted for truncated labels only; the full id is the name.
     const { violations } = await new AxeBuilder({ page }).analyze();
+    const truncated = await page
+      .locator('.gnode')
+      .evaluateAll((els) => els.filter((e) => e.querySelector('.gnode-label')?.textContent?.endsWith('…')).map((e) => `data-tree-key="${e.getAttribute('data-tree-key')}"`));
     const bad = violations
       .filter((v) => v.impact === 'serious' || v.impact === 'critical')
-      .filter((v) => !(v.id === 'scrollable-region-focusable' && v.nodes.every((n) => n.html.includes('class="web-rows"'))));
+      .filter((v) => !(v.id === 'scrollable-region-focusable' && v.nodes.every((n) => n.html.includes('class="web-rows"'))))
+      .filter((v) => !(v.id === 'label-content-name-mismatch' && v.nodes.every((n) => truncated.some((key) => n.html.includes(key)))));
     expect(bad.map((v) => `${v.id}: ${v.nodes.length} × ${v.nodes[0]?.target.join(' ')}`)).toEqual([]);
   });
 }
