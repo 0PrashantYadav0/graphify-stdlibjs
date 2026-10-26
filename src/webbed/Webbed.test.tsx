@@ -12,7 +12,12 @@ const g = graphFromIds(['p/a', 'p/b', 'p/c', 'p/d', 'p/e', 'q/x'], {
   dev: [['q/x', 'p/a']],
 });
 const webbed = (id = 'p/a', opts = {}) => render(<Focus graph={g} route={routes.module(id, { view: 'webbed', ...opts })} />);
-const option = (id: string) => screen.getByRole('option', { name: new RegExp(`^${id.replace('/', '\\/')},`) });
+// A row is named by what it shows: last segment, own-web count, pills, then namespace.
+const idOf = (o: HTMLElement) => {
+  const parts = o.getAttribute('aria-label')!.split(', ');
+  return `${parts[parts.length - 1]}/${parts[0]}`;
+};
+const option = (id: string) => screen.getAllByRole('option').find((o) => idOf(o) === id)!;
 const chain = () => within(screen.getByRole('list', { name: 'shortest chain' })).getAllByRole('listitem').map((li) => li.textContent);
 
 afterEach(() => {
@@ -39,7 +44,7 @@ describe('Webbed', () => {
     const boxes = screen.getAllByRole('listbox');
     expect(boxes.map((b) => b.getAttribute('aria-label'))).toEqual(['this package', '2 packages, 1 step out', '1 package, 2 steps out', '1 package, 3 steps out']);
     expect(within(boxes[2]).getAllByRole('option')).toHaveLength(1); // d, reached twice, listed once
-    expect(option('p/b').getAttribute('aria-label')).toBe('p/b, 2 in its own web');
+    expect(option('p/b').getAttribute('aria-label')).toBe('b, +2, js, p');
   });
 
   it('shows why a selected package is here, and what it links to', () => {
@@ -125,7 +130,7 @@ describe('Impact', () => {
   it('filters the strata to a bucket, and to a namespace', () => {
     render(<Focus graph={h} route={routes.module('p/x', all)} />);
     fireEvent.click(bucket('Tests'));
-    const shown = () => screen.getAllByRole('option').map((o) => o.getAttribute('aria-label')!.split(',')[0]);
+    const shown = () => screen.getAllByRole('option').map(idOf);
     expect(shown()).toEqual(['p/x', 'p/v', 'p/t']); // by column; w is in the dev web but not affected
     fireEvent.click(bucket('Tests'));
     fireEvent.click(within(screen.getByRole('group', { name: 'by namespace' })).getByRole('button', { name: 'm 2' }));

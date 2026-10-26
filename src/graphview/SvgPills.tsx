@@ -35,7 +35,7 @@ export function SvgPills({ mask, x, y, align = 'end' }: Props) {
         const el = (
           <g key={t} className={`spill spill-${label}`} transform={`translate(${cursor}, ${y - H / 2})`}>
             <rect width={w} height={H} rx={3} />
-            <text x={w / 2} y={H / 2 + 3.5} textAnchor="middle">{label}</text>
+            <text x={w / 2} y={H / 2 + 3.5} textAnchor="middle">{label}</text>{' '}
           </g>
         );
         cursor += w + GAP;

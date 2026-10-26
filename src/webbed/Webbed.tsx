@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { EdgeQuery, Graph } from '../graph/Graph';
 import { formatRoute, navigate, routes, type ModuleRoute } from '../app/router';
+import { shownTagLabels } from '../graph/tags';
 import { TagPills } from '../ui/TagPills';
 import { BUCKETS, impactList, impactSet, type Bucket } from './impact';
 import { webColumns, webLinks } from './webModel';
@@ -215,16 +216,17 @@ export function Webbed({ graph, index, route }: { graph: Graph; index: number; r
                       key={j}
                       role="option"
                       aria-selected={j === sel}
-                      aria-label={`${id}, ${fmt.format(own)} in its own web`}
+                      // The row's text in on-screen order, so the name contains what is shown (WCAG 2.5.3).
+                      aria-label={[id.slice(cut + 1), own > 0 ? `+${fmt.format(own)}` : '', ...shownTagLabels(graph.tags[j]), id.slice(0, Math.max(cut, 0))].filter(Boolean).join(', ')}
                       tabIndex={j === tabStop ? 0 : -1}
                       data-index={j}
                       className={`web-row${state}`}
                       onClick={() => select(j)}
                       onKeyDown={(e) => onKey(e, c, pos)}
                     >
-                      <span className="web-name mono">{id.slice(cut + 1)}</span>
-                      {own > 0 && <span className="web-own mono">+{fmt.format(own)}</span>}
-                      <TagPills mask={graph.tags[j]} />
+                      <span className="web-name mono">{id.slice(cut + 1)}</span>{' '}
+                      {own > 0 && <span className="web-own mono" title={`${fmt.format(own)} in its own web`}>+{fmt.format(own)}</span>}{' '}
+                      <TagPills mask={graph.tags[j]} />{' '}
                       {cut > 0 && <span className="web-ns mono">{id.slice(0, cut)}</span>}
                     </li>
                   );

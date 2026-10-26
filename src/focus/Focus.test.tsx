@@ -26,8 +26,8 @@ describe('Focus', () => {
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('math/base/special/logf');
     expect(facts()).toEqual(['Requires 1 / 1 in web', 'Required by 1 / 1 in web']);
-    expect(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ })).toBeTruthy();
-    expect(screen.getByRole('treeitem', { name: /^math\/base\/special\/log10f$/ })).toBeTruthy();
+    expect(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf(,|$)/ })).toBeTruthy();
+    expect(screen.getByRole('treeitem', { name: /^math\/base\/special\/log10f(,|$)/ })).toBeTruthy();
     // the centre is a treeitem like any other node -- role="img" would have been an
     // invalid child of role="tree" -- but it stays static: no count, and nothing to open.
     const centre = screen.getByRole('treeitem', { name: /^logf/ });
@@ -52,28 +52,28 @@ describe('Focus', () => {
     expect(stops(requires)).toHaveLength(1);
     expect(stops(requiredBy)).toHaveLength(1);
     // the requires side hides the shared centre, so its neighbours are the top level
-    expect(within(requires).getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ }).getAttribute('aria-level')).toBe('1');
-    expect(within(requiredBy).getByRole('treeitem', { name: /^math\/base\/special\/log10f$/ }).getAttribute('aria-level')).toBe('2');
+    expect(within(requires).getByRole('treeitem', { name: /^math\/base\/special\/lnf(,|$)/ }).getAttribute('aria-level')).toBe('1');
+    expect(within(requiredBy).getByRole('treeitem', { name: /^math\/base\/special\/log10f(,|$)/ }).getAttribute('aria-level')).toBe('2');
   });
 
   it('walks the required-by tree from its centre with the Down arrow', () => {
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
     const centre = screen.getByRole('treeitem', { name: /^logf/ });
     fireEvent.keyDown(centre, { key: 'ArrowDown' });
-    expect(document.activeElement).toBe(screen.getByRole('treeitem', { name: /^math\/base\/special\/log10f$/ }));
+    expect(document.activeElement).toBe(screen.getByRole('treeitem', { name: /^math\/base\/special\/log10f(,|$)/ }));
   });
 
   it('opens a neighbour on click', () => {
     window.location.hash = '#/module/math/base/special/logf';
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
-    fireEvent.click(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ }));
+    fireEvent.click(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf(,|$)/ }));
     expect(window.location.hash).toBe('#/module/math/base/special/lnf');
   });
 
   it('opens a neighbour with Enter', () => {
     window.location.hash = '#/module/math/base/special/logf';
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
-    fireEvent.keyDown(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ }), { key: 'Enter' });
+    fireEvent.keyDown(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf(,|$)/ }), { key: 'Enter' });
     expect(window.location.hash).toBe('#/module/math/base/special/lnf');
   });
 
@@ -85,13 +85,13 @@ describe('Focus', () => {
     cleanup();
     render(<Focus graph={g} route={routes.module('math/base/special/logf', { edges: ['runtime', 'dev', 'native'] })} />);
     expect(facts()).toEqual(['Requires 2 / 2 in web', 'Required by 2 / 2 in web']);
-    expect(screen.getByRole('treeitem', { name: /^assert\/is-nan$/ })).toBeTruthy();
+    expect(screen.getByRole('treeitem', { name: /^assert\/is-nan(,|$)/ })).toBeTruthy();
   });
 
   it('keeps the edge kinds that are on when hopping to a neighbour', () => {
     window.location.hash = '#/module/math/base/special/logf?edges=runtime,dev';
     render(<Focus graph={g} route={routes.module('math/base/special/logf', { edges: ['runtime', 'dev'] })} />);
-    fireEvent.click(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ }));
+    fireEvent.click(screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf(,|$)/ }));
     expect(window.location.hash).toBe('#/module/math/base/special/lnf?edges=runtime,dev');
   });
 
@@ -101,11 +101,11 @@ describe('Focus', () => {
       { runtime: [['math/base/special/logf', 'blas/base/dasum'], ['math/base/special/logf', 'blas/base/daxpy']] },
     );
     render(<Focus graph={g2} route={routes.module('math/base/special/logf')} />);
-    expect(screen.getByRole('treeitem', { name: /^dasum$/ })).toBeTruthy();
+    expect(screen.getByRole('treeitem', { name: /^dasum(,|$)/ })).toBeTruthy();
     fireEvent.click(screen.getByRole('treeitem', { name: /^blas\/base, 2 packages/ }));
-    expect(screen.queryByRole('treeitem', { name: /^dasum$/ })).toBeNull();
+    expect(screen.queryByRole('treeitem', { name: /^dasum(,|$)/ })).toBeNull();
     fireEvent.click(screen.getByRole('treeitem', { name: /^blas\/base, 2 packages/ }));
-    expect(screen.getByRole('treeitem', { name: /^dasum$/ })).toBeTruthy();
+    expect(screen.getByRole('treeitem', { name: /^dasum(,|$)/ })).toBeTruthy();
   });
 
   it('explains an unknown id', () => {
@@ -148,7 +148,7 @@ describe('Focus', () => {
 
   it('leaves a tree, or the Webbed columns, for the module card on Escape', () => {
     render(<Focus graph={g} route={routes.module('math/base/special/logf')} />);
-    const node = screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf$/ });
+    const node = screen.getByRole('treeitem', { name: /^math\/base\/special\/lnf(,|$)/ });
     node.focus();
     fireEvent.keyDown(node, { key: 'Escape' });
     expect(document.activeElement).toBe(screen.getByRole('link', { name: /explore math\/base\/special/ }));
