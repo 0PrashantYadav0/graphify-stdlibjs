@@ -41,6 +41,23 @@ describe('groupVariants', () => {
     expect(groups[0].variants[0].members.map((m) => m.name)).toEqual(['dsum', 'dsumors']);
   });
 
+  it('reads dsnansum as dsnan+sum, not ds+nansum or d+snansum, when its family is present', () => {
+    // The blas/ext/base/ndarray sum family in stdlib develop as of November 2026, which added dssum, sdssum and dsnansum.
+    const { groups } = groupVariants(['dsum', 'ssum', 'gsum', 'dnansum', 'snansum', 'gnansum', 'dssum', 'sdssum', 'dsnansum', 'dsumkbn']);
+    const sum = groups.find((g) => g.stem === 'sum')!;
+    expect(sum.variants.map((v) => [v.prefix, v.members.map((m) => m.name)])).toEqual([
+      ['d', ['dsum', 'dsumkbn']],
+      ['s', ['ssum']],
+      ['dnan', ['dnansum']],
+      ['snan', ['snansum']],
+      ['ds', ['dssum']],
+      ['sds', ['sdssum']],
+      ['dsnan', ['dsnansum']],
+      ['g', ['gsum']],
+    ]);
+    expect(sum.variants.find((v) => v.prefix === 'dsnan')!.label).toBe('float32 in, float64 accumulate, NaN (dsnan)');
+  });
+
   it('prefers the shorter stem on a count tie, so dasumpw/gasumpw/sasumpw share stem asum', () => {
     const { groups } = groupVariants(['dasumpw', 'gasumpw', 'sasumpw']);
     expect(groups).toHaveLength(1);
